@@ -18,8 +18,10 @@
     <style type="text/css">
         .mui-table-view-cell p{ line-height: 27px; }
         .mui-segmented-control .mui-control-item{ border-bottom: 5px solid #FFF; }
-        .mui-control-content { top:80px !important; bottom:44px !important; }
-        .bottomInfo { position: fixed; bottom:0px; left: 0px; z-index: 999; width: 100%; height: 40px; line-height: 40px; padding: 0px 15px; font-size: 12px; background-color: #FFF; border-top: 1px solid #DDD; text-align: center; }
+        .mui-control-content { top:78px !important; }
+        .bottomInfo { position:absolute; bottom:0px; left: 0px; z-index: 9999; width: 100%; height: 40px; line-height: 40px; padding: 0px 15px; font-size: 12px; background-color: #FFF; border-top: 1px solid #DDD; text-align: center; }
+        .mui-badge { margin-left: 6px; font-size: 10px !important; }
+        .mui-slider-handle .fr { text-align: right; font-size: 12px; }
     </style>
 </head>
 
@@ -61,9 +63,9 @@
         </div>
         <div id="offlineStudentList" class="mui-control-content mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view coach list border-b student2 OA_task_student"></ul>
+                <ul class="mui-table-view coach list border-b student-intake2"></ul>
             </div>
-            <div class="bottomInfo">Tips：左滑动“在学”或“预结业”列表即可设置为“正式结业”</div>
+            <div class="bottomInfo">Tips：左滑动“在学”或“待结业”列表即可设置为“正式结业”</div>
         </div>
         <div id="pendingStudentList" class="mui-control-content mui-scroll-wrapper">
             <div class="mui-scroll">
@@ -73,8 +75,9 @@
         </div>
         <div id="searchList" class="mui-control-content mui-scroll-wrapper">
             <div class="mui-scroll">
-                <ul class="mui-table-view coach list border-b student-search"><li class="mui-table-view-cell mui-media listli mui-text-center">请在搜索栏输入您需要查找的学生名称，<br />可以只输入关键字，如姓氏“李”、名字“佳”等</li></ul>
+                <ul class="mui-table-view coach list border-b student-search OA_task_student"><li class="mui-table-view-cell mui-media listli mui-text-center">请在搜索栏输入您需要查找的学生名称，<br />可以只输入关键字，如姓氏“李”、名字“佳”等</li></ul>
             </div>
+            <div class="bottomInfo">搜索结果：<text class="colororange">0</text> 条记录</div>
         </div>
     </div>
 
@@ -234,7 +237,7 @@
                 offCount = 1;//刷新并显示第一页
                 var page = offCount;
                 var gType = 1;//代表下拉刷新
-                toList('offlineStudentList', page, gType, 1,2);//具体取数据的方法
+                toGraduateList('offlineStudentList', page, gType, 2);//具体取数据的方法
             }, 100);
         }
 
@@ -244,7 +247,7 @@
                 offCount++;//翻下一页
                 var page = offCount;
                 var gType = 2;//代表上拉加载
-                toList('offlineStudentList', page, gType,1, 2);//具体取数据的方法
+                toGraduateList('offlineStudentList', page, gType, 2);//具体取数据的方法
             }, 100);
         }
 
@@ -329,68 +332,84 @@
             }, 100);
         }
 
-
-
     })
 
 
     //接口获取数据并追加到页面
     var toSearchList = function (wList, page, gType, keyword) {
-        //搜索关键字不能完全为空，否则查询为空
-        var url  = "{:url('api/lesson_member/searchLessonMemberByPageApi','','',true)}?page="+page+"&keyword="+keyword;
-        var campID = "{$camp_id}";
-        var typeID = 1;
-        mui.ajax({
-            url: url,
-            data: {
-                camp_id: campID,
-                type: typeID
-            },
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: {'Content-Type': 'application/json'},
-            success: function (data) {
-                var newli = '';
-                var statusCN = '';
-                if (data.code == 200) {
-                    for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
-                        newli += '<li class="mui-table-view-cell mui-media listli">';
-                        
-                        if(data.data.data[i].status=="待结业"){
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus">设为结业</span></div>';
+        if(keyword==""){
+            mui.toast("请输入关键字");
+            mui('#' + wList).pullRefresh().endPulldownToRefresh();
+            mui('#' + wList).pullRefresh().endPullupToRefresh();
+        }else{
+       
+            //搜索关键字不能完全为空，否则查询为空
+            var url  = "{:url('api/lesson_member/searchLessonMemberByPageApi','','',true)}?page="+page+"&keyword="+keyword;
+            var campID = "{$camp_id}";
+            var typeID = 1;
+            mui.ajax({
+                url: url,
+                data: {
+                    camp_id: campID,
+                    type: typeID
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    var newli = '';
+                    var statusCN = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
+                            newli += '<li class="mui-table-view-cell mui-media listli">';
+                            
+                            statusCN = '<text class="mui-badge mui-badge-primary">'+data.data.data[i].status+'</text>';
+                            if(data.data.data[i].intake==2){
+                                statusCN = '<text class="mui-badge">正式结业</text>';
+                            }else{
+                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus" lid="'+data.data.data[i].id+'">设为结业</span></div>';
+                                if(data.data.data[i].status=="在学"){
+                                    statusCN = '<text class="mui-badge mui-badge-success">在学</text>';
+                                }else if(data.data.data[i].status=="待结业"){
+                                    statusCN = '<text class="mui-badge mui-badge-danger">待结业</text>';
+                                }
+                            }
+
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student +statusCN+'<p class="mui-ellipsis">' + data.data.data[i].lesson +'，剩余 <text class="colororange">'+data.data.data[i].rest_schedule + '</text> 课时</p></div></a></div>';
+                            newli += '</li>';
                         }
-
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student +'（'+data.data.data[i].status+'）<p class="mui-ellipsis">' + data.data.data[i].lesson +'，剩余 <text class="colororange">'+data.data.data[i].rest_schedule + '</text> 课时</p></div></a></div>';
-                        newli += '</li>';
                     }
-                }
-                if (gType == 1) {
-                    //上拉刷新
-                    $("ul.student-search").empty().append(newli);
-                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
-                    mui('#' + wList).pullRefresh().refresh(true);
-                    if (newli == '') {
-                        $("ul.student-search").append('<li class="nodata"><p>没有搜索到相关数据哦</p></li>');
+                    if (gType == 1) {
+                        //上拉刷新
+                        $("ul.student-search").empty().append(newli);
+                        mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                        mui('#' + wList).pullRefresh().refresh(true);
+                        if (newli == '') {
+                            $("ul.student-search").append('<li class="nodata"><p>没有搜索到相关数据哦</p></li>');
+                        }
+                    } else {
+                        //下拉加载 gType==2
+                        $("ul.student-search").append(newli);
                     }
-                } else {
-                    //下拉加载 gType==2
-                    $("ul.student-search").append(newli);
-                }
 
-                if (newli != '') {
-                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
-                } else {
+                    if (newli != '') {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                    } else {
+                        mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                    }
+
+                    $("#searchList .bottomInfo .colororange").text(data.data.total);
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
                     mui('#' + wList).pullRefresh().endPullupToRefresh(true);
                 }
-
-            },
-            error: function (xhr, type, errerThrown) {
-                mui.toast('网络异常,请稍候再试');
-                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
-            }
-        });
+            });
+            
+        }
     };
 
 
@@ -406,14 +425,6 @@
                 status: status,
                 intake:intake
             };
-            if(intake >1){
-                data = {
-
-                    camp_id: campID,
-                    type: typeID,
-                    intake:intake
-                }
-            }
         mui.ajax({
             url: url,
             data: data,
@@ -425,26 +436,26 @@
             success: function (data) {
 
                 var newli = '';
+                var statusCN = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
                         var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
-                        newli += '<li class="mui-table-view-cell mui-media listli">';
-                        
-                        if(wList=="onlineStudentList"||wList=="graduateStudentList"){
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus" lid="'+data.data.data[i].id+'">设为结业</span></div>';
+
+                        statusCN = '<text class="mui-badge mui-badge-primary">'+data.data.data[i].status+'</text>';
+                        if(data.data.data[i].status=="在学"){
+                            statusCN = '<text class="mui-badge mui-badge-success">在学</text>';
+                        }else if(data.data.data[i].status=="待结业"){
+                            statusCN = '<text class="mui-badge mui-badge-danger">待结业</text>';
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><p class="fr f12">学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student + '<p class="mui-ellipsis">' + data.data.data[i].lesson + '，剩余 <text class="colororange">'+data.data.data[i].rest_schedule+'</text> 课时</p></div></a></div>';
+                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                        newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data.data[i].student_id + '"><span class="mui-btn mui-btn-grey" data-action="editstatus" lid="'+data.data.data[i].id+'">设为结业</span></div>';
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><p class="fr">'+statusCN+'<br />学号: '+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student + '<p class="mui-ellipsis">' + data.data.data[i].lesson + '，剩余 <text class="colororange">'+data.data.data[i].rest_schedule+'</text> 课时</p></div></a></div>';
                         newli += '</li>';
                     }
                 }
                 if (gType == 1) {
                     //上拉刷新
-                    if(intake >1){
-                        $("ul.student2").empty().append(newli);
-                    }else{
-
-                    $("ul.student" + status).empty().append(newli);   
-                    }
+                    $("ul.student" + status).empty().append(newli);
                     mui('#' + wList).pullRefresh().endPulldownToRefresh();
                     mui('#' + wList).pullRefresh().refresh(true);
                     if (newli == '') {
@@ -469,9 +480,71 @@
         });
     };
 
+
+
+    //接口获取数据并追加到页面（正式毕业学员）
+    var toGraduateList = function (wList, page, gType, intake) {
+        //搜索关键字不能完全为空，否则查询为空
+        var url  = "{:url('api/lesson_member/searchLessonMemberByPageApi','','',true)}?page="+page;
+        var campID = "{$camp_id}";
+        var typeID = 1;
+        var data = {
+                camp_id: campID,
+                type: typeID,
+                intake:intake
+            };
+        mui.ajax({
+            url: url,
+            data: data,
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            //processData:false,
+            success: function (data) {
+
+                var newli = '';
+                if (data.code == 200) {
+                    for (var i = 0; i <= data.data.data.length - 1; i++) {
+                        var urls = "{:url('student/studentInfoOfCamp')}" + '/student_id/' + data.data.data[i].student_id + '/camp_id/' + campID;
+                        newli += '<li class="mui-table-view-cell mui-media listli">';
+                    
+                        newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left coachicon" src="' + data.data.data[i].avatar + '"><p class="fr"><text class="mui-badge">正式结业</text><br />学号：'+ data.data.data[i].student_id +'</p><div class="mui-media-body wd60">' + data.data.data[i].student + '<p class="mui-ellipsis">' + data.data.data[i].lesson + '，剩余 <text class="colororange">'+data.data.data[i].rest_schedule+'</text> 课时</p></div></a></div>';
+                        newli += '</li>';
+                    }
+                }
+                if (gType == 1) {
+                    //上拉刷新
+                    $("ul.student-intake2").empty().append(newli);
+                    mui('#' + wList).pullRefresh().endPulldownToRefresh();
+                    mui('#' + wList).pullRefresh().refresh(true);
+                    if (newli == '') {
+                        $("ul.student-intake2").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+                } else {
+                    //下拉加载 gType==2
+                    $("ul.student-intake2").append(newli);
+                }
+
+                if (newli != '') {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(false);
+                } else {
+                    mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+                }
+
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+                mui('#' + wList).pullRefresh().endPullupToRefresh(true);
+            }
+        });
+    };
+
     //拖拽后显示操作图标，点击操作图标删除元素；
     $('.OA_task_student').on('tap', '.mui-btn', function (event) {
         var l_id = $(this).attr('lid');
+        var elem = this;
+        var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
         mui.confirm('确认讲该学生正式毕业?', '提示', btnArray, function (e) {
             if (e.index == 0) {
@@ -491,7 +564,7 @@
                             mui.alert(data.msg);
                             setTimeout(function(){
                                     // $(this).parentNode.removeChild(li);
-                                    // location.reload();
+                                    location.reload();
                             },1000);
                         } else {
                             mui.toast(data.msg);
@@ -502,9 +575,9 @@
                     }
                 });
             } else {
-                // setTimeout(function () {
-                //     mui.swipeoutClose(li);
-                // }, 0);
+                setTimeout(function () {
+                    mui.swipeoutClose(li);
+                }, 0);
             }
         });
     });
