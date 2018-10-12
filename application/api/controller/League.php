@@ -1489,16 +1489,16 @@ class League extends Base
             foreach ($result as $row) {
                 if (!array_key_exists($row['match_team_id'], $tempData)) {
                     $tempData[$row['match_team_id']] = [];
+                    $tempData[$row['match_team_id']]["match_id"] = $row["match_id"];
                     $tempData[$row['match_team_id']]["match_team_id"] = $row["match_team_id"];
                     $tempData[$row['match_team_id']]["team_id"] = $row["team_id"];
-                    $tempData[$row['match_team_id']]["team_member_id"] = $row["team_member_id"];
-                    $tempData[$row['match_team_id']]["member_id"] = $row["member_id"];
-                    $tempData[$row['match_team_id']]["name"] = $row["name"];
+                    $tempData[$row['match_team_id']]["team"] = $row["team"];
                     $tempData[$row['match_team_id']]["match_team_members"] = []; 
                 }
                 $temp = [
                     "match_team_id" => $row["match_team_id"],
                     "team_id" => $row["team_id"],
+                    "team" => $row["team"],
                     "team_member_id" => $row["team_member_id"],
                     "member_id" => $row["team_member_id"],
                     "name" => $row["name"]
