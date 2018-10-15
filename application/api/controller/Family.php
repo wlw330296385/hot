@@ -55,11 +55,52 @@ class Family extends Base{
             }
             $data['avatar'] = $this->memberInfo['avatar'];
             $data['member_id'] = $this->memberInfo['id'];
+            $data['status'] = -1;
             $res = $this->FamilyModel->save($data);
             if($res){
-                return json(['code'=>100,'msg'=>'邀请成功','data'=>$this->FamilyModel->id]);
+                return json(['code'=>200,'msg'=>'邀请成功','data'=>$this->FamilyModel->id]);
             }else{
                 return json(['code'=>100,'msg'=>'邀请失败']);
+            }
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+    //接受或者拒绝一个邀请
+    public function updateFamilyApi(){
+        try {
+            $f_id = input('param.f_id');
+            if(!$f_id){
+                return json(['code'=>100,'msg'=>'没有邀请信息']);
+            }
+            $map = ['id'=>$f_id];
+            $result = $this->FamilyModel->where($map)->find();
+            if($result){
+                if($result['status']<>-1){
+                    return json(['code'=>100,'msg'=>'邀请状态已改变']); 
+                }
+
+                if($result['telephone']<>$this->memberInfo['telephone']){                   
+                    return json(['code'=>100,'msg'=>'您账号的电话号码不匹配']); 
+                }
+            }
+            $status = input('param.status');
+            if ($status==1) {
+                $data['to_member_avatar'] = $this->memberInfo['avatar'];
+                $data['to_member_id'] = $this->memberInfo['id'];
+                $data['to_member'] = $this->memberInfo['member'];
+                $data['status'] = 1;
+                $res = $this->FamilyModel->save($data,$map);
+            }
+            if ($status==-2) {
+                $data['status'] = -2;
+                $res = $this->FamilyModel->save($data,$map);
+            }
+            if($res){
+                return json(['code'=>200,'msg'=>'操作成功']);
+            }else{
+                return json(['code'=>100,'msg'=>'操作失败']);
             }
         } catch (Exception $e) {
             return json(['code'=>100,'msg'=>$e->getMessage()]);
