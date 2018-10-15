@@ -49,7 +49,11 @@ class Family extends Base{
             if($result){
                 if($result['status']<>-1){
                     $res = $this->FamilyModel->save(['status'=>-1],$map);
-                    return json(['code'=>200,'msg'=>'邀请成功','data'=>$result['id']]);
+                    if($res){
+                        return json(['code'=>200,'msg'=>'邀请成功','data'=>$result['id']]);
+                    }else{
+                        return json(['code'=>100,'msg'=>'邀请失败,请重试']);
+                    }
                 }else{
                     return json(['code'=>100,'msg'=>'重复邀请']); 
                 }
