@@ -61,10 +61,10 @@
 
             //搜索、下拉刷选后触发
             function searchToList() {
-                count = 1;//显示第一页
+                count = 1; //显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toList(page, gType); //具体取数据的方法
             }
 
             mui.init({
@@ -74,19 +74,19 @@
                     container: "#refreshContainer",
                     down: {
                         //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                        height: 50, //可选.默认50.触发下拉刷新拖动距离
+                        auto: true, //可选,默认false.自动下拉刷新一次
+                        contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                         callback: pulldownRefresh
                     },
                     up: {
                         //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
+                        height: 150, //可选.默认50.触发上拉加载拖动距离
                         //auto:true,//可选,默认false.自动上拉加载一次
                         contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                        contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                         callback: pullupRefresh
                     }
                 }
@@ -94,19 +94,19 @@
             //下拉刷新具体业务实现
             function pulldownRefresh() {
                 setTimeout(function () {
-                    count = 1;//刷新并显示第一页
+                    count = 1; //刷新并显示第一页
                     var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
             function pullupRefresh() {
                 setTimeout(function () {
-                    count++;//翻下一页
+                    count++; //翻下一页
                     var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 2; //代表上拉加载
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
 
@@ -114,7 +114,7 @@
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
                 //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/league/getMatchHonorList','','',true)}";
+                var url = "{:url('api/league/getMatchHonorList','','',true)}"+page;
                 var league_id = "{$leagueInfo.id}";
                 mui.ajax({
                     url: url,
@@ -122,22 +122,38 @@
                         league_id: league_id,
                         status: 1
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('match/honorinfo')}" + '/honor_id/' + data.data[i].id + '/league_id/' + data.data[i].match_id;
-                                newli += '<li class="mui-table-view-cell listli">';
-                                newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data[i].id + '"><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '">';
-                                newli += '<div class="fl orderNum">' + (i + 1) + '</div>'
-                                newli += '<div class="mui-media-body wd83">奖项名称：<strong class="colororange f16"> ' + data.data[i].name + '</strong><p class="mui-ellipsis lineHeight20" >授奖单位： ' + "{$leagueInfo.match_org.name}" + '</p ><p class="mui-ellipsis lineHeight20">授奖日期：' + data.data[i].honor_time + '</p></div >'
-                                newli += '</a></div></li>';
+                                var urls = "{:url('match/honorinfoOfLeague')}" + '/honor_id/' + data.data[
+                                    i].id + '/league_id/' + data.data[i].match_id;
+                                newli +=
+                                    `<li class="mui-table-view-cell listli">
+                                        <div class="mui-slider-right mui-disabled" data-id="${data.data[i].id}">
+                                            <span class="mui-btn mui-btn-red" data-action="del">删除</span>
+                                        </div>
+                                        <div class="mui-slider-handle">
+                                            <a href="${urls}">
+                                                <div class="fl orderNum">${(i + 1)}</div>
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
+                                                    <p class="mui-ellipsis lineHeight20" >授奖单位：{$leagueInfo.name}</p>`
+                                if (data.data[i].honor_time == '') {
+                                    newli +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                } else {
+                                    newli +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                }
+
+                                newli += `</div></a></div></li>`;
                             }
                         }
                         if (gType == 1) {
@@ -146,7 +162,9 @@
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.honor").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.honor").html(
+                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                                );
                             }
                         } else {
                             //下拉加载 gType==2
@@ -184,7 +202,9 @@
                         },
                         dataType: 'json',
                         type: 'post',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function (data) {
                             if (data.code == 200) {
                                 li.parentNode.removeChild(li);
@@ -204,7 +224,6 @@
                 }
             });
         });
-
     </script>
 </body>
 

@@ -1199,15 +1199,38 @@ class Match extends Base {
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
+        
         $this->assign('honorInfo', $honorInfo);
         return view('Match/honor/info');
     }
     // 联赛荣誉详情
     public function honorInfoOfLeague() {
+        $honor_id = input('honor_id', 0, 'intval');
+        $leagueId = input('league_id', 0,'intval');
+        $leagueS = new LeagueService();
+        $honorInfo = $leagueS->getMatchHonor([
+            'id' => $honor_id,
+            'match_id' => $leagueId
+        ]);
+        if (!$honorInfo) {
+            $this->error('找不到该荣誉信息');
+        }
+        $this->assign('honorInfo', $honorInfo);
         return view('Match/honor/infoOfLeague');
     }
     // 联赛编辑荣誉
     public function honotEditOfLeague() {
+        $honor_id = input('honor_id', 0, 'intval');
+        $leagueId = input('league_id', 0,'intval');
+        $leagueS = new LeagueService();
+        $honorInfo = $leagueS->getMatchHonor([
+            'id' => $honor_id,
+            'match_id' => $leagueId
+        ]);
+        if (!$honorInfo) {
+            $this->error('找不到该荣誉信息');
+        }
+        $this->assign('honorInfo', $honorInfo);
         return view('Match/honor/editOfLeague');
     }
     // 联赛荣誉
