@@ -60,6 +60,7 @@ class Family extends Base{
             }
             $data['avatar'] = $this->memberInfo['avatar'];
             $data['member_id'] = $this->memberInfo['id'];
+            $data['member'] = $this->memberInfo['member'];
             $data['status'] = -1;
             $res = $this->FamilyModel->save($data);
             if($res){
