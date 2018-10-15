@@ -5930,7 +5930,4 @@ class League extends Base
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 
-    public function quickSignUp() {
-        $data = input("post.");
-    }
 }

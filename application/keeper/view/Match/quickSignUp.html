@@ -81,9 +81,8 @@
 
         <form action="" class="mui-input-group registerFrom">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <input type="hidden" name="member" class="data" value="{$memberInfo.nickname}" />
-            <input type="hidden" name="match" class="data" value="" />
-            <input type="hidden" name="match_id" class="data" value="" />
+            <input type="hidden" name="league_id" class="data" value="61" />
+            <input type="hidden" name="team_type" class="data" value="7" />
 
             <div class="mui-input-row">
                 <label class="colororange">真实姓名</label>
@@ -98,18 +97,18 @@
             <div class="mui-input-row smsValidate">
                 <label class="colororange">短信验证码</label>
                 <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" style="width: 30%;">
-                <input id="code" type="text" class="input reg_code reg_validate" placeholder="输入验证码" style="width: 30%;">
+                <input id="code" type="text" name="smscode" class="input reg_code reg_validate data" placeholder="输入验证码"
+                    style="width: 30%;">
             </div>
 
             <div class="mui-input-row ">
                 <a class="mui-navigate-right">
                     <label class="colororange">性别</label>
-                    <select name="sexSelect" style="padding-right: 30px;">
-                        <option value="男">男</option>
-                        <option value="女">女</option>
+                    <select name="sex" class="data" style="padding-right: 30px;">
+                        <option value="1">男</option>
+                        <option value="2">女</option>
                     </select>
                 </a>
-                <input type="hidden" name="sex" value="男">
             </div>
 
             <div class="mui-input-row">
@@ -154,9 +153,18 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        var leagueId = wooApi.GetQueryString('league_id');
+        var type = wooApi.GetQueryString('type');
+        // if("{$memberInfo.id}"!=0){
+        //     mui.alert("你已是平台会员，前往报名联赛。",function(){
+        //         window.location.href="{:url('match/signupleague')}"+"/league_id/"+leagueId +"type"+type
+        //     });
+        // }
+
+
         //定义全局变量
         var flagPhone = false;
-        var flagSMS = false;
+        // var flagSMS = false;
         var flagMember = false;
         var flagCreate = true;
 
@@ -209,7 +217,7 @@
             var str =
                 ` <div class="mui-input-row mui-checkbox checkboxCont" style="margin-top:0">
                         <label class="number" style="width:15%">1</label>
-                        <span class="fr">队长</span>
+                        <span class="fr">领队</span>
                         <input type="text" name="teamMember" data-teamMember_id="" value="${member}" class="mui-text-left fr" style="padding-right:60px;width:51%" /> 
                     </div>`
             $("#inactiveList").empty().append(str)
@@ -260,25 +268,25 @@
 
 
         //验证短信验证码
-        $('#code').on("blur", function () {
-            var code = document.getElementById('code').value;
-            var codeReg = /^\d{6,6}$/;
-            if (!codeReg.test(code)) {
-                mui.toast('请填写正确的验证码');
-                flagSMS = false;
-            } else {
-                var telephone = $(".telephone").val();
-                var result = smsCode.validateSmsCodeApi(telephone, code,
-                    "{:url('api/sms/validateSmsCodeApi','','',true)}");
-                if (result.code == 200) {
-                    flagSMS = true;
-                    mui.toast(result.msg);
-                } else {
-                    flagSMS = false;
-                    mui.toast(result.msg);
-                }
-            }
-        });
+        // $('#code').on("blur", function () {
+        //     var code = document.getElementById('code').value;
+        //     var codeReg = /^\d{6,6}$/;
+        //     if (!codeReg.test(code)) {
+        //         mui.toast('请填写正确的验证码');
+        //         flagSMS = false;
+        //     } else {
+        //         var telephone = $(".telephone").val();
+        //         var result = smsCode.validateSmsCodeApi(telephone, code,
+        //             "{:url('api/sms/validateSmsCodeApi','','',true)}");
+        //         if (result.code == 200) {
+        //             flagSMS = true;
+        //             mui.toast(result.msg);
+        //         } else {
+        //             flagSMS = false;
+        //             mui.toast(result.msg);
+        //         }
+        //     }
+        // });
 
         //全选
         $(".all").click(function () {
@@ -337,7 +345,7 @@
                 $(this).find("label").text(i++); //更新序号
             });
         }
-        var teamMemberList = ''
+        var team_member_list = ''
         // 获取数据并进行提交
         function submitAction() {
             var realname = $("input[name=realname]").val();
@@ -370,55 +378,36 @@
             //     return false;
             // };
 
-            teamMemberList = [];
-            $("#inactiveList input[name=teamMember]").each(function () {
-                teamMember_id = $(this).attr("data-teamMember_id");
-                teamMember = $(this).val();
-                teamMemberList.push({
-                    teamMember: teamMember,
-                    teamMember_id: teamMember_id,
+            team_member_list = [];
+            $("#inactiveList .checkboxCont").each(function () {
+                var realname = $(this).find("input[name=teamMember]").val();
+                team_member_list.push({
+                    realname: realname,
                 });
             });
-            console.log(teamMemberList)
+            console.log(team_member_list)
 
-            //如已经通过以上验证则创建会员账号
-            // mui.ajax("{:url('api/login/registerApi')}", {
-            //     data: {
-            //         member: member,
-            //         telephone: telephone,
-            //         __token__: token,
-            //     },
-            //     dataType: 'json', //服务器返回json格式数据
-            //     type: 'post', //HTTP请求类型
-            //     async: false,
-            //     timeout: 10000, //超时时间设置为10秒；
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     success: function (data) {
-            //         //服务器返回响应，根据响应结果，分析是否登录成功；
-            //         console.log(data);
-            //         if (data.code == 100) {
-            //             flagCreate = false;
-            //             mui.alert(data.msg, '提交失败', '确定', function () {
-            //                 mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-            //                     if (data.code === 200) {
-            //                         $('input[name=__token__]').val(data.data);
-            //                     }
-            //                 }, 'json');
-            //             })
-            //         } else {
-            //             flagCreate = true;
-            //             $("input[name='member_id']").val(data.id)
-            //             mui.toast("提交中...");
-            //         }
-            //     },
-            //     error: function (xhr, type, errorThrown) {
-            //         //异常处理；
-            //         flagCreate = false;
-            //         console.log(type);
-            //     }
-            // });
+            var data = wooApi.getInputData('input', 'data');
+            datas = wooApi.getInputData('select', 'data', data);
+            // 获取其他标签值
+            arrData = wooApi.getDomData('domData', datas);
+            var objData = wooApi.arrTOobj(arrData);
+            objData.team_member_list = JSON.stringify(team_member_list);
+            var url = "{:url('api/Shortcut/leaderApplyLeagueTeam')}";
+            var ajaxResult = wooApi.asyncF(url, objData);
+            if (ajaxResult.code == 200) {
+                mui.alert(ajaxResult.msg, '报名成功', '确定', function () {
+                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
+                    window.top.location.href = goUrl;
+                })
+            } else {
+                mui.alert(ajaxResult.msg, '报名失败');
+                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    if (data.code === 200) {
+                        $('input[name=__token__]').val(data.data);
+                    }
+                }, 'json');
+            }
 
         };
     </script>
