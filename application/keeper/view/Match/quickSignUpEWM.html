@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>快捷报名二维码</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="viewport" content="width=500">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
@@ -12,6 +12,41 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
+        html,
+        body {
+            padding: 0px;
+            width: 500px;
+        }
+
+        .subheader {
+            height: 60px;
+        }
+
+        .subheader a {
+            padding-top: 17px;
+            padding-bottom: 17px;
+        }
+
+        .subheader .mui-title {
+            font-size: 20px;
+            line-height: 60px;
+        }
+
+        .img50 {
+            width: 80px;
+            height: 80px;
+            margin-top: 5px;
+        }
+
+        #pageShare h4 {
+            font-size: 22px;
+        }
+
+        #pageShare p {
+            font-size: 18px;
+            line-height: 30px
+        }
+
         #qrcode {
             width: 200px;
             margin: 0 auto;
@@ -28,180 +63,26 @@
         }
 
         #popupShare {
-            /* width: 1000px; */
+            width: 500px;
             visibility: hidden;
             position: absolute;
-            top: 44px;
+            top: 60px;
             left: 0;
             z-index: 888;
         }
 
-        .mui-backdrop {
-            display: none;
-            background-color: #000;
-            opacity: 0.9;
+        #pageShare {
+            width: 500px;
+            font-family: "Microsoft Yahei", Arial, sans-serif;
+            position: relative;
+            background: #fff;
+            margin-top: 60px;
         }
 
-        @-webkit-keyframes rotate_pacman_half_up {
-            0% {
-                -webkit-transform: rotate(270deg);
-                transform: rotate(270deg);
-            }
-
-            50% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-
-            100% {
-                -webkit-transform: rotate(270deg);
-                transform: rotate(270deg);
-            }
-        }
-
-        @keyframes rotate_pacman_half_up {
-            0% {
-                -webkit-transform: rotate(270deg);
-                transform: rotate(270deg);
-            }
-
-            50% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-
-            100% {
-                -webkit-transform: rotate(270deg);
-                transform: rotate(270deg);
-            }
-        }
-
-        @-webkit-keyframes rotate_pacman_half_down {
-            0% {
-                -webkit-transform: rotate(90deg);
-                transform: rotate(90deg);
-            }
-
-            50% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-
-            100% {
-                -webkit-transform: rotate(90deg);
-                transform: rotate(90deg);
-            }
-        }
-
-        @keyframes rotate_pacman_half_down {
-            0% {
-                -webkit-transform: rotate(90deg);
-                transform: rotate(90deg);
-            }
-
-            50% {
-                -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-
-            100% {
-                -webkit-transform: rotate(90deg);
-                transform: rotate(90deg);
-            }
-        }
-
-        @-webkit-keyframes pacman-balls {
-            75% {
-                opacity: 0.7;
-            }
-
-            100% {
-                -webkit-transform: translate(-100px, -6.25px);
-                transform: translate(-100px, -6.25px);
-            }
-        }
-
-        @keyframes pacman-balls {
-            75% {
-                opacity: 0.7;
-            }
-
-            100% {
-                -webkit-transform: translate(-100px, -6.25px);
-                transform: translate(-100px, -6.25px);
-            }
-        }
-
-        .pacman {
-            position: fixed;
-            left: 500px;
-            top: 500px;
-            z-index: 9999;
-            display: none;
-        }
-
-        .pacman>div:nth-child(2) {
-            -webkit-animation: pacman-balls 1s 0s infinite linear;
-            animation: pacman-balls 1s 0s infinite linear;
-        }
-
-        .pacman>div:nth-child(3) {
-            -webkit-animation: pacman-balls 1s 0.33s infinite linear;
-            animation: pacman-balls 1s 0.33s infinite linear;
-        }
-
-        .pacman>div:nth-child(4) {
-            -webkit-animation: pacman-balls 1s 0.66s infinite linear;
-            animation: pacman-balls 1s 0.66s infinite linear;
-        }
-
-        .pacman>div:nth-child(5) {
-            -webkit-animation: pacman-balls 1s 0.99s infinite linear;
-            animation: pacman-balls 1s 0.99s infinite linear;
-        }
-
-        .pacman>div:first-of-type {
-            width: 0px;
-            height: 0px;
-            border-right: 25px solid transparent;
-            border-top: 25px solid #fff;
-            border-left: 25px solid #fff;
-            border-bottom: 25px solid #fff;
-            border-radius: 25px;
-            -webkit-animation: rotate_pacman_half_up 0.5s 0s infinite;
-            animation: rotate_pacman_half_up 0.5s 0s infinite;
-        }
-
-        .pacman>div:nth-child(2) {
-            width: 0px;
-            height: 0px;
-            border-right: 25px solid transparent;
-            border-top: 25px solid #fff;
-            border-left: 25px solid #fff;
-            border-bottom: 25px solid #fff;
-            border-radius: 25px;
-            -webkit-animation: rotate_pacman_half_down 0.5s 0s infinite;
-            animation: rotate_pacman_half_down 0.5s 0s infinite;
-            margin-top: -50px;
-        }
-
-        .pacman>div:nth-child(3),
-        .pacman>div:nth-child(4),
-        .pacman>div:nth-child(5),
-        .pacman>div:nth-child(6) {
-            background-color: #fff;
-            width: 15px;
-            height: 15px;
-            border-radius: 100%;
-            margin: 2px;
-            width: 10px;
-            height: 10px;
-            position: absolute;
-            -webkit-transform: translate(0, -6.25px);
-            -ms-transform: translate(0, -6.25px);
-            transform: translate(0, -6.25px);
-            top: 25px;
-            left: 100px;
+        .operation .opli {
+            height: 60px;
+            line-height: 40px;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -213,35 +94,27 @@
         <h1 class="mui-title">联赛快捷报名</h1>
     </header>
 
-    <div class="loader">
-        <div class="loader-inner pacman">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
-    <div class="mui-backdrop"></div>
 
-    <div class="mui-content">
-        <div id="pageShare" style="background: #fff;">
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px;border-radius: 50% !important">
-                    <h4>{$leagueInfo.name}</h4>
-                    <div class="mui-media-body wd73" style="line-height:20px !important">
-                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
-                        <p>{$leagueInfo.city} {$leagueInfo.area} 参赛队：<strong class="colororange">{$leagueInfo.teams_count}</strong>支
-                            | 关注：
-                            <strong class="colororange">{$leagueInfo.fans_num}</strong></p>
-                    </div>
-                </li>
-            </ul>
-            <p class="pline"></p>
-            <div id="qrcode"></div>
-            <p class="tip">长按二维码保存或转发给朋友快捷报名联赛</p>
-        </div>
+    <div id="pageShare">
+        <ul class="mui-table-view mb">
+            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                <img class="img50 mui-pull-left" src="{$leagueInfo.logo}">
+                <h4 style="line-height: 27px;">{$leagueInfo.name}</h4>
+                <div class="mui-media-body lineHeight20 wd73">
+                    <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                    <p>{$leagueInfo.city} {$leagueInfo.area} 参赛队：<strong class="colororange">{$leagueInfo.teams_count}</strong>支
+                        | 关注：
+                        <strong class="colororange">{$leagueInfo.fans_num}</strong></p>
+                </div>
+            </li>
+        </ul>
+
+        <p class="pline"></p>
+
+        <div id="qrcode"></div>
+
+        <p class="saveBefore tipBefore tip">请先点击底部合成图片并分享按钮</p>
+        <p class="saveAfter tipAfter tip hide">长按二维码保存或转发给朋友快捷报名联赛</p>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bgorange saveBefore" id="btnSave">
@@ -253,6 +126,7 @@
         </ul>
 
     </div>
+
     <!--canvasPic:页面转画布-->
     <div id="canvasPic"></div>
     <!--pageShare:画布转图片-->
@@ -270,14 +144,12 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        var leagueId = wooApi.GetQueryString('league_id');
         window.onload = function () {
             var qrcode = new QRCode(document.getElementById("qrcode"), {
-                width: 200, //设置宽高
-                height: 200
+                height: 200,
+                width: 200
             });
-            qrcode.makeCode("https://m.hot-basketball.com/keeper/match/quickSignUp" + "/league_id/" + leagueId);
-            console.log("https://m.hot-basketball.com/keeper/match/quickSignUp" + "/league_id/" + leagueId)
+            qrcode.makeCode("https://m.hot-basketball.com/keeper/match/quickSignUp?league_id=" + "{$league_id}");
         }
 
         /*生成canvas图形*/
@@ -289,11 +161,12 @@
         // 进行canvas生成
         btnSave.onclick = function () {
 
-            $(".mui-backdrop").show();
-            $(".pacman").show();
-
             setTimeout(function () {
 
+                $(".tipBefore").hide()
+                $(".tipAfter").show()
+
+                $(".img50").css("border-radius", "50% !important");
                 var h = content.clientHeight;
                 var w = content.clientWidth;
                 html2canvas(content, {
@@ -303,20 +176,17 @@
                         //添加属性
                         canvas.setAttribute('id', 'thecanvas');
                         //读取属性值
-                        // var value= canvas.getAttribute('id');
                         document.getElementById('canvasPic').appendChild(canvas);
                         var oCanvas = document.getElementById("thecanvas");
-                        var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true, w, h).getAttribute(
+                        var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true).getAttribute(
                             'src');
                         var element = document.getElementById('sharePic');
                         element.src = img_data2;
                         $("#pageShare").hide();
                         $(".saveBefore").hide();
-                        // $("#popupShare img").css("width", "1000px")
+                        $("#popupShare img").css("width", "500px")
                         $("#popupShare").css("visibility", "visible");
                         $(".saveAfter").show();
-                        $(".mui-backdrop").hide();
-                        $(".pacman").hide();
                     }
                 });
 
