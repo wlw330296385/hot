@@ -1345,10 +1345,10 @@ class Match extends Base {
         $this->assign('league_id', $league_id);
         return view('Match/team/updateTeamOfLeague');
     }
-   // 联赛操作指南
-   public function leagueGuide() {
-    return view('Match/leagueGuide');
-}
+    // 联赛操作指南
+    public function leagueGuide() {
+        return view('Match/leagueGuide');
+    }
 
     // 联赛招募列表（对外）
     public function recruitmentList() {

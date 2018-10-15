@@ -36,7 +36,7 @@ class Shortcut extends Base
     }
     */
     public function leaderApplyLeagueTeam() {
-        
+
         // 验证数据，重复提交
         if (empty(input('league_id')) || empty(input('telephone')) || empty(input('smscode')) || empty(input('realname')) || empty(input('sex')) 
             || empty(trim(input('team'))) || empty(input('team_type')) || empty(input('team_member_list')) ) {
@@ -82,11 +82,19 @@ class Shortcut extends Base
             }
         }
 
+        $data['__token__'] = input('__token__');
         $data['realname'] = input('realname');
-        $data['member'] = !empty($sessionMemberInfo['nickname']) ? $sessionMemberInfo['nickname'] : $data['realname'];
+        if ( empty($sessionMemberInfo['nickname']) || $sessionMemberInfo['nickname'] == '游客' ) {
+            $data['member'] = $data['realname'];
+        } else {
+            $data['member'] = $sessionMemberInfo['nickname'];
+        }
 
         $data['telephone'] = input('telephone');
         $data['sex'] = (input('sex') == 2) ? 2 : 1;
+        $data['province'] = !empty(input('province')) ? input('province') : '';
+        $data['city'] = !empty(input('city')) ? input('city') : '';
+        $data['area'] = !empty(input('area')) ? input('area') : '';
 
         // 注册送积分;
         $setting = db('setting')->find();
@@ -99,6 +107,7 @@ class Shortcut extends Base
         if ($response['code'] != 200) {
             return json(['code' => 100, 'msg' => $response['msg']]);
         }
+
         // 保存登录记录
         $result = $memberS->saveLogin($response['id']);
         $this->memberInfo = session('memberInfo', '', 'think');
@@ -112,6 +121,9 @@ class Shortcut extends Base
         $dataTeam['captain_id'] = $this->memberInfo['id'];
         $dataTeam['captain'] = $this->memberInfo['member'];
         $dataTeam['member_num'] = 1;
+        $dataTeam['province'] = !empty(input('province')) ? input('province') : '';
+        $dataTeam['city'] = !empty(input('city')) ? input('city') : '';
+        $dataTeam['area'] = !empty(input('area')) ? input('area') : '';
 
         // 执行创建球队
         $dataTeam['name'] = trim(input('team'));
@@ -128,7 +140,7 @@ class Shortcut extends Base
         }
 
         // 短信验证更新
-        // db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
+        db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
 
         // 创建球队成功 保存创建者会员的球队-会员关系team_member
         $finalTeamMemberArray = [];
@@ -138,6 +150,7 @@ class Shortcut extends Base
             'member_id' => $this->memberInfo['id'],
             'member' => $this->memberInfo['member'],
             'name' => empty($this->memberInfo['realname']) ? $this->memberInfo['member'] : $this->memberInfo['realname'],
+            'avatar' => config('default_image.member_avatar'),
             'telephone' => $this->memberInfo['telephone'],
             'position' => 0,
             'status' => 1,
@@ -155,6 +168,7 @@ class Shortcut extends Base
                     'member_id' => -1,
                     'member' => $row['realname'],
                     'name' => $row['realname'],
+                    'avatar' => config('default_image.member_avatar'),
                     'telephone' => '',
                     'position' => 0,
                     'status' => 1,
