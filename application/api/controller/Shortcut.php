@@ -3,8 +3,10 @@
 namespace app\api\controller;
 
 use app\service\MemberService;
+use app\service\MessageService;
 use app\model\Match;
 use app\model\MatchApply;
+use app\model\MatchMember;
 use app\model\MatchTeamMember;
 use app\model\Member;
 use app\model\Team;
@@ -219,29 +221,6 @@ class Shortcut extends Base
             return json(['code' => 100, 'msg' => '报名联赛失败']);
         }
 
-        // 发送消息通知给联赛组织管理员
-        // 获取联赛组织人员列表
-        // $matchOrgMembers = $leagueService->getMatchOrgMembers(['match_org_id' => $league['match_org_id']]);
-        // $memberIds = [];
-        // if (!empty($matchOrgMembers)) {
-        //     foreach ($matchOrgMembers as $k => $val) {
-        //         $memberIds[$k]['id'] = $val['member_id'];
-        //     }
-        // }
-        // $message = [
-        //     'title' => '您好，球队' . $team['name'] . '申请报名联赛' . $league['name'],
-        //     'content' => '您好，球队' . $team['name'] . '申请报名联赛' . $league['name'],
-        //     'url' => url('keeper/match/teamlistofleague', ['league_id' => $league['id']], '', true),
-        //     'keyword1' => '球队报名参加联赛',
-        //     'keyword2' => $teamMember['name'],
-        //     'keyword3' => date('Y-m-d H:i', time()),
-        //     'remark' => '点击进入查看更多',
-        //     'steward_type' => 2
-        // ];
-        // $messageS = new MessageService();
-        // $messageS->sendMessageToMembers($memberIds, $message, config('wxTemplateID.checkPend'));
-            
-
         $finalMatchTeamMemberArray = [];
         $list = TeamMember::all(['team_id' => $teamModel->id]);
         foreach ($list as $row) {
@@ -271,6 +250,29 @@ class Shortcut extends Base
         if (empty($res5)) {
             return json(['code' => 100, 'msg' => '联赛队员报名失败']);
         }
+
+        // 发送消息通知给联赛组织管理员
+        // 获取联赛组织人员列表
+        $matchMemberModel = new MatchMember();
+        $matchMemberList = $matchMemberModel->all(['match_id' => $matchInfo['id'], 'type' => ['>=', 9]]);
+        $memberIds = [];
+        if (!empty($matchMemberList)) {
+            foreach ($matchMemberList as $k => $val) {
+                $memberIds[$k]['id'] = $val['member_id'];
+            }
+        }
+        $message = [
+            'title' => '您好，球队' . $teamModel->name . '申请报名联赛' . $matchInfo['name'],
+            'content' => '您好，球队' . $teamModel->name . '申请报名联赛' . $matchInfo['name'],
+            'url' => url('keeper/match/teamlistofleague', ['league_id' => $matchInfo['id']], '', true),
+            'keyword1' => '球队报名参加联赛',
+            'keyword2' => $data['realname'],
+            'keyword3' => date('Y-m-d H:i', time()),
+            'remark' => '点击进入查看更多',
+            'steward_type' => 2
+        ];
+        $messageS = new MessageService();
+        $res6 = $messageS->sendMessageToMembers($memberIds, $message, config('wxTemplateID.checkPend'));
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
