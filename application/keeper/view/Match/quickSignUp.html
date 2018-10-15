@@ -16,17 +16,6 @@
     <link href="/static/frontend/css/mui.poppicker.css" rel="stylesheet" />
     <link href="/static/frontend/css/webuploader.css" rel="stylesheet">
     <style>
-        .tipContent {
-            margin: 25px 28px 0 28px;
-            line-height: 54px;
-            vertical-align: middle;
-        }
-
-        .tipContent .tipContentText p {
-            line-height: 20px;
-            color: #666;
-        }
-
         .registerFrom {
             margin: 10px 25px 0px;
             background: none;
@@ -36,37 +25,7 @@
             margin-top: 15px;
             background: #fff;
         }
-
-        .tipBottom {
-            margin: 30px;
-            text-align: center;
-        }
-        .tipBottom p.f12 {
-            color: #999;
-            font-size: 12px;
-        }
-        #eventDes {
-            margin-top: 0;
-            display: none;
-        }
-        #showSuccess {
-            display: none;
-            padding: 20px;
-            text-align: center;
-            background-color: #FF9900;
-        }
-        #showSuccess h4,#showSuccess p{
-            color:#FFF;
-        }
-        .nobg {
-            background: transparent !important;
-        }
-        .nobg::after {
-            background: none !important;
-        }
-        .selectTotal, .selectDom{
-            padding: 5px 8px !important;
-        }
+       
     </style>
 </head>
 
@@ -74,15 +33,32 @@
 
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">联赛报名</h1>
+        <h1 class="mui-title">联赛快捷报名</h1>
     </header>
 
-    <div class="mui-content">
+    <div class="mui-content list">
+
+        <ul class="mui-table-view mb" style="margin-top: -4px">
+            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+                <h4>{$leagueInfo.name}</h4>
+                <div class="mui-media-body wd73" style="line-height:20px !important">
+                    <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                    <p>{$leagueInfo.city} {$leagueInfo.area} 参赛队：<strong class="colororange">{$leagueInfo.teams_count}</strong>支
+                        | 关注：
+                        <strong class="colororange">{$leagueInfo.fans_num}</strong></p>
+
+                </div>
+            </li>
+        </ul>
 
         <form action="" class="mui-input-group registerFrom">
             <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
-            <input type="hidden" name="league_id" class="data" value="61" />
-            <input type="hidden" name="team_type" class="data" value="7" />
+            <input type="hidden" name="league_id" class="data" value="{$league_id}" />
+            <input type="hidden" name="team_type" class="data" value="6" />
+            <input type="hidden" name="province" class="data" value="" />
+            <input type="hidden" name="city" class="data" value="" />
+            <input type="hidden" name="area" class="data" value="" />
 
             <div class="mui-input-row">
                 <label class="colororange">真实姓名</label>
@@ -126,12 +102,8 @@
                 </div>
             </div>
 
-            <div class="mui-input-row">
-                <label class="colororange">当前联赛</label>
-                <span>联赛名</span>
-            </div>
-
         </form>
+
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -146,6 +118,7 @@
     <script src="/static/frontend/js/common.js"></script>
     <script src="/static/frontend/js/wooApi.js"></script>
     <script src="/static/frontend/js/smsCode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 
     <script>
         //初始化
@@ -153,21 +126,38 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        console.log($("input[name=__token__]").val())
+
         var leagueId = wooApi.GetQueryString('league_id');
-        var type = wooApi.GetQueryString('type');
-        // if("{$memberInfo.id}"!=0){
-        //     mui.alert("你已是平台会员，前往报名联赛。",function(){
-        //         window.location.href="{:url('match/signupleague')}"+"/league_id/"+leagueId +"type"+type
-        //     });
-        // }
+        if ("{$memberInfo.id}" != 0) {
+            mui.alert("你已是平台会员，前往报名联赛。", function () {
+                window.location.href = "{:url('match/signupleague')}" + "/league_id/" + leagueId
+            });
+        }
+
+        //获取定位省市区
+        var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+        var gCity = getLocationTB['city'];
+        var gProvince = getLocationTB['province'];
+        var gArea = getLocationTB['area'];
+        if (gCity == null || gCity == "undefined") {
+            gCity = "";
+        }
+        if (gProvince == null || gProvince == "undefined") {
+            gProvince = "";
+        }
+        if (gArea == null || gArea == "undefined") {
+            gArea = "";
+        }
+        $("input[name=province]").val(gProvince);
+        $("input[name=city]").val(gCity);
+        $("input[name=area]").val(gArea);
 
 
         //定义全局变量
         var flagPhone = false;
-        // var flagSMS = false;
         var flagMember = false;
         var flagCreate = true;
-
 
         // 验证会员名是否存在
         $("input[name='realname']").on("blur", function () {
@@ -177,41 +167,13 @@
             //判断会员名格式
             if (((/\s/).test(member)) === true) {
                 flagMember = false;
-                mui.alert("会员名不许有空格");
+                mui.alert("真实姓名不许有空格");
                 return false;
             } else if ((/^[\u4E00-\u9FA5A-Za-z0-9_]{2,15}$/).test(member) === false) {
                 flagMember = false;
-                mui.alert("会员名只能包含英文、数字或中文，长度为2-15位");
+                mui.alert("姓名只能包含英文或中文，长度为2-15位");
                 return false;
             }
-
-            //判断用户名是否存在
-            mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
-                data: {
-                    'field': 'member',
-                    'value': member
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    console.log(data);
-                    if (data.msg == 1) {
-                        flagMember = false;
-                        mui.alert("该会员名称已经存在，请使用其他名称！");
-                        $("input[name=realname]").val("")
-                        return false;
-                    } else {
-                        flagMember = true;
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-            });
 
             // 赋值球队创建者名单
             var str =
@@ -265,28 +227,6 @@
             }
         });
 
-
-
-        //验证短信验证码
-        // $('#code').on("blur", function () {
-        //     var code = document.getElementById('code').value;
-        //     var codeReg = /^\d{6,6}$/;
-        //     if (!codeReg.test(code)) {
-        //         mui.toast('请填写正确的验证码');
-        //         flagSMS = false;
-        //     } else {
-        //         var telephone = $(".telephone").val();
-        //         var result = smsCode.validateSmsCodeApi(telephone, code,
-        //             "{:url('api/sms/validateSmsCodeApi','','',true)}");
-        //         if (result.code == 200) {
-        //             flagSMS = true;
-        //             mui.toast(result.msg);
-        //         } else {
-        //             flagSMS = false;
-        //             mui.toast(result.msg);
-        //         }
-        //     }
-        // });
 
         //全选
         $(".all").click(function () {
@@ -365,18 +305,11 @@
                 return false;
             }
 
-            // if (flagMember == false) {
-            //     mui.toast("提交失败，会员名填写有误，请重新填写！");
-            //     return false;
-            // };
-            // if (flagPhone == false) {
-            //     mui.toast("提交失败，手机号填写有误，请重新填写");
-            //     return false;
-            // };
-            // if (flagSMS == false) {
-            //     mui.toast("提交失败，验证码填写有误");
-            //     return false;
-            // };
+            if (flagPhone == false) {
+                mui.toast("提交失败，手机号填写有误，请重新填写");
+                return false;
+            };
+
 
             team_member_list = [];
             $("#inactiveList .checkboxCont").each(function () {
@@ -397,7 +330,7 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '报名成功', '确定', function () {
-                    var goUrl = "{:url('match/leaguemanage')}" + '/league_id/' + league_id;
+                    var goUrl = "{:url('match/leagueInfo')}" + '/league_id/' + "{$league_id}";
                     window.top.location.href = goUrl;
                 })
             } else {

@@ -509,8 +509,17 @@ class Match extends Base {
     // 报名联赛
     public function signUpLeague() {
         $league_id = input('league_id');
+        // 检查他是否为管理员
+        $leagueS = new LeagueService();
+        $is_manager = 0;
+        $matchMember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if ( !empty($matchMember) && $matchMember['type'] >= 9) {
+            $is_manager = 1;
+        }
+
         return view('Match/signUpLeague', [
-            'league_id' => $league_id
+            'league_id' => $league_id,
+            'is_manager' => $is_manager
         ]);
     }
 
@@ -1345,10 +1354,10 @@ class Match extends Base {
         $this->assign('league_id', $league_id);
         return view('Match/team/updateTeamOfLeague');
     }
-   // 联赛操作指南
-   public function leagueGuide() {
-    return view('Match/leagueGuide');
-}
+    // 联赛操作指南
+    public function leagueGuide() {
+        return view('Match/leagueGuide');
+    }
 
     // 联赛招募列表（对外）
     public function recruitmentList() {
@@ -1375,9 +1384,17 @@ class Match extends Base {
         return view('Match/recruitment/updateRecruitment');
     }
 
-
-     // 快捷报名
-     public function quickSignUp() {
+    // 快捷报名
+    public function quickSignUp() {
+        if ( !$this->is_weixin() ) {
+            if(request()->ip() != '127.0.0.1'){
+                $this->error('请通过 微信扫码方式 报名参加该联赛');
+            }
+        }
         return view('Match/quickSignUp');
+    }
+
+    public function quickSignUpEWM() {
+        return view('Match/quickSignUpEWM');
     }
 }
