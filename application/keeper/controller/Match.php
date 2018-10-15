@@ -1386,6 +1386,11 @@ class Match extends Base {
 
     // 快捷报名
     public function quickSignUp() {
+        if ( !$this->is_weixin() ) {
+            if(request()->ip() != '127.0.0.1'){
+                $this->error('请通过 微信扫码方式 报名参加该联赛');
+            }
+        }
         return view('Match/quickSignUp');
     }
 
