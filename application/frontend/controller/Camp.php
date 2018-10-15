@@ -46,7 +46,7 @@ class Camp extends Base{
         }
         //我的family
         $Family = new \app\model\Family;
-        $familyList = $Family->where(['member_id'=>$this->memberInfo['id']])->select();
+        $familyList = $Family->where(['member_id'=>$this->memberInfo['id'],'status'=>1])->select();
 
         $this->assign('campList',$campList);
         $this->assign('familyList',$familyList);
