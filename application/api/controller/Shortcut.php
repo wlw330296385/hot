@@ -125,7 +125,7 @@ class Shortcut extends Base
         }
 
         // 短信验证更新
-        // db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
+        db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
 
         // 创建球队成功 保存创建者会员的球队-会员关系team_member
         $finalTeamMemberArray = [];
