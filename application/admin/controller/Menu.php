@@ -80,10 +80,10 @@ class Menu extends Backend{
 		$ag_id = input('param.ag_id');
 		if(request()->isPost()){
 			$data = input('post.');
+			$data['menu_auth'] = json_decode($data['menu_auth']);//当前的权限;
 			if($ag_id){
 				//判断职位权限是否与当前权限有差集;
 				$sebsetList = db('admin_group')->where(['pid'=>$ag_id])->select();
-				$power = json_decode($data['menu_auth']);//当前的权限;
 
 				foreach ($sebsetList as $key => $value) {
 					$array_diff = array_intersect($power,json_decode($value['menu_auth']));
@@ -93,7 +93,6 @@ class Menu extends Backend{
 					}
 					$AdminGroup->isUpdate(true)->save(['menu_auth'=>$menu_auth,'id'=>$value['id']]);
 				}
-				$data['menu_auth'] = $power;
 				$result = $AdminGroup->save($data,['id'=>$ag_id]);
 
 			}else{
