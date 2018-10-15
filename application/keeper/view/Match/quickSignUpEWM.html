@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>快捷报名二维码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        #qrcode {
+            width: 200px;
+            margin: 0 auto;
+            margin-top: 55px;
+        }
+
+        .tip {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        #canvasPic {
+            display: none;
+        }
+
+        #popupShare {
+            /* width: 1000px; */
+            visibility: hidden;
+            position: absolute;
+            top: 44px;
+            left: 0;
+            z-index: 888;
+        }
+
+        .mui-backdrop {
+            display: none;
+            background-color: #000;
+            opacity: 0.9;
+        }
+
+        @-webkit-keyframes rotate_pacman_half_up {
+            0% {
+                -webkit-transform: rotate(270deg);
+                transform: rotate(270deg);
+            }
+
+            50% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(270deg);
+                transform: rotate(270deg);
+            }
+        }
+
+        @keyframes rotate_pacman_half_up {
+            0% {
+                -webkit-transform: rotate(270deg);
+                transform: rotate(270deg);
+            }
+
+            50% {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(270deg);
+                transform: rotate(270deg);
+            }
+        }
+
+        @-webkit-keyframes rotate_pacman_half_down {
+            0% {
+                -webkit-transform: rotate(90deg);
+                transform: rotate(90deg);
+            }
+
+            50% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(90deg);
+                transform: rotate(90deg);
+            }
+        }
+
+        @keyframes rotate_pacman_half_down {
+            0% {
+                -webkit-transform: rotate(90deg);
+                transform: rotate(90deg);
+            }
+
+            50% {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(90deg);
+                transform: rotate(90deg);
+            }
+        }
+
+        @-webkit-keyframes pacman-balls {
+            75% {
+                opacity: 0.7;
+            }
+
+            100% {
+                -webkit-transform: translate(-100px, -6.25px);
+                transform: translate(-100px, -6.25px);
+            }
+        }
+
+        @keyframes pacman-balls {
+            75% {
+                opacity: 0.7;
+            }
+
+            100% {
+                -webkit-transform: translate(-100px, -6.25px);
+                transform: translate(-100px, -6.25px);
+            }
+        }
+
+        .pacman {
+            position: fixed;
+            left: 500px;
+            top: 500px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .pacman>div:nth-child(2) {
+            -webkit-animation: pacman-balls 1s 0s infinite linear;
+            animation: pacman-balls 1s 0s infinite linear;
+        }
+
+        .pacman>div:nth-child(3) {
+            -webkit-animation: pacman-balls 1s 0.33s infinite linear;
+            animation: pacman-balls 1s 0.33s infinite linear;
+        }
+
+        .pacman>div:nth-child(4) {
+            -webkit-animation: pacman-balls 1s 0.66s infinite linear;
+            animation: pacman-balls 1s 0.66s infinite linear;
+        }
+
+        .pacman>div:nth-child(5) {
+            -webkit-animation: pacman-balls 1s 0.99s infinite linear;
+            animation: pacman-balls 1s 0.99s infinite linear;
+        }
+
+        .pacman>div:first-of-type {
+            width: 0px;
+            height: 0px;
+            border-right: 25px solid transparent;
+            border-top: 25px solid #fff;
+            border-left: 25px solid #fff;
+            border-bottom: 25px solid #fff;
+            border-radius: 25px;
+            -webkit-animation: rotate_pacman_half_up 0.5s 0s infinite;
+            animation: rotate_pacman_half_up 0.5s 0s infinite;
+        }
+
+        .pacman>div:nth-child(2) {
+            width: 0px;
+            height: 0px;
+            border-right: 25px solid transparent;
+            border-top: 25px solid #fff;
+            border-left: 25px solid #fff;
+            border-bottom: 25px solid #fff;
+            border-radius: 25px;
+            -webkit-animation: rotate_pacman_half_down 0.5s 0s infinite;
+            animation: rotate_pacman_half_down 0.5s 0s infinite;
+            margin-top: -50px;
+        }
+
+        .pacman>div:nth-child(3),
+        .pacman>div:nth-child(4),
+        .pacman>div:nth-child(5),
+        .pacman>div:nth-child(6) {
+            background-color: #fff;
+            width: 15px;
+            height: 15px;
+            border-radius: 100%;
+            margin: 2px;
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            -webkit-transform: translate(0, -6.25px);
+            -ms-transform: translate(0, -6.25px);
+            transform: translate(0, -6.25px);
+            top: 25px;
+            left: 100px;
+        }
+    </style>
+</head>
+
+<body class="whitebg">
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <h1 class="mui-title">联赛快捷报名</h1>
+    </header>
+
+    <div class="loader">
+        <div class="loader-inner pacman">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div class="mui-backdrop"></div>
+
+    <div class="mui-content">
+        <div id="pageShare" style="background: #fff;">
+            <ul class="mui-table-view mb" style="margin-top: -4px">
+                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
+                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px;border-radius: 50% !important">
+                    <h4>{$leagueInfo.name}</h4>
+                    <div class="mui-media-body wd73" style="line-height:20px !important">
+                        <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                        <p>{$leagueInfo.city} {$leagueInfo.area} 参赛队：<strong class="colororange">{$leagueInfo.teams_count}</strong>支
+                            | 关注：
+                            <strong class="colororange">{$leagueInfo.fans_num}</strong></p>
+                    </div>
+                </li>
+            </ul>
+            <p class="pline"></p>
+            <div id="qrcode"></div>
+            <p class="tip">长按二维码保存或转发给朋友快捷报名联赛</p>
+        </div>
+
+        <ul class="mui-table-view operation">
+            <li class="mui-table-view-cell mui-col-xs-12 opli bgorange saveBefore" id="btnSave">
+                合成图片并分享
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen hide saveAfter">
+                请长按图片保存或转发朋友
+            </li>
+        </ul>
+
+    </div>
+    <!--canvasPic:页面转画布-->
+    <div id="canvasPic"></div>
+    <!--pageShare:画布转图片-->
+    <div id="popupShare">
+        <img src="/static/frontend/images/images/blank.png" id="sharePic" />
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script src="/static/frontend/js/qrcode.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        var leagueId = wooApi.GetQueryString('league_id');
+        window.onload = function () {
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                width: 200, //设置宽高
+                height: 200
+            });
+            qrcode.makeCode("https://m.hot-basketball.com/keeper/match/quickSignUp" + "/league_id/" + leagueId);
+            console.log("https://m.hot-basketball.com/keeper/match/quickSignUp" + "/league_id/" + leagueId)
+        }
+
+        /*生成canvas图形*/
+
+        // 获取按钮id
+        var btnSave = document.getElementById("btnSave");
+        // 获取内容id
+        var content = $("#pageShare");
+        // 进行canvas生成
+        btnSave.onclick = function () {
+
+            $(".mui-backdrop").show();
+            $(".pacman").show();
+
+            setTimeout(function () {
+
+                var h = content.clientHeight;
+                var w = content.clientWidth;
+                html2canvas(content, {
+                    scale: 2,
+                    onrendered: function (canvas) {
+
+                        //添加属性
+                        canvas.setAttribute('id', 'thecanvas');
+                        //读取属性值
+                        // var value= canvas.getAttribute('id');
+                        document.getElementById('canvasPic').appendChild(canvas);
+                        var oCanvas = document.getElementById("thecanvas");
+                        var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true, w, h).getAttribute(
+                            'src');
+                        var element = document.getElementById('sharePic');
+                        element.src = img_data2;
+                        $("#pageShare").hide();
+                        $(".saveBefore").hide();
+                        // $("#popupShare img").css("width", "1000px")
+                        $("#popupShare").css("visibility", "visible");
+                        $(".saveAfter").show();
+                        $(".mui-backdrop").hide();
+                        $(".pacman").hide();
+                    }
+                });
+
+            }, 2000)
+        }
+    </script>
+    <!-- 将canvas图片保存成图片 -->
+    <script src="/static/frontend/js/html2canvas/html2canvas.min.js"></script>
+    <script src="/static/frontend/js/html2canvas/canvas2image.js"></script>
+    <script src="/static/frontend/js/html2canvas/base64.js"></script>
+
+</body>
+
+</html>
