@@ -101,6 +101,7 @@ class Shortcut extends Base
         }
         // 保存登录记录
         $result = $memberS->saveLogin($response['id']);
+        $this->memberInfo = session('memberInfo', '', 'think');
 
         // 创建球队
         $dataTeam['logo'] = config('default_image.team_logo');
@@ -127,7 +128,7 @@ class Shortcut extends Base
         }
 
         // 短信验证更新
-        db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
+        // db('smsverify')->where(['id' => $smsverify['id']])->setField('status', 1);
 
         // 创建球队成功 保存创建者会员的球队-会员关系team_member
         $finalTeamMemberArray = [];
@@ -151,9 +152,9 @@ class Shortcut extends Base
                 $temp = [
                     'team_id' => $teamModel->id,
                     'team' => $teamModel->name,
-                    'name' => $row['realname'],
                     'member_id' => -1,
                     'member' => $row['realname'],
+                    'name' => $row['realname'],
                     'telephone' => '',
                     'position' => 0,
                     'status' => 1,
@@ -165,7 +166,7 @@ class Shortcut extends Base
         }
 
         $teamMemberModel = new TeamMember();
-        $res2 = $teamMemberModel->allowField(true)->insertAll($finalTeamMemberArray);;
+        $res2 = $teamMemberModel->allowField(true)->insertAll($finalTeamMemberArray);
         if (empty($res2)) {
             return json(['code' => 100, 'msg' => '创建球队队员失败']);
         }
