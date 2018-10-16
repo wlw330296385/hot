@@ -5736,6 +5736,8 @@ class League extends Base
 
     public function getMatchHonorList() {
         $data = input('param.');
+        $page = input('page', 1);
+        unset($data['page']);
         if (empty($data["league_id"])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         } else {
@@ -5744,7 +5746,7 @@ class League extends Base
         }
         $leagueS = new LeagueService();
 
-        $result = $leagueS->getMatchHonorList($data);
+        $result = $leagueS->getMatchHonorList($data, $page);
         if ($result) {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } else {

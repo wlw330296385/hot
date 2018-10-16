@@ -1395,10 +1395,10 @@ class LeagueService
     }
 
     // 获取联赛奖项列表
-    public function getMatchHonorList($map, $order = 'id asc')
+    public function getMatchHonorList($map, $page = 1, $order = 'id asc', $limit = 10)
     {
         $model = new MatchHonor();
-        $res = $model->where($map)->order($order)->select();
+        $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
         return $res->toArray();
     }
 
