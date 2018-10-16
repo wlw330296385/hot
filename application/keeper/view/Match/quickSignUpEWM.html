@@ -3,128 +3,195 @@
 
 <head>
     <meta charset="utf-8">
-    <title>快捷报名二维码</title>
-    <meta name="viewport" content="width=500">
+    <title>联赛快捷报名</title>
+    <meta name="viewport" content="width=1000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!--标准mui.css-->
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
+    <style type="text/css">
         html,
         body {
             padding: 0px;
-            width: 500px;
+            width: 1000px;
+            height: 100%;
+            background: #fff !important;
         }
 
-        .subheader {
-            height: 60px;
+        #popupShare {
+            width: 1000px;
+            margin-top: 115px;
+            visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 888;
         }
 
-        .subheader a {
-            padding-top: 17px;
-            padding-bottom: 17px;
-        }
-
-        .subheader .mui-title {
-            font-size: 20px;
-            line-height: 60px;
-        }
-
-        .img50 {
-            width: 80px;
-            height: 80px;
-            margin-top: 5px;
+        #pageShare {
+            width: 1000px;
+            margin-top: 115px;
+            padding-bottom: 70px;
+            font-family: "Microsoft Yahei", Arial, sans-serif;
+            position: relative;
         }
 
         #pageShare h4 {
-            font-size: 22px;
+            font-size: 47px;
+            line-height: 70px !important;
+            color: #4a4a4a;
         }
 
         #pageShare p {
-            font-size: 18px;
-            line-height: 30px
+            font-size: 35px;
+            line-height: 60px;
         }
 
-        #qrcode {
-            width: 200px;
-            margin: 0 auto;
-            margin-top: 55px;
-        }
-
-        .tip {
-            text-align: center;
-            margin: 30px 0;
+        .showCont {
+            padding: 40px 44px;
+            overflow: hidden;
         }
 
         #canvasPic {
             display: none;
         }
 
-        #popupShare {
-            width: 500px;
-            visibility: hidden;
-            position: absolute;
-            top: 60px;
+        #fixTop {
+            width: 1000px;
+            height: 100px;
+            background-color: #F60;
+            text-align: center;
+            position: fixed;
             left: 0;
-            z-index: 888;
+            bottom: 0;
+            z-index: 997;
+            font-size: 42px;
         }
 
-        #pageShare {
-            width: 500px;
-            font-family: "Microsoft Yahei", Arial, sans-serif;
-            position: relative;
+        #fixTop span,
+        #fixTop a {
+            display: block;
+            width: 25%;
+            height: 100px;
+            line-height: 85px;
+            color: #fff;
+            text-decoration: none;
+            float: left;
+        }
+
+        #fixTop a {
+            width: 100%;
+        }
+
+        #fixTop .mui-icon {
+            font-size: 56px;
+        }
+
+        #fixTopAfter {
+            display: none;
+            background-color: #690;
+            color: #fff;
+            text-decoration: none;
+            font-size: 42px;
+            width: 1000px;
+            height: 100px;
+            line-height: 95px;
+            text-align: center;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 997;
+        }
+
+        #fixTopAfter .fr {
+            display: block;
+            width: 100%;
+        }
+
+        #fixTopAfter .fl {
+            display: block;
+            width: 10%;
+            float: left;
+            margin-top: 20px;
+            color: #fff;
+            font-size: 56px;
+        }
+
+
+        .subheader {
+            height: 115px;
+            border-bottom: 3px solid #ddd;
+        }
+
+        .subheader a {
+            padding-top: 30px !important;
+            padding-bottom: 30px !important;
+            padding-left: 30px !important;
+            font-size: 55px !important;
+        }
+
+        .subheader .mui-title {
+            font-size: 40px;
+            line-height: 115px;
+        }
+
+        .img50 {
+            width: 150px;
+            height: 150px;
+            margin-top: 5px;
+            margin-right: 25px;
+        }
+
+        .tip {
+            text-align: center;
+            margin: 80px 0;
+        }
+
+        .pline {
+            height: 10px;
+        }
+
+        #qrcode {
+            width: 400px;
+            margin: 0 auto;
+            margin-top: 100px;
             background: #fff;
-            margin-top: 60px;
-        }
-
-        .operation .opli {
-            height: 60px;
-            line-height: 40px;
-            font-size: 20px;
         }
     </style>
 </head>
 
-<body class="whitebg">
-
+<body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">联赛快捷报名</h1>
     </header>
-
-
     <div id="pageShare">
-        <ul class="mui-table-view mb">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <img class="img50 mui-pull-left" src="{$leagueInfo.logo}">
-                <h4 style="line-height: 27px;">{$leagueInfo.name}</h4>
-                <div class="mui-media-body lineHeight20 wd73">
-                    <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
-                    <p>{$leagueInfo.city} {$leagueInfo.area} 参赛队：<strong class="colororange">{$leagueInfo.teams_count}</strong>支
-                        | 关注：
-                        <strong class="colororange">{$leagueInfo.fans_num}</strong></p>
-                </div>
-            </li>
-        </ul>
+        <div class="showCont" style="padding: 40px 44px;overflow: hidden;">
+            <img class="img50 mui-pull-left" src="{$leagueInfo.logo}">
+            <div class="mui-media-body lineHeight20 wd73 fl">
+                <h4>{$leagueInfo.name}</h4>
+                <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
+                <p>{$leagueInfo.city} {$leagueInfo.area} 参赛队：<strong class="colororange">{$leagueInfo.teams_count}</strong>支
+                    | 关注：<strong class="colororange">{$leagueInfo.fans_num}</strong></p>
+            </div>
+        </div>
 
         <p class="pline"></p>
-
+        <!-- 二维码容器 qrcode-->
         <div id="qrcode"></div>
 
         <p class="saveBefore tipBefore tip">请先点击底部合成图片并分享按钮</p>
-        <p class="saveAfter tipAfter tip hide">长按二维码保存或转发给朋友快捷报名联赛</p>
+        <p class="saveAfter tipAfter tip hide">快捷报名联赛二维码</p>
+    </div>
 
-        <ul class="mui-table-view operation">
-            <li class="mui-table-view-cell mui-col-xs-12 opli bgorange saveBefore" id="btnSave">
-                合成图片并分享
-            </li>
-            <li class="mui-table-view-cell mui-col-xs-12 opli bggreen hide saveAfter">
-                请长按图片保存或转发朋友
-            </li>
-        </ul>
+    <div id="fixTop">
+        <a id="btnSave">合成图片并分享</a>
+    </div>
 
+    <div id="fixTopAfter">
+        <span class="fr">请长按图片保存或转发朋友</span>
     </div>
 
     <!--canvasPic:页面转画布-->
@@ -136,43 +203,41 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
+    <!-- 二维码生成js -->
     <script src="/static/frontend/js/qrcode.js"></script>
+    <!-- 将canvas图片保存成图片 -->
+    <script src="/static/frontend/js/html2canvas/html2canvas.min.js"></script>
+    <script src="/static/frontend/js/html2canvas/canvas2image.js"></script>
+    <script src="/static/frontend/js/html2canvas/base64.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
 
+        // 生成二维码
         window.onload = function () {
             var qrcode = new QRCode(document.getElementById("qrcode"), {
-                height: 200,
-                width: 200
+                height: 400, //设置二维码高
+                width: 400 //设置二维码高
             });
             qrcode.makeCode("https://m.hot-basketball.com/keeper/match/quickSignUp?league_id=" + "{$league_id}");
         }
 
-        /*生成canvas图形*/
-
         // 获取按钮id
         var btnSave = document.getElementById("btnSave");
         // 获取内容id
-        var content = $("#pageShare");
+        var content = document.getElementById("pageShare");
         // 进行canvas生成
         btnSave.onclick = function () {
-
+            
             setTimeout(function () {
-
                 $(".tipBefore").hide()
                 $(".tipAfter").show()
 
-                $(".img50").css("border-radius", "50% !important");
-                var h = content.clientHeight;
-                var w = content.clientWidth;
                 html2canvas(content, {
                     scale: 2,
                     onrendered: function (canvas) {
-
                         //添加属性
                         canvas.setAttribute('id', 'thecanvas');
                         //读取属性值
@@ -182,10 +247,11 @@
                             'src');
                         var element = document.getElementById('sharePic');
                         element.src = img_data2;
-                        $("#pageShare").hide();
                         $(".saveBefore").hide();
-                        $("#popupShare img").css("width", "500px")
+                        $("#pageShare").hide();
+                        $("#fixTop").hide();
                         $("#popupShare").css("visibility", "visible");
+                        $("#fixTopAfter").show();
                         $(".saveAfter").show();
                     }
                 });
@@ -193,10 +259,6 @@
             }, 2000)
         }
     </script>
-    <!-- 将canvas图片保存成图片 -->
-    <script src="/static/frontend/js/html2canvas/html2canvas.min.js"></script>
-    <script src="/static/frontend/js/html2canvas/canvas2image.js"></script>
-    <script src="/static/frontend/js/html2canvas/base64.js"></script>
 
 </body>
 
