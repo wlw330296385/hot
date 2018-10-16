@@ -50,8 +50,8 @@ class User extends Backend {
     }
 
     public function update() {
+
         if (request()->isPost()) {
-            //dump(input('post.'));
             $id = input('id');
             $data['username'] = input('username');
             if (input('?password') && !empty(input('password'))) {
@@ -61,6 +61,7 @@ class User extends Backend {
             
             $data['truename'] = input('truename');
             $data['avatar'] = '/static/default/avatar.png';
+            $data['group_id'] = input('group_id');
             $model = new Admin();
             $res = $model->where(['id' => $id])->update($data);
             if ($res || ($res === 0)) {

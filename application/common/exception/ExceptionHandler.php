@@ -2,6 +2,7 @@
 namespace app\common\exception;
 
 use Exception;
+use think\Request;
 use think\exception\Handle;
 use think\exception\HttpException;
 use app\model\LogException;
@@ -10,8 +11,11 @@ class ExceptionHandler extends Handle
 {
     public function render(Exception $e)
     {
+
+        $request = Request::instance();
+        
         $e_file = $e->getFile();
-        $e_relative_file = str_replace(ROOT_PATH,'',$e_file);
+        $e_relative_file = str_replace(ROOT_PATH, '', $e_file);
         $e_line    = $e->getLine();
         $e_message = $e->getMessage();
         $trace = $e->getTraceAsString();
@@ -39,7 +43,7 @@ class ExceptionHandler extends Handle
         }
 
         if (!empty($_SERVER['HTTP_REFERER'])) {
-            $log_data['referer'] = $_SERVER['HTTP_REFERER'];
+            $log_data['referer'] = str_replace($request->domain(), '', $_SERVER['HTTP_REFERER']);
         }
 
         if (!empty($_SERVER['OS'])) {

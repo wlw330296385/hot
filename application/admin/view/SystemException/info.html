@@ -106,7 +106,7 @@
                                 <label >备注</label>
                                 <p>{$exceptionInfo.remark}</p>
                             </div>
-                            <hr/>
+                            
                             {if condition="$exceptionInfo.status == 0"}
                             <div class="form-group">
                                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-default">
@@ -114,6 +114,8 @@
                                 </button>
                             </div>
                             {/if}
+
+                            <hr/>
                         </div>
                     </form>
                 </div>
@@ -188,6 +190,36 @@
                         </li>
                     </ul>
                 </div>
+                <div class="col-md-12" >
+                    
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label >错误列表</label>
+                        </div>
+                        <table id="myTable" class="table table-bordered table-striped" >
+                            <thead>
+                                <tr>
+                                    <th>请求页面</th>
+                                    <th>上一页</th>
+                                    <th>用户ID</th>
+                                    <th>用户</th>
+                                    <th>报错时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {volist name="exceptionList" id="item"}
+                                <tr>
+                                    <td>{$item.request_url}</td>
+                                    <td>{$item.referer}</td>
+                                    <td>{$item.member_id}</td>
+                                    <td>{$item.member}</td>
+                                    <td>{:date('Y-m-d H:i',$item.create_time)}</td>
+                                </tr>
+                                {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -231,6 +263,8 @@
         </div>
     </div>
 </div>
+
+
 {/block}
 
 {block name="js"}
@@ -250,6 +284,16 @@
                 window.location.reload();
             }
         })
+    });
+    $(document).ready( function () {
+        $('#myTable').DataTable({
+            'paging'      : true,
+            'lengthChange': true,
+            'searching'   : true,
+            'ordering'    : false,
+            'info'        : true,
+            'autoWidth'   : false
+        });
     });
 </script>
 {/block}

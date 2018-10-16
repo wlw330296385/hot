@@ -84,9 +84,18 @@ class SystemException extends Backend
         ->order('update_time desc')
         ->select();
 
+        $exceptionList = Db::table('log_exception')->where([
+            'file' => $exceptionInfo["file"],
+            'line' => $exceptionInfo["line"],
+            'message' => $exceptionInfo["message"],
+            'status' => 0
+        ])->select();
+
         $this->assign('exceptionInfo',$exceptionInfo);
         $this->assign('exceptionStats',$exceptionStats);
         $this->assign('exceptionGroup',$exceptionGroup);
+        $this->assign('exceptionList',$exceptionList);
+
         return view('SystemException/info');
     }
 
