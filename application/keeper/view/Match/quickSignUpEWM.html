@@ -142,6 +142,16 @@
             height: 150px;
             margin-top: 5px;
             margin-right: 25px;
+            border-radius: 20px;
+        }
+
+        .img50-after {
+            display: none;
+            margin-top: 5px;
+            border-radius: 20px;
+            height: 150px;
+            width: 150px;
+            margin-right: 25px;
         }
 
         .tip {
@@ -170,6 +180,7 @@
     <div id="pageShare">
         <div class="showCont" style="padding: 40px 44px;overflow: hidden;">
             <img class="img50 mui-pull-left" src="{$leagueInfo.logo}">
+            <div class="img50-after mui-pull-left" style="background: url('{$leagueInfo.logo}');background-size: 100%;"></div>
             <div class="mui-media-body lineHeight20 wd73 fl">
                 <h4>{$leagueInfo.name}</h4>
                 <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
@@ -230,23 +241,27 @@
         var content = document.getElementById("pageShare");
         // 进行canvas生成
         btnSave.onclick = function () {
-            
+
             setTimeout(function () {
                 $(".tipBefore").hide()
                 $(".tipAfter").show()
-
+                $(".img50").hide()
+                $(".img50-after").css("display", "block");
                 html2canvas(content, {
                     scale: 2,
                     onrendered: function (canvas) {
+
                         //添加属性
                         canvas.setAttribute('id', 'thecanvas');
                         //读取属性值
                         document.getElementById('canvasPic').appendChild(canvas);
                         var oCanvas = document.getElementById("thecanvas");
+
                         var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true).getAttribute(
                             'src');
                         var element = document.getElementById('sharePic');
                         element.src = img_data2;
+                        $(".img50").css("border-radius", "50px")
                         $(".saveBefore").hide();
                         $("#pageShare").hide();
                         $("#fixTop").hide();
