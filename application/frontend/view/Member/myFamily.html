@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>家庭成员管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style type="text/css">
+        .list .listli .mui-navigate-right {
+            padding-right: 15px;
+            width: auto;
+            font-size: 12px;
+        }
+        .tjbtn{
+            margin-top: 20px;
+        }
+        #fType { display: none; }
+        .nodata { padding:30px 0px; }
+    </style>
+</head>
+
+<body>
+
+    <header id="header" class="mui-bar mui-bar-nav for-tab">
+        <div class="camp-lesson-list">
+            <div class="mui-segmented-control mb">
+                <a class="mui-action-back mui-control-item mui-icon mui-icon-left-nav"></a>
+                <a class="mui-control-item mui-active" href="#tabmyfamily">家庭成员</a>
+                <a class="mui-control-item" href="#tabinvitation">添加邀请</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="mui-content">
+
+        <div class="tab-pullRefresh">
+            <div id="tabmyfamily" class="mui-scroll-wrapper mui-control-content mui-active">
+                <div class="mui-scroll">
+                    <div class="page-header organizationTitle">
+                        <span class="course">邀请我的</span>
+                    </div>
+                    <ul class="mui-table-view list border-b fromFamily">
+                    </ul>
+                    <div class="page-header organizationTitle">
+                        <span class="course">我邀请的</span>
+                    </div>
+                    <ul class="mui-table-view list border-b toFamily">
+                    </ul>
+                </div>
+            </div>
+            <div id="tabinvitation" class="mui-scroll-wrapper mui-control-content">
+                <div class="mui-scroll">
+                    <div class="tip-box colorgray">
+                        接受方需要接收手机验证码进行验证，<br />请务必填写对方的真实手机号码。
+                    </div>
+                    <form class="mui-input-group">
+                        <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                        <div class="mui-input-row">
+                            <label>您与对方的关系</label>
+                            <span class="select-row mui-navigate-right" style="padding-right: 30px;">
+                                <select id="selectFamilyType" name="selectFamilyType">
+                                    <option value="">请选择</option>
+                                    <option value="老公">我是她老公</option>
+                                    <option value="老婆">我是他老婆</option>
+                                    <option value="孩子">我是他孩子</option>
+                                    <option value="爸爸">我是他爸爸</option>
+                                    <option value="妈妈">我是他妈妈</option>
+                                    <option value="others">其他（自填）</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="mui-input-row" id="fType">
+                            <label>我是他/她的</label>
+                            <input type="text" name="familyType" id="familyType" placeholder="请填写关系" />
+                        </div>
+                        <div class="mui-input-row">
+                            <label>对方手机号码</label>
+                            <input id="telephone" type="text" name="telephone" placeholder="接受邀请时需验证此号码" id="telephone">
+                        </div>
+                    </form>
+                    <div class="tjbtn">
+                        <button type="button" class="mui-btn btn invitationrBtn">
+                            立即邀请
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        mui(".mui-content").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
+
+        $(function () {
+
+            //邀请我的
+            fromfamily();
+
+            //我邀请的
+            tofamily();
+
+
+            // 选择是否
+            $("#selectFamilyType").change(function () {
+                var getSelectVal = $(this).children('option:selected').val();
+                if (getSelectVal == 'others') {
+                    $("#familyType").val("");
+                    $("#fType").show();
+                } else {
+                   $("#fType").hide();
+                   $("#familyType").val(getSelectVal);
+                }
+            });
+
+            $(".invitationrBtn").on("click", function () {
+                var telephone = $("#telephone").val();
+                if (!(/^1[3456789]\d{9}$/).test(telephone)) {
+                    //判断手机号码格式是否正确
+                    mui.toast("请填写正确的手机格式");
+                    return false;
+                }
+                var familyType = $('#familyType').val();
+                if(familyType==""){
+                    mui.toast("请选择或填写您与对方的关系");
+                    return false;
+                }
+
+                var btnArray = ['确认', '取消'];
+                mui.confirm('确认添加此邀请吗？', '提示', btnArray, function (e) {
+                    if (e.index == 0) {
+                        mui.ajax("{:url('api/family/createFamilyApi')}", {
+                            data: {
+                                type: familyType,
+                                telephone: telephone
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                //服务器返回响应，根据响应结果，分析是否登录成功；
+                                if (data.code == 200) {
+                                    mui.toast(data.msg);
+                                   location.href = "{:url('/frontend/member/invitationFamily/f_id/')}"+data.data+"?membername={$memberInfo.member}"
+                                } else {
+                                    mui.toast(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
+                    }
+                });
+            });
+
+
+
+
+        })
+
+       
+        var fromfamily = function () {
+            //接口获取数据并追加到页面
+            var member_id = "{$memberInfo.id}";
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/family/getFamilyListNoPageApi')}"
+            mui.ajax({
+                url: url,
+                data: {
+                    to_member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('member/myFamilyMember')}" + '/member_id/' + data.data[i].member_id;
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame"><p class="address">' + data.data[i].type + '</p></div>';
+                            newli += '</a></li>';
+                        }
+                    }
+                     $("ul.fromFamily").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.fromFamily").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+    
+        var tofamily = function () {
+            //接口获取数据并追加到页面
+            var member_id = "{$memberInfo.id}";
+            //搜索关键字不能完全为空，否则查询为空
+            var url = "{:url('api/family/getFamilyListNoPageApi')}"
+            mui.ajax({
+                url: url,
+                data: {
+                    member_id: member_id
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                timeout: 10000,//超时时间设置为10秒；
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "#";
+                            newli += '<li class="mui-table-view-cell mui-media listli">'
+                            newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].to_member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].to_member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame">我是他' + data.data[i].type + '</div>';
+                            newli += '</a></li>';
+                        }
+                    }
+                    $("ul.toFamily").empty().append(newli);
+                    if (newli == '') {
+                        $("ul.toFamily").append('<li class="nodata"><p>没有相关数据哦</p></li>');
+                    }
+
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
+
+    </script>
+</body>
+
+</html>

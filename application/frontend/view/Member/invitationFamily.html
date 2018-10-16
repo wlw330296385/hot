@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>邀请家庭成员</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style type="text/css">
+        .invInfo{
+            margin: 20px;
+            text-align: center;
+        }
+        .tjbtn{
+            margin-top: 30px;
+        }
+        .tipBottom {
+            margin: 30px;
+            text-align: center;
+        }
+        .tipBottom p.f10 {
+            color: #999;
+            font-size: 10px;
+        }
+        #telephone{ display: none; }
+        .tjbtn { height: auto !important; }
+        .tips { color:#F00; text-align: center; }
+    </style>
+</head>
+
+<body class="whitebg">
+
+    <header id="header" class="mui-bar mui-bar-nav subheader subheader-other">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content whitebg" style="padding: 0">
+
+                <div class="img16x9" style="background-image:url('/static/frontend/images/membercenter-bg.jpg')"></div>
+                <div class="invInfo">
+                    <p><img src="{$familyInfo.avatar}" class="img24"></p>
+                    <p>您的弟弟（<text class="memberName" class="colororange"></text>）邀请您加入他的家庭，<br />请获取并输入您的验证码。</p>
+                </div>
+                 <form class="mui-input-group" style="margin:0 10%">
+                    <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
+                    <div class="mui-input-row">
+                        <label>验证手机号</label>
+                        <span id="telephoneTips"></span>
+                        <input id="telephone" type="text" name="telephone" value="{$familyInfo.telephone}" disabled="disabled">
+                    </div>
+                    {if $memberInfo.id == 0}
+                    <div class="mui-input-row">
+                        <label>短信验证码</label>
+                        <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" style="width: 30%;">
+                        <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 35%;" >
+                    </div>
+                    {/if}
+                </form>
+
+            <div class="tjbtn">
+                {if $memberInfo.id == 0}
+                <button type="button" class="mui-btn btn bggreen registerBtn">
+                    接受邀请
+                </button>
+                {elseif $memberInfo.telephone==$familyInfo.telephone }
+                <button type="button" class="mui-btn btn bggreen registerBtn">
+                    接受邀请
+                </button>
+                {else/}
+                <p class="tips">您当前账号所绑定的电话号码<br />与对方邀请所需验证的号码不一致哦</p>
+                <p>如需加入请让<text class="memberName"></text>给您转发该号码的申请。<br />您当前账号所绑定的手机号码为 {$memberInfo.telephone}</p>
+                <button type="button" class="mui-btn btn bggray registerBtn" disabled="disabled">
+                    接受邀请
+                </button>
+                {/if}
+            </div>
+
+            <div class="tipBottom">
+                <p>
+                    <span class="f10">Power by HotTech | 技术支持（篮球管家）</span>
+                </p>
+            </div>
+
+
+    </div>
+
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        var memberName = wooApi.GetQueryString('memberName');
+
+        $(function () {
+
+            $(".memberName").text(memberName);
+            var telephoneTips = "{$familyInfo.telephone}".replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+            $("#telephoneTips").text(telephoneTips);
+
+        })
+    </script>
+</body>
+
+</html>

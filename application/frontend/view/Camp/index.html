@@ -40,6 +40,7 @@
             width: auto;
             font-size: 12px;
         }
+        .myFamily li { border-bottom: 1px solid #EEE; }
     </style>
 </head>
 
@@ -115,33 +116,21 @@
                     <span class="more">更多</span>
                 </a>
             </div>
-            <!--我的活动-->
-            <!-- <div class="page-header mb" style="background-color: #FFF;">
-                <a href="{:url('event/eventListOfMember')}">
-                    <span class="course wd83">我参与的活动</span>
-                    <span class="mui-navigate-right"></span>
-                </a>
-            </div> -->
 
-            <div class="nav-list mb">
-
-                <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame ptb4">My Family
-                    {volist name="familyList" id="vol"}
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="">
-                            <img src="{$vol.to_member_avatar}">
-                            <div class="mui-media-body">{$vol.type}</div>
-                        </a>
-                    </li>
-                    {/volist}
-                    <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3 navli">
-                        <a href="">
-                            <span class="mui-icon icon icon-add iconfont"></span>
-                            <div class="mui-media-body">添加家庭对象</div>
-                        </a>
-                    </li>
-                </ul>
+            <div class="page-header">
+                <span class="course">家庭成员</span>
+                <div class="fr"><a href="{:url('member/myFamily',['member_id'=>$memberInfo['id']])}" class="f12 mui-navigate-right" style="padding-right:15px;">管理</a></div>
             </div>
+            <ul class="mui-table-view list mb myFamily">
+                    {volist name="familyList" id="vol" empty="<li class='mui-table-view-cell listli' style='padding:15px;'>还没有家庭成员</li>" }
+                     <a href="/frontend/camp/clientofcamp/camp_id/9">
+                        <li class="mui-table-view-cell listli" style="padding:15px;">
+                            <img src="{$vol.avatar}" class="img24"> {$vol.member} <span class="mui-navigate-right">{$vol.type}</span>
+                        </li>
+                    </a>
+                    {/volist}
+            </ul>
+
             <!-- 机构训练营主页 -->
             {if $o_id!=0 }
             <ul class="mui-table-view list mb myCamp hide">

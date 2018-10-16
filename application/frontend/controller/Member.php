@@ -348,4 +348,25 @@ class Member extends Base{
         return view('Member/hotCoinDetail');
     }
 
+
+    // 家庭成员列表
+    public function myFamily(){
+        
+
+        return view('Member/myFamily');
+    }
+
+    // 分享邀请家庭成员页面
+    public function invitationFamily(){
+        $f_id = input('param.f_id');
+        if($f_id){
+            $familyInfo = db('family')->where(['id'=>$f_id])->find();
+            $this->assign('familyInfo',$familyInfo);
+        }else{
+           $this->error('无效页面');
+        }
+
+        return view('Member/invitationFamily');
+    }
+
 }
