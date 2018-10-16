@@ -5306,6 +5306,7 @@ class League extends Base
             unset($map['page']);
             $leagueS = new LeagueService();
             // 返回结果
+            $map['comment'] = ['neq', ''];
             $result = $leagueS->getCommentList($map, $page);
             if ($result) {
                 // 评论列表数据删除按钮标识：
@@ -5391,12 +5392,14 @@ class League extends Base
                 $map['match_id'] = $data['match_id'];
             }
             if (input('?post.match_record_id')) {
-                $map['match_record_id'] = $data['match_record_id'];
+                $map['commented_id'] = $data['match_record_id'];
+            } else if (input('?post.match_honor_id')) {
+                $map['commented_id'] = $data['match_honor_id'];
             }
             $hasCommented = $leagueS->getCommentInfo($map);
             if ($hasCommented) {
                 // 只能发表一次文字评论
-                if (!is_null($hasCommented['comment'])) {
+                if (!empty($hasCommented['comment'])) {
                     return json(['code' => 100, 'msg' => '只能发表一次评论']);
                 } else {
                     $data['id'] = $hasCommented['id'];
