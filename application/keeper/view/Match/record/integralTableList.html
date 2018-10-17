@@ -65,13 +65,6 @@
             display: block;
         }
 
-        /* .divScroll {
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow-x: scroll;
-          width: 100%;
-        } */
-
         .teamTitle td:first-child {
             background-color: #111 !important;
             color: #fff !important
@@ -101,7 +94,6 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
-
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $(".mui-scroll-wrapper").scroll({
@@ -117,26 +109,31 @@
                 league_id: league_id
             },
             async: false,
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
-                        newli += `<div class="divScroll mb"><table width=100%><tbody>
+                        newli +=
+                            `<div class="divScroll mb"><table width=100%><tbody>
                         <tr class="teamTitle" data-match_stage_advance_number="${data.data[i].match_stage_advance_number}">
                           <td data-match_stage="${data.data[i].match_stage}" data-match_stage_id="${data.data[i].match_stage_id}" data-match_group_id="${data.data[i].match_group_id}">${data.data[i].match_group}</td>`
                         // 横向
                         for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                            newli += `<td class="h${data.data[i].teams[j].team_id}">${data.data[i].teams[j].team}</td>`
+                            newli +=
+                                `<td class="h${data.data[i].teams[j].team_id}">${data.data[i].teams[j].team}</td>`
                         }
                         newli += `<td>得失分率</td><td>积分</td><td>名次</td></tr>`
                         // 竖向
                         for (var j = 0; j <= data.data[i].teams.length - 1; j++) {
-                            newli += `<tr data-team_id="${data.data[i].teams[j].team_id}" class="s${data.data[i].teams[j].team_id} teamColumnl"><td class="team">${data.data[i].teams[j].team}</td>`
+                            newli +=
+                                `<tr data-team_id="${data.data[i].teams[j].team_id}" class="s${data.data[i].teams[j].team_id} teamColumnl"><td class="team">${data.data[i].teams[j].team}</td>`
                             for (var t = 0; t <= data.data[i].teams.length - 1; t++) {
                                 if (t == j) {
                                     newli += `<td>--</td>`
@@ -144,14 +141,17 @@
                                     newli += `<td></td>`
                                 }
                             }
-                            newli += `<td></td><td class="jf">${data.data[i].teams[j].score}</td><td class="rank"></td></tr>`
+                            newli +=
+                                `<td></td><td class="jf">${data.data[i].teams[j].score}</td><td class="rank"></td></tr>`
                         }
                         newli += `</tbody ></table></div>`
                     }
                 }
                 $(".integralList").empty().append(newli);
                 if (newli == '') {
-                    $(".integralList").append('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><h5>暂无分组</h5></li>');
+                    $(".integralList").append(
+                        '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p style="border:none">暂无分组</p></li>'
+                    );
                 }
             },
             error: function (xhr, type, errerThrown) {
@@ -160,15 +160,19 @@
         });
 
         // 比赛球队数据
+        var match_stage_id = "{$matchStageInfo.id}"
         mui.ajax("{:url('api/league/getresultmatchrecords')}", {
             data: {
                 league_id: league_id,
+                match_stage_id: match_stage_id
             },
             async: false,
-            dataType: 'json',//服务器返回json格式数据
-            type: 'post',//HTTP请求类型
-            timeout: 10000,//超时时间设置为10秒；
-            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
             success: function (data) {
                 console.log(data)
                 var newli1 = ''
@@ -176,9 +180,12 @@
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var st = $(".s" + data.data[i].home_team_id).index();
                         var ht = $(".h" + data.data[i].away_team_id).index();
-                        $(".s" + data.data[i].home_team_id).find("td:eq(" + ht + ")").text(data.data[i].home_score + ':' + data.data[i].away_score);
-                        $(".s" + data.data[i].away_team_id).find("td:eq(" + st + ")").text(data.data[i].away_score + ':' + data.data[i].home_score);
-                        newli1 += `<p><span data-team_id="${data.data[i].home_team_id}">${data.data[i].home_team}</span>:<span data-team_id="${data.data[i].away_team_id}">${data.data[i].away_team}</span></p>`
+                        $(".s" + data.data[i].home_team_id).find("td:eq(" + ht + ")").text(data.data[i].home_score +
+                            ':' + data.data[i].away_score);
+                        $(".s" + data.data[i].away_team_id).find("td:eq(" + st + ")").text(data.data[i].away_score +
+                            ':' + data.data[i].home_score);
+                        newli1 +=
+                            `<p><span data-team_id="${data.data[i].home_team_id}">${data.data[i].home_team}</span>:<span data-team_id="${data.data[i].away_team_id}">${data.data[i].away_team}</span></p>`
                     }
                 }
             },
@@ -203,8 +210,10 @@
             advteams = []
             $("table").each(function () {
                 var match_group = $(this).find(".teamTitle").children("td:eq(0)").text();
-                var match_group_id = $(this).find(".teamTitle").children("td:eq(0)").attr("data-match_group_id");
-                var match_stage_advance_number = $(this).find(".teamTitle").attr("data-match_stage_advance_number");
+                var match_group_id = $(this).find(".teamTitle").children("td:eq(0)").attr(
+                    "data-match_group_id");
+                var match_stage_advance_number = $(this).find(".teamTitle").attr(
+                    "data-match_stage_advance_number");
                 var team = '';
                 var team_id = '';
                 var adv_num = '';
@@ -214,15 +223,26 @@
                     team = $(this).find(".team").text();
                     team_id = $(this).attr("data-team_id");
                     adv_num = $(this).find(".rank").text();
-                    advteamsChild.push({ team, team_id, adv_num })
-                    advteamsChild.sort(compare("adv_num")).reverse();  // 对组别进行排名排序
-                    advteamsChild = advteamsChild.slice(0, match_stage_advance_number);  // 根据出线球队数量截取数据
+                    advteamsChild.push({
+                        team,
+                        team_id,
+                        adv_num
+                    })
+                    advteamsChild.sort(compare("adv_num")).reverse(); // 对组别进行排名排序
+                    advteamsChild = advteamsChild.slice(0, match_stage_advance_number); // 根据出线球队数量截取数据
                 })
                 for (var i = 0; i <= advteamsChild.length - 1; i++) {
                     var team = advteamsChild[i].team;
                     var team_id = advteamsChild[i].team_id;
                     var adv_num = advteamsChild[i].adv_num;
-                    advteams.push({ match_group, match_group_id, match_stage_advance_number, team, team_id, adv_num })
+                    advteams.push({
+                        match_group,
+                        match_group_id,
+                        match_stage_advance_number,
+                        team,
+                        team_id,
+                        adv_num
+                    })
                 }
             })
             // 数组转成json格式
@@ -237,14 +257,18 @@
                     advteams: advteams
                 },
                 async: false,
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     mui.toast(data.msg);
-                    setTimeout('window.location="{:url("match/leaguemanage",["league_id"=>$league_id])}"', 2000)
+                    setTimeout(
+                        'window.location="{:url("match/leaguemanage",["league_id"=>$league_id])}"',
+                        2000)
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast(data.msg);
@@ -283,8 +307,8 @@
             $sTable.next().each(function () {
                 var $getPM = $(this).text();
                 if ($sTable.next().filter(function (index) {
-                    return $(this).text() == $getPM
-                }).length == 2) {
+                        return $(this).text() == $getPM
+                    }).length == 2) {
                     var t1x = $(this).parent().index();
                     var t2x = $sTable.next().filter(function (index) {
                         return $(this).text() == $getPM && $(this).parent().index() != t1x
@@ -304,8 +328,8 @@
             $sTable.next().each(function () {
                 var $getPM = $(this).text();
                 if ($sTable.next().filter(function (index) {
-                    return $(this).text() == $getPM
-                }).length > 2) {
+                        return $(this).text() == $getPM
+                    }).length > 2) {
                     var t1x = $(this).parent().index();
                     var $tb = $sTable.parent().parent();
                     var df = 0;
@@ -327,8 +351,8 @@
             $sTable.next().each(function () {
                 var $getPM = $(this).text();
                 if ($sTable.next().filter(function (index) {
-                    return $(this).text() == $getPM
-                }).length > 2) {
+                        return $(this).text() == $getPM
+                    }).length > 2) {
                     var $repeatPM = $sTable.next().filter(function (index) {
                         return $(this).text() == $getPM
                     });
@@ -342,7 +366,8 @@
                     }).reverse();
                     $repeatPM.each(function () {
                         for (var j = 0; j < sArr.length; j++) {
-                            if ($.isNumeric($(this).prev().prev().text()) && $(this).prev().prev().text() == sArr[j].toString()) {
+                            if ($.isNumeric($(this).prev().prev().text()) && $(this).prev().prev().text() ==
+                                sArr[j].toString()) {
                                 $(this).text(j + Number($getPM));
                                 break;
                             }
@@ -352,7 +377,6 @@
                 }
             });
         }
-
     </script>
 </body>
 
