@@ -92,6 +92,9 @@ class Family extends Base{
                 }
             }
             $status = input('param.status');
+            if(!$status){
+                return json(['code'=>100,'msg'=>'传参有误']); 
+            }
             if ($status==1) {
                 $data['to_member_avatar'] = $this->memberInfo['avatar'];
                 $data['to_member_id'] = $this->memberInfo['id'];

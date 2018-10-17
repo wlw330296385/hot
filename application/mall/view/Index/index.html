@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>这里是index下的index</title>
+</head>
+<style type="text/css">
+#container {width:300px; height: 180px; }  	
+</style>
+
+<body>
+	<div>{:token()}</div>
+
+
+	<div id="container"></div>  
+</body>
+
+
+
+
+
+<script src="/static/frontend/js/mui.min.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript">
+	wx.config({
+            //开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug:false,
+            appId: "{$jsApi.appId}", // 必填，企业号的唯一标识，此处填写企业号corpid
+            timestamp: "{$jsApi.timestamp}", // 必填，生成签名的时间戳
+            nonceStr: "{$jsApi.nonceStr}", // 必填，生成签名的随机串
+            signature: "{$jsApi.signature}",// 必填，签名，见附录1
+            jsApiList:  [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'hideMenuItems'
+            ]// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+	
+	// wx.hideAllNonBaseMenuItem();
+	wx.ready(function(Api){
+		{if condition="$timestr<6"}
+            wx.hideMenuItems({
+		    menuList: [ 
+		    "menuItem:share:appMessage",
+		    "menuItem:share:timeline",
+		    "menuItem:share:qq",
+		    "menuItem:share:weiboApp",
+		    "menuItem:share:facebook",
+		    "menuItem:favorite",
+		    "menuItem:copyUrl",
+		    "menuItem:originPage",
+		    "menuItem:readMode",
+		    "menuItem:openWithQQBrowser",
+		    "menuItem:openWithSafari",
+		    ] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+
+		});
+     	{/if}
+	
+
+	})
+</script>
+
+
+</html>

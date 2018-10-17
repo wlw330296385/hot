@@ -1,9 +1,6 @@
 <?php 
 namespace app\index\controller;
 use app\frontend\controller\Base;
-/**
-* 
-*/
 class Apps extends Base
 {
 	

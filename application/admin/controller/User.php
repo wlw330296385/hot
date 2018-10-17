@@ -67,7 +67,7 @@ class User extends Backend {
             if ($res || ($res === 0)) {
                 $this->record('修改管理员 id:'.$id.'成功');
                 $this->success(__lang('MSG_200'), 'user/index');
-            } else {
+            } else {    
                 $this->record('修改管理员 失败');
                 $this->error(__lang('MSG_400'));
             }
