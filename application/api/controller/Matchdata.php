@@ -127,7 +127,7 @@ class Matchdata extends Base
             $recordMembers = json_decode($data['members'], true);
             foreach ($recordMembers as $k => $val) {
                 // 球衣号码可为空
-                if (empty($val['number'])) {
+                if (!isset($val['number'])) {
                     $recordMembers[$k]['number'] = null;
                 }
                 // 提交了无参赛信息的球员（会员）数据 需要保存出赛会员(match_record_member)信息
@@ -207,10 +207,10 @@ class Matchdata extends Base
                     }
                 }
                 // 更新球员参赛信息球衣号码
-                if ($val['match_record_member_id'] && !empty($val['number'])) {
+                if ($val['match_record_member_id'] && isset($val['number'])) {
                     $matchS->saveMatchRecordMember([
                         'id' => $val['match_record_member_id'],
-                        'number' => $val['number']
+                        'number' => intval($val['number'])
                     ]);
                 }
 
