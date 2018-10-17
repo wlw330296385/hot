@@ -1093,58 +1093,58 @@ class Match extends Base {
 
     // 联赛对阵积分表
     public function integralTableList() {
-        
-        $leagueS = new LeagueService();
 
+        $leagueS = new LeagueService();
         $matchStageInfo = $leagueS->getMatchStage([
             'match_id' => $this->league_id,
             'type' => 1
         ]);
 
         // 判断有无小组赛晋级数据 显示提交数据按钮
-        $showBtn = 1;
+        $showBtn = 0;
         
         $matchStageAdvteams = $leagueS->getMatchStageAdvteams([
             'match_id' => $this->league_id,
-            'match_group_id' => ['>', 0]
+            'match_group_id' => ['>', 0],
+            'match_stage_id' => $matchStageInfo['id']
         ]);
-        // 不显示按钮
-        if ($matchStageAdvteams) {
-            $showBtn = 0;
-        }
 
         // 控制能否提交排名数据：小组赛阶段赛程无完成，已发布的小组赛阶段比赛结果记录数等于已完成小组赛阶段赛程记录数
-        $canSubmit = 0;
         // 未完成分组赛程记录数
         $normalMatchScheduleCount = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
-            'status' => 1,
-            'match_group_id' => ['>', 0]
+            'status' => ['in', [0,1]],
+            'match_group_id' => ['>', 0],
+            'match_stage_id' => $matchStageInfo['id']
         ]);
+
         // 已完成分组赛程记录数
         $finishMatchScheduleCount = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
             'status' => 2,
-            'match_group_id' => ['>', 0]
+            'match_group_id' => ['>', 0],
+            'match_stage_id' => $matchStageInfo['id']
         ]);
         // 未发布的分组比赛结果
-        $normalMatchRecordCount = $leagueS->getMatchRecordCount([
-            'match_id' => $this->league_id,
-            'match_group_id' => ['>', 0],
-            'is_record' => 0
-        ]);
+        // $normalMatchRecordCount = $leagueS->getMatchRecordCount([
+        //     'match_id' => $this->league_id,
+        //     'match_group_id' => ['>', 0],
+        //     'is_record' => 0,
+        //     'match_stage_id' => $matchStageInfo['id']
+        // ]);
         // 已发布的分组比赛结果
         $isRecordMatchRecordCount = $leagueS->getMatchRecordCount([
             'match_id' => $this->league_id,
             'match_group_id' => ['>', 0],
-            'is_record' => 1
+            'is_record' => 1,
+            'match_stage_id' => $matchStageInfo['id']
         ]);
-        if ( !$normalMatchScheduleCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
-            $canSubmit = 1;
+        if ( !$matchStageAdvteams && !$normalMatchScheduleCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && 
+            $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+            $showBtn = 1;
         }
 
         $this->assign('showBtn', $showBtn);
-        $this->assign('canSubmit', $canSubmit);
         $this->assign('matchStageInfo', $matchStageInfo);
         return view('Match/record/integralTableList');
     }
