@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>添加荣誉</title>
+    <title>荣誉编辑</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -27,13 +27,12 @@
             right: 0;
             margin: 0 auto;
         }
-    
     </style>
 </head>
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow">
             <span class="return">返回</span>
         </a>
@@ -74,9 +73,24 @@
             </div>
 
             <div class="mui-input-row price-input-row h-auto">
-                <a href="#honorMember" id="setCoachBox" class="mui-navigate-right">
+                <a href="#honorMember" id="setHonorBox" class="mui-navigate-right">
                     <label>获奖者</label>
-                    <span class="honorMember" style="width: 60%"></span>
+                    {if $honorInfo.type==2}
+                    <span class="honorMember" style="width: 60%">{volist name='honorMemberList.team_list' id='vo'}{$vo.team},{/volist}</span>
+                    <div class="hide hideList">
+                        {volist name='honorMemberList.team_list' id='vo'}
+                        <input type="text" value="{$vo.team_id}" data-team="{$vo.team}" />
+                        {/volist}
+                    </div>
+                    {else/}
+                    <span class="honorMember" style="width: 60%">{volist name='honorMemberList.team_member_list' id='vo'}{$vo.name},{/volist}</span>
+                    <div class="hide hideList">
+                        {volist name='honorMemberList.team_member_list' id='vo'}
+                        <input type="text" value="{$vo.team_member_id}" data-team="{$vo.team}" data-team_id="{$vo.team_id}"
+                            data-member_id="{$vo.member_id}" data-name="{$vo.name}" />
+                        {/volist}
+                    </div>
+                    {/if}
                 </a>
             </div>
 
@@ -109,7 +123,7 @@
         </div>
         <div class="mui-scroll-wrapper">
             <div class="mui-scroll">
-                <form class="mui-input-group memberList">
+                <form class="mui-input-group honorList">
                     <p class="nohave">请先选择颁奖类型</p>
                 </form>
             </div>
@@ -162,7 +176,6 @@
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
-                //开始时间
                 var result = $('#result')[0];
                 var btn = $('.btn');
                 btn.each(function (i, btn) {
@@ -183,15 +196,21 @@
 
         var team_list = "";
         var team_member_list = "";
-        var type = {$honorInfo.type};
+        var type = "{$honorInfo.type}";
         $(function () {
+
+            // 去逗号
+            var honorMember = $(".honorMember").text()
+            $(".honorMember").text(honorMember.substring(0, honorMember.length - 1));
+
             // 设置类型默认值
             $('.select-matchOrg option[value="{$honorInfo.type}"]').prop("selected", true);
-            if ("{$honorInfo.type}" == 2) {
+            if (type == 2) {
                 toTeamList()
             } else {
                 toTeamMemberList();
             }
+            
             // 选择类型
             $(".select-matchOrg").on("change", function () {
                 type = $(this).children("option:selected").val();
@@ -207,48 +226,93 @@
                 $(".honorMember").empty();
                 var teamCont = "";
                 var nameCont = "";
-
+                var str2 = "";
+                var str1 = "";
                 if (type == 2) {
-                    team_list = []
-                    $(".memberList input[type=checkbox]:checked").each(function () {
+                    $(".honorList input[type=checkbox]:checked").each(function () {
                         var team = $(this).attr("data-team");
                         var team_id = $(this).attr("data-team_id");
                         teamCont += team + ','
                         $(".honorMember").text(teamCont.substring(0, teamCont.length - 1));
-                        team_list.push({
-                            team,
-                            team_id
-                        })
+                        str2 += `<input type="text" value="${team_id}" data-team="${team}"/>`
+                        $(".hideList").empty().append(str2)
                     });
                 } else {
-                    team_member_list = []
-                    $(".memberList input[type=checkbox]:checked").each(function () {
+                    $(".honorList input[type=checkbox]:checked").each(function () {
                         var team_id = $(this).attr("data-team_id");
                         var team_member_id = $(this).attr("data-team_member_id");
                         var member_id = $(this).attr("data-member_id");
                         var name = $(this).attr("data-name");
                         nameCont += name + ','
                         $(".honorMember").text(nameCont.substring(0, nameCont.length - 1));
-                        team_member_list.push({
-                            team_id,
-                            team_member_id,
-                            member_id,
-                            name
-                        })
+                        str1 +=
+                            `<input type="text" value="${team_member_id}" data-team_id="${team_id}" data-member_id="${member_id}" data-name="${name}"/>`
+                        $(".hideList").empty().append(str1)
                     });
                 }
                 mui("#honorMember").popover("toggle");
+            });
+
+            //授奖人列表复选框赋值
+            $("#setHonorBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $(".honorList input[name='checkbox']").prop("checked", false);
+                //然后遍历出对应所选
+                var thisVal = ''
+                $(".hideList input").each(function () {
+                    thisVal = $(this).val();
+                    $(".honorList input[name='checkbox']").each(function () {
+                        if (type == 2) {
+                            if (thisVal == $(this).attr("data-team_id")) {
+                                $(this).prop("checked", true);
+                            }
+                        } else {
+                            if (thisVal == $(this).attr("data-team_member_id")) {
+                                $(this).prop("checked", true);
+                            }
+                        }
+                    })
+                })
             });
         })
 
         // 获取数据并进行提交
         function submitAction() {
-            console.log(type==2)
+
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
             var introHtml = $("#articleEditor").html();
             $(".introduction").val(introHtml);
+
+            // 提交获奖者名单
+            if (type == 2) {
+                team_list = []
+                $(".hideList input").each(function () {
+                    var team = $(this).attr("data-team");
+                    var team_id = $(this).val();
+                    team_list.push({
+                        team,
+                        team_id
+                    })
+                });
+                console.log(team_list)
+            } else {
+                team_member_list = []
+                $(".hideList input").each(function () {
+                    var team_id = $(this).attr("data-team_id");
+                    var team_member_id = $(this).val();
+                    var member_id = $(this).attr("data-member_id");
+                    var name = $(this).attr("data-name");
+                    team_member_list.push({
+                        team_id,
+                        team_member_id,
+                        member_id,
+                        name
+                    })
+                });
+                console.log(team_member_list)
+            }
 
             var data = wooApi.getInputData('input', 'data');
             datas = wooApi.getInputData('select', 'data', data);
@@ -310,7 +374,7 @@
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
-                        $(".memberList").empty().append(newli);
+                        $(".honorList").empty().append(newli);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }
@@ -351,7 +415,7 @@
                                 newli +=
                                     `<div class="mui-input-row mui-checkbox mui-left">
                                     <label class="wd mui-ellipsis">${teamMemberArray.name}</label>
-                                    <input name="checkbox-firght" type="checkbox" data-team_id="${teamMemberArray.team_id}"
+                                    <input name="checkbox" type="checkbox" data-team_id="${teamMemberArray.team_id}"
                                           data-team_member_id="${teamMemberArray.team_member_id}" data-member_id="${teamMemberArray.member_id}" 
                                           data-name="${teamMemberArray.name}"> 
                                        
@@ -362,7 +426,7 @@
                         if (newli == '') {
                             newli = '<p class="mui-text-center">没有查找到数据哦</p>'
                         }
-                        $(".memberList").empty().append(newli);
+                        $(".honorList").empty().append(newli);
                     } else {
                         mui.toast('数据获取失败,请稍候再试');
                     }

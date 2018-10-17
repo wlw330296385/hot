@@ -61,8 +61,9 @@
                 </li>
                 <li class="mui-table-view-cell listli">
                     <label>
-                        <span class="icon iconfont icon-activity-Quantity colororange"></span>获奖者</label>
-                    <span class="honorList"></span>
+                        <span class="icon iconfont icon-activity-Quantity colororange"></span>{if
+                        condition="$honorInfo['type'] == 1"}获奖者{else/}获奖队伍{/if}</label>
+                    <span>{$honorStr}</span>
                 </li>
             </ul>
 
@@ -98,26 +99,29 @@
                         分享
                     </a>
                 </li>
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
-                    <a href="{:url('team/honorEdit')}">
+                {if condition="$is_manager"}
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bggreen">
+                    <a href="{:url('match/honotEditOfLeague',['league_id'=>$leagueInfo.id,'honor_id'=>$honorInfo.id])}">
                         编辑
                     </a>
-                </li> -->
-                <!-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 opli bgblue">
                     <a href="#fbcomment">
                         评论
                     </a>
-                </li> -->
+                </li>
+                {else/}
                 <li class="mui-table-view-cell mui-media mui-col-xs-8 mui-col-sm-8 opli bgblue">
                     <a href="#fbcomment">
                         发表评论
                     </a>
                 </li>
-
+                {/if}
             </ul>
 
         </div>
     </div>
+
     <!--分享-->
     <div id="shareGuide" class="mui-popover">
         <div class="shareGuideText">1、点击右上角的
@@ -126,6 +130,7 @@
         </div>
         <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
     </div>
+
     <!-- 发表评论 -->
     <div id="fbcomment" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list camp-list camp-lesson-list detalis-list grade-list coach">
@@ -152,12 +157,10 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        var match_id = "{$league_id}"
+        var honor_id = "{$honorInfo.id}"
         var count = 1;
         $(function () {
-
-            // 去逗号
-            var honorList = $(".honorList").text()
-            $(".honorList").text(honorList.substring(0, honorList.length - 1));
 
             // 荣誉简介默认的提示
             if ($(".desimg").html() == '') {
@@ -167,7 +170,6 @@
 
             // 关注联赛
             $(".follow").on("tap", '', function () {
-                var league_id = "{$league_id}";
                 mui.ajax("{:url('api/follow/focus')}", {
                     data: {
                         type: 5,
@@ -198,23 +200,20 @@
 
             //评论功能
             $(".commentBtn").on('tap', function () {
-                var commented_id = "{honorInfo.id}";
-                var commented = "{honorInfo.name}";
-                var team_id = "{honorInfo.prize_team_id}";
+                var commented_id = honor_id;
                 var comment = $(".comment").val();
 
                 if (comment == '') {
-                    mui.toast("评价内容不能为空哦");
+                    mui.toast("评价内容不能为空");
                     return false;
                 }
 
-                mui.ajax("{:url('api/team/addteamcomment')}", {
+                mui.ajax("{:url('api/league/addleaguecomment')}", {
                     data: {
+                        comment_type: 3,
+                        match_id: match_id,
                         commented_id: commented_id,
-                        comment_type: 5,
-                        comment: comment,
-                        commented: commented,
-                        team_id: team_id
+                        comment: comment
                     },
                     dataType: 'json', //服务器返回json格式数据
                     type: 'post', //HTTP请求类型
@@ -244,11 +243,12 @@
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
-                var match_id = "{$league_id}";
+                var commented_id = honor_id;
                 mui.ajax("{:url('api/league/dianzan')}", {
                     data: {
-                        comment_type: 1,
-                        match_id: match_id
+                        comment_type: 3,
+                        match_id: match_id,
+                        commented_id: commented_id
                     },
                     dataType: 'json', //服务器返回json格式数据
                     type: 'post', //HTTP请求类型
@@ -279,11 +279,11 @@
 
         // 点赞状态
         function isthumbsup() {
-            var match_id = "{$league_id}";
             mui.ajax("{:url('api/league/isthumbup')}", {
                 data: {
                     match_id: match_id,
-                    comment_type: 1,
+                    comment_type: 3,
+                    commented_id: honor_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -313,11 +313,10 @@
 
         // 判断当前的关注状态
         function followStatus() {
-            var league_id = "{$league_id}";
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 5,
-                    league_id: league_id
+                    league_id: match_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -364,13 +363,14 @@
         }
         //获取评论列表
         function toCommentList(page, gType) {
-            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "{$honorInfo.id}";
+            var url = "{:url('api/league/leaguecommentlist','','',true)}/?page=" + page;
+            var commented_id = honor_id;
             mui.ajax({
                 url: url,
                 data: {
-                    commented_id: commented_id,
-                    comment_type: 5,
+                    match_id: match_id,
+                    comment_type: 3,
+                    commented_id: commented_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
