@@ -44,6 +44,7 @@
 
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="league_id" value="{$league_id}" class="data">
+        <input type="hidden" name="id" value="{$honorInfo.id}" class="data">
 
         <form action="" class="mui-input-group mt55">
 
@@ -180,9 +181,9 @@
             });
         })(mui, document);
 
-        var team_List = "";
-        var team_member_List = "";
-        var type = ''
+        var team_list = "";
+        var team_member_list = "";
+        var type = {$honorInfo.type};
         $(function () {
             // 设置类型默认值
             $('.select-matchOrg option[value="{$honorInfo.type}"]').prop("selected", true);
@@ -208,19 +209,19 @@
                 var nameCont = "";
 
                 if (type == 2) {
-                    team_List = []
+                    team_list = []
                     $(".memberList input[type=checkbox]:checked").each(function () {
-                        var team = $(this).attr("data-name");
+                        var team = $(this).attr("data-team");
                         var team_id = $(this).attr("data-team_id");
                         teamCont += team + ','
                         $(".honorMember").text(teamCont.substring(0, teamCont.length - 1));
-                        team_List.push({
+                        team_list.push({
                             team,
                             team_id
                         })
                     });
                 } else {
-                    team_member_List = []
+                    team_member_list = []
                     $(".memberList input[type=checkbox]:checked").each(function () {
                         var team_id = $(this).attr("data-team_id");
                         var team_member_id = $(this).attr("data-team_member_id");
@@ -228,7 +229,7 @@
                         var name = $(this).attr("data-name");
                         nameCont += name + ','
                         $(".honorMember").text(nameCont.substring(0, nameCont.length - 1));
-                        team_member_List.push({
+                        team_member_list.push({
                             team_id,
                             team_member_id,
                             member_id,
@@ -242,7 +243,7 @@
 
         // 获取数据并进行提交
         function submitAction() {
-            console.log(type)
+            console.log(type==2)
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
@@ -257,9 +258,9 @@
             var introduction = $('textarea.introduction').val();
             objData.introduction = introduction;
             if (type == 2) {
-                objData.team_List = JSON.stringify(team_List);
+                objData.team_list = JSON.stringify(team_list);
             } else {
-                objData.team_member_List = JSON.stringify(team_member_List);
+                objData.team_member_list = JSON.stringify(team_member_list);
             }
             var url = "{:url('api/league/saveMatchHonor')}";
             var ajaxResult = wooApi.asyncF(url, objData);
@@ -303,8 +304,7 @@
                             newli +=
                                 `<div class="mui-input-row mui-checkbox mui-left">
                                     <label>${data.data[i].team.name}</label>
-                                    <input name="checkbox" type="checkbox" data-team_id="${data.data[i].team.name}" data-team_member_id="${data.data[i].team.name}"
-                                    data-member_id="${data.data[i].team.name}" data-name="${data.data[i].team.name}">
+                                    <input name="checkbox" type="checkbox" data-team_id="${data.data[i].team.id}" data-team="${data.data[i].team.name}">
                                 </div>`
                         }
                         if (newli == '') {

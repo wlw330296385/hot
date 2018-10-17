@@ -180,9 +180,9 @@
             });
         })(mui, document);
 
-        var team_List = "";
-        var team_member_List = "";
-        var type = ''
+        var team_list = "";
+        var team_member_list = "";
+        var type = 1;
         $(function () {
             // 选择类型
             $(".select-matchOrg").on("change", function () {
@@ -201,19 +201,19 @@
                 var nameCont = "";
 
                 if (type == 2) {
-                    team_List = []
+                    team_list = []
                     $(".memberList input[type=checkbox]:checked").each(function () {
                         var team = $(this).attr("data-name");
                         var team_id = $(this).attr("data-team_id");
                         teamCont += team + ','
                         $(".honorMember").text(teamCont.substring(0, teamCont.length - 1));
-                        team_List.push({
+                        team_list.push({
                             team,
                             team_id
                         })
                     });
                 } else {
-                    team_member_List = []
+                    team_member_list = []
                     $(".memberList input[type=checkbox]:checked").each(function () {
                         var team_id = $(this).attr("data-team_id");
                         var team_member_id = $(this).attr("data-team_member_id");
@@ -221,7 +221,7 @@
                         var name = $(this).attr("data-name");
                         nameCont += name + ','
                         $(".honorMember").text(nameCont.substring(0, nameCont.length - 1));
-                        team_member_List.push({
+                        team_member_list.push({
                             team_id,
                             team_member_id,
                             member_id,
@@ -249,9 +249,9 @@
             var introduction = $('textarea.introduction').val();
             objData.introduction = introduction;
             if (type == 2) {
-                objData.team_List = JSON.stringify(team_List);
+                objData.team_list = JSON.stringify(team_list);
             } else {
-                objData.team_member_List = JSON.stringify(team_member_List);
+                objData.team_member_list = JSON.stringify(team_member_list);
             }
             var url = "{:url('api/league/saveMatchHonor')}";
             var ajaxResult = wooApi.asyncF(url, objData);

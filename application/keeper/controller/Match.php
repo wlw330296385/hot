@@ -1230,8 +1230,15 @@ class Match extends Base {
             'match_honor_id' => $honor_id
         ]);
 
+        $tempArray = [];
+        foreach ($honorMemberList as $row) {
+            array_push($tempArray, $row['name']);
+        }
+        $uniqueArray = array_unique($tempArray);
+        $honorMemberStr = implode("，", $uniqueArray);
+
         $this->assign('honorInfo', $honorInfo);
-        $this->assign('honorMemberList', $honorMemberList);
+        $this->assign('honorMemberStr', $honorMemberStr);
         return view('Match/honor/infoOfLeague');
     }
     // 联赛编辑荣誉
@@ -1246,11 +1253,52 @@ class Match extends Base {
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
-        $honorMemberList = $leagueS->getMatchHonorMemberList([
+        $result = $leagueS->getMatchHonorMemberList([
             'match_id' => $league_id,
             'match_honor_id' => $honor_id
         ]);
+        if (!empty($result)) {
+            $honorMemberList = [
+                "id" => $honorInfo['id'],
+                "league_id" => $honorInfo['match_id'],
+                "name" => $honorInfo['name'],
+                "type" => $honorInfo['type'],
+                "honor_time" => $honorInfo['honor_time'],
+                "introduction" => $honorInfo['introduction']
+            ];
 
+            $tempArray = [];
+            switch ($honorInfo['type']) {
+                case '1':
+                    foreach ($result as $row) {
+                        $temp = [
+                            "team_id" => $row["team_id"],
+                            "team" => $row["team"],
+                            "team_member_id" => $row["team_member_id"],
+                            "member_id" => $row["member_id"],
+                            "name" => $row["name"]
+                        ];
+                        array_push($tempArray, $temp);
+                    }
+                    $honorMemberList["team_member_list"] = $tempArray;
+                    break;
+                case '2':
+                    $tempTeamId = '';
+                    foreach ($result as $row) {
+                        if ($tempTeamId != $row['team_id']) {
+                            $tempTeamId = $row['team_id'];
+                            $temp = [
+                                "team_id" => $row["team_id"],
+                                "team" => $row["team"]
+                            ];
+                            array_push($tempArray, $temp);
+                        }
+                    }
+                    $honorMemberList["team_list"] = $tempArray;
+                    break;
+            }
+        }
+// dump($honorMemberList);exit;
         $this->assign('honorInfo', $honorInfo);
         $this->assign('honorMemberList', $honorMemberList);
         return view('Match/honor/editOfLeague');

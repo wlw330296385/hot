@@ -1500,7 +1500,7 @@ class League extends Base
                     "team_id" => $row["team_id"],
                     "team" => $row["team"],
                     "team_member_id" => $row["team_member_id"],
-                    "member_id" => $row["team_member_id"],
+                    "member_id" => $row["member_id"],
                     "name" => $row["name"]
                 ];
                 array_push($tempData[$row['match_team_id']]["match_team_members"], $temp);
@@ -5766,6 +5766,14 @@ class League extends Base
             unset($data['league_id']);
         }
 
+        $leagueS = new LeagueService();
+        $matchInfo = $leagueS->getMatch(['id' => $data['match_id']]);
+        if (!$matchInfo) {
+            return json(['code' => 100, 'msg' => '未找到该联赛']);
+        } else {
+            $data['match'] = $matchInfo['name'];
+        }
+
         if (empty($data['status'])) {
             $data['status'] = 1;
         }
@@ -5774,7 +5782,6 @@ class League extends Base
             $data['honor_time'] = strtotime($data['honor_time']);
         }
         // 权限验证
-        $leagueS = new LeagueService();
         $power = $leagueS->getMatchMemberType([
             'match_id' => $data['match_id'],
             'member_id' => $this->memberInfo['id'],
@@ -5808,7 +5815,9 @@ class League extends Base
         }
 
         // 填了获奖人，奖项颁发
-        if (!empty($data['team_member_list']) || !empty($data['team_list'])) {
+        if ( ( !empty($data['team_member_list']) && !empty(json_decode($data['team_member_list'])) )
+            ||
+            ( !empty($data['team_list']) && !empty(json_decode($data['team_list'])) ) ) {
             // 查之前的颁奖人信息
             $matchHonorMemberList = $leagueS->getMatchHonorMemberList([
                 'match_id' => $data['match_id'], 
@@ -5824,6 +5833,7 @@ class League extends Base
             $honorTeamMemberIdArray = array_unique($honorTeamMemberIdArray);
 
             $finalData = [];
+
             switch ($data['type']) {
                 case '1':
                     // 个人奖颁发时，team_id, team_member_id 都是必填
@@ -5849,9 +5859,9 @@ class League extends Base
                         }
                         $temp = [
                             "match_id" => $matchTeamMember["match_id"],
-                            "match" => $matchTeamMember["match"],
-                            "match_honor_id" => $matchHonor['id'],
-                            "match_honor" => $matchHonor['name'],
+                            "match" => $matchInfo['name'],
+                            "match_honor_id" => !empty($matchHonor) ? $matchHonor['id'] : $data['id'],
+                            "match_honor" => !empty($matchHonor) ? $matchHonor['name'] : $data['name'],
                             "team_id" => $matchTeamMember["team_id"],
                             "team" => $matchTeamMember["team"],
                             "team_member_id" => $matchTeamMember["team_member_id"],
@@ -5884,7 +5894,7 @@ class League extends Base
                             'team_id' => $row['team_id']
                         ]);
                         if (empty($matchTeam)) {
-                            return json(['code' => 100, 'msg' => $row['name'].'该队伍未参加该赛事']);
+                            return json(['code' => 100, 'msg' => $row['team'].'该队伍未参加该赛事']);
                         }
 
                         if (!in_array($row['team_id'], $honorTeamIdArray)) {
@@ -5897,25 +5907,28 @@ class League extends Base
                             'team_id' => $row['team_id']
                         ]);
                         if (!empty($matchTeamMemberList)) {
-                            foreach ($matchTeamMemberList as $row) {
+                            foreach ($matchTeamMemberList as $item) {
                                 $temp = [
-                                    "match_id" => $row["match_id"],
-                                    "match" => $row["match"],
-                                    "match_honor_id" => $data['id'],
-                                    "match_honor" => $matchHonor['name'],
-                                    "team_id" => $row["team_id"],
-                                    "team" => $row["team"],
-                                    "team_member_id" => $row["team_member_id"],
-                                    "name" => $row["name"],
-                                    "member_id" => $row["member_id"]
+                                    "match_id" => $item["match_id"],
+                                    "match" => $matchInfo['name'],
+                                    "match_honor_id" => !empty($matchHonor) ? $matchHonor['id'] : $data['id'],
+                                    "match_honor" => !empty($matchHonor) ? $matchHonor['name'] : $data['name'],
+                                    "team_id" => $item["team_id"],
+                                    "team" => $item["team"],
+                                    "team_member_id" => $item["team_member_id"],
+                                    "name" => $item["name"],
+                                    "member_id" => $item["member_id"]
                                 ];
                                 array_push($finalData, $temp);
                             }
                         } else {
                             $temp = [
                                 "match_id" => $matchTeam["match_id"],
+                                "match" => $matchInfo['name'],
                                 "match_honor_id" => $data['id'],
-                                "team_id" => $matchTeam["team_id"]
+                                "match_honor" => !empty($matchHonor) ? $matchHonor['name'] : $data['name'],
+                                "team_id" => $matchTeam["team_id"],
+                                "team" => $row["team"],
                             ];
                             array_push($finalData, $temp);
                         }
