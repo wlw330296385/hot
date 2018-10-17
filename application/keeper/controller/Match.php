@@ -1215,31 +1215,44 @@ class Match extends Base {
     // 联赛荣誉详情
     public function honorInfoOfLeague() {
         $honor_id = input('honor_id', 0, 'intval');
-        $leagueId = input('league_id', 0,'intval');
+        $league_id = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $honorInfo = $leagueS->getMatchHonor([
             'id' => $honor_id,
-            'match_id' => $leagueId
+            'match_id' => $league_id
         ]);
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
+
+        $honorMemberList = $leagueS->getMatchHonorMemberList([
+            'match_id' => $league_id,
+            'match_honor_id' => $honor_id
+        ]);
+
         $this->assign('honorInfo', $honorInfo);
+        $this->assign('honorMemberList', $honorMemberList);
         return view('Match/honor/infoOfLeague');
     }
     // 联赛编辑荣誉
     public function honotEditOfLeague() {
         $honor_id = input('honor_id', 0, 'intval');
-        $leagueId = input('league_id', 0,'intval');
+        $league_id = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $honorInfo = $leagueS->getMatchHonor([
             'id' => $honor_id,
-            'match_id' => $leagueId
+            'match_id' => $league_id
         ]);
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
+        $honorMemberList = $leagueS->getMatchHonorMemberList([
+            'match_id' => $league_id,
+            'match_honor_id' => $honor_id
+        ]);
+
         $this->assign('honorInfo', $honorInfo);
+        $this->assign('honorMemberList', $honorMemberList);
         return view('Match/honor/editOfLeague');
     }
     // 联赛荣誉
