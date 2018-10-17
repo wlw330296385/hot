@@ -90,6 +90,8 @@ class Family extends Base{
                 if($result['telephone']<>$this->memberInfo['telephone']){                   
                     return json(['code'=>100,'msg'=>'您账号的电话号码不匹配']); 
                 }
+            }else{
+                return json(['code'=>100,'msg'=>'并没有人邀请你成为家庭成员']); 
             }
             $status = input('param.status');
             if(!$status){
@@ -103,6 +105,9 @@ class Family extends Base{
                 $res = $this->FamilyModel->save($data,$map);
             }
             if ($status==-2) {
+                $data['to_member_avatar'] = $this->memberInfo['avatar'];
+                $data['to_member_id'] = $this->memberInfo['id'];
+                $data['to_member'] = $this->memberInfo['member'];
                 $data['status'] = -2;
                 $res = $this->FamilyModel->save($data,$map);
             }
