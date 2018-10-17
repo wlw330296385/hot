@@ -1225,20 +1225,32 @@ class Match extends Base {
             $this->error('找不到该荣誉信息');
         }
 
+        // 检查他是否为管理员
+        $is_manager = 0;
+        $matchMember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if ( !empty($matchMember) && $matchMember['type'] >= 9) {
+            $is_manager = 1;
+        }
+
         $honorMemberList = $leagueS->getMatchHonorMemberList([
             'match_id' => $league_id,
             'match_honor_id' => $honor_id
         ]);
 
-        $tempArray = [];
+        $tempArray1 = [];
+        $tempArray2 = [];
         foreach ($honorMemberList as $row) {
-            array_push($tempArray, $row['name']);
+            array_push($tempArray1, $row['name']);
+            array_push($tempArray2, $row['team']);
         }
-        $uniqueArray = array_unique($tempArray);
-        $honorMemberStr = implode("，", $uniqueArray);
+        $uniqueArray1 = array_unique($tempArray1);
+        $uniqueArray2 = array_unique($tempArray2);
+
+        $honorStr = $honorInfo["type"] == 1 ? implode("，", $uniqueArray1) : implode("，", $uniqueArray2);
 
         $this->assign('honorInfo', $honorInfo);
-        $this->assign('honorMemberStr', $honorMemberStr);
+        $this->assign('honorStr', $honorStr);
+        $this->assign('is_manager', $is_manager);
         return view('Match/honor/infoOfLeague');
     }
     // 联赛编辑荣誉
@@ -1298,7 +1310,7 @@ class Match extends Base {
                     break;
             }
         }
-// dump($honorMemberList);exit;
+
         $this->assign('honorInfo', $honorInfo);
         $this->assign('honorMemberList', $honorMemberList);
         return view('Match/honor/editOfLeague');
