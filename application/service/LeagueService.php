@@ -64,6 +64,17 @@ class LeagueService
         }
     }
 
+    // 获取联赛信息
+    public function getMatch($map)
+    {
+        $model = new Match();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
     // 获取联赛组织信息
     public function getMatchOrg($map)
     {

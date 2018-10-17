@@ -1093,6 +1093,11 @@ class Match extends Base {
 
     // 联赛对阵积分表
     public function integralTableList() {
+        $matchStageInfo = $leagueS->getMatchStage(([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+
         // 判断有无小组赛晋级数据 显示提交数据按钮
         $showBtn = 1;
         $leagueS = new LeagueService();
@@ -1137,6 +1142,7 @@ class Match extends Base {
 
         $this->assign('showBtn', $showBtn);
         $this->assign('canSubmit', $canSubmit);
+        $this->assign('matchStageInfo', $matchStageInfo);
         return view('Match/record/integralTableList');
     }
 
@@ -1225,13 +1231,32 @@ class Match extends Base {
             $this->error('找不到该荣誉信息');
         }
 
+        // 检查他是否为管理员
+        $is_manager = 0;
+        $matchMember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if ( !empty($matchMember) && $matchMember['type'] >= 9) {
+            $is_manager = 1;
+        }
+
         $honorMemberList = $leagueS->getMatchHonorMemberList([
             'match_id' => $league_id,
             'match_honor_id' => $honor_id
         ]);
 
+        $tempArray1 = [];
+        $tempArray2 = [];
+        foreach ($honorMemberList as $row) {
+            array_push($tempArray1, $row['name']);
+            array_push($tempArray2, $row['team']);
+        }
+        $uniqueArray1 = array_unique($tempArray1);
+        $uniqueArray2 = array_unique($tempArray2);
+
+        $honorStr = $honorInfo["type"] == 1 ? implode("，", $uniqueArray1) : implode("，", $uniqueArray2);
+
         $this->assign('honorInfo', $honorInfo);
-        $this->assign('honorMemberList', $honorMemberList);
+        $this->assign('honorStr', $honorStr);
+        $this->assign('is_manager', $is_manager);
         return view('Match/honor/infoOfLeague');
     }
     // 联赛编辑荣誉
@@ -1246,10 +1271,51 @@ class Match extends Base {
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
-        $honorMemberList = $leagueS->getMatchHonorMemberList([
+        $result = $leagueS->getMatchHonorMemberList([
             'match_id' => $league_id,
             'match_honor_id' => $honor_id
         ]);
+        if (!empty($result)) {
+            $honorMemberList = [
+                "id" => $honorInfo['id'],
+                "league_id" => $honorInfo['match_id'],
+                "name" => $honorInfo['name'],
+                "type" => $honorInfo['type'],
+                "honor_time" => $honorInfo['honor_time'],
+                "introduction" => $honorInfo['introduction']
+            ];
+
+            $tempArray = [];
+            switch ($honorInfo['type']) {
+                case '1':
+                    foreach ($result as $row) {
+                        $temp = [
+                            "team_id" => $row["team_id"],
+                            "team" => $row["team"],
+                            "team_member_id" => $row["team_member_id"],
+                            "member_id" => $row["member_id"],
+                            "name" => $row["name"]
+                        ];
+                        array_push($tempArray, $temp);
+                    }
+                    $honorMemberList["team_member_list"] = $tempArray;
+                    break;
+                case '2':
+                    $tempTeamId = '';
+                    foreach ($result as $row) {
+                        if ($tempTeamId != $row['team_id']) {
+                            $tempTeamId = $row['team_id'];
+                            $temp = [
+                                "team_id" => $row["team_id"],
+                                "team" => $row["team"]
+                            ];
+                            array_push($tempArray, $temp);
+                        }
+                    }
+                    $honorMemberList["team_list"] = $tempArray;
+                    break;
+            }
+        }
 
         $this->assign('honorInfo', $honorInfo);
         $this->assign('honorMemberList', $honorMemberList);
