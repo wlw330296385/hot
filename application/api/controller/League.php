@@ -5849,10 +5849,14 @@ class League extends Base
                         }
                         $temp = [
                             "match_id" => $matchTeamMember["match_id"],
-                            "match_honor_id" => $data['id'],
+                            "match" => $matchTeamMember["match"],
+                            "match_honor_id" => $matchHonor['id'],
+                            "match_honor" => $matchHonor['name'],
                             "team_id" => $matchTeamMember["team_id"],
+                            "team" => $matchTeamMember["team"],
                             "team_member_id" => $matchTeamMember["team_member_id"],
-                            "member_id" => $matchTeamMember["member_id"] 
+                            "name" => $matchTeamMember["name"],
+                            "member_id" => $matchTeamMember["member_id"]
                         ];
                         // 如果team_member_id不在honorTeamMemberIdArray内就表示有修改
                         if (!in_array($row['team_member_id'], $honorTeamMemberIdArray)) {
@@ -5896,9 +5900,13 @@ class League extends Base
                             foreach ($matchTeamMemberList as $row) {
                                 $temp = [
                                     "match_id" => $row["match_id"],
+                                    "match" => $row["match"],
                                     "match_honor_id" => $data['id'],
+                                    "match_honor" => $matchHonor['name'],
                                     "team_id" => $row["team_id"],
+                                    "team" => $row["team"],
                                     "team_member_id" => $row["team_member_id"],
+                                    "name" => $row["name"],
                                     "member_id" => $row["member_id"]
                                 ];
                                 array_push($finalData, $temp);
@@ -5935,4 +5943,21 @@ class League extends Base
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 
+    public function getMatchHonorMemberList() {
+        $data = input('param.');
+        if (empty($data["league_id"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        } else {
+            $data['match_id'] = $data["league_id"];
+            unset($data['league_id']);
+        }
+        $leagueS = new LeagueService();
+
+        $result = $leagueS->getMatchHonorMemberList($data);
+        if ($result) {
+            return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+    }
 }

@@ -153,7 +153,7 @@ class Matchdata extends Base
                         $matchRecordMemberData['member'] = $teamMemberInfo['member'];
                         $matchRecordMemberData['member_id'] = $teamMemberInfo['member_id'];
                         $matchRecordMemberData['name'] = $teamMemberInfo['name'];
-                        $matchRecordMemberData['number'] = empty($val['number']) ? null : $val['number'];
+                        $matchRecordMemberData['number'] = isset($val['number']) ? intval($val['number']) : null;
                         $matchRecordMemberData['avatar'] = $teamMemberInfo['avatar'];
                         $matchRecordMemberData['contact_tel'] = $teamMemberInfo['telephone'];
                     } else {
@@ -166,7 +166,7 @@ class Matchdata extends Base
                             $matchRecordMemberData['member'] = $memberInfo['member'];
                             $matchRecordMemberData['member_id'] = $memberInfo['id'];
                             $matchRecordMemberData['name'] = $memberInfo['member'];
-                            $matchRecordMemberData['number'] = empty($val['number']) ? null : $val['number'];
+                            $matchRecordMemberData['number'] = isset($val['number']) ? intval($val['number']) : null;
                             $matchRecordMemberData['avatar'] = $memberInfo['avatar'];
                             $matchRecordMemberData['contact_tel'] = $memberInfo['telephone'];
                         } else {
@@ -174,7 +174,7 @@ class Matchdata extends Base
                             $matchRecordMemberData['member'] = $val['name'];
                             $matchRecordMemberData['member_id'] = 0;
                             $matchRecordMemberData['name'] = $val['name'];
-                            $matchRecordMemberData['number'] = empty($val['number']) ? null : $val['number'];
+                            $matchRecordMemberData['number'] = isset($val['number']) ? intval($val['number']) : null;
                             $matchRecordMemberData['avatar'] = config('default_image.member_avatar');
                             $matchRecordMemberData['contact_tel'] = 0;
                         }
