@@ -199,7 +199,7 @@
             </div>
             {/volist}
         </form>
-        <!-- <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p> -->
+        <p class="clearOperation hide">需要清空赛程？点击<a class="clearScheduleList colororange">清空</a></p>
 
         <ul class="mui-table-view operation">
             <li class="mui-table-view-cell mui-col-xs-12 opli bggreen" onclick="submitAction()">
@@ -714,12 +714,14 @@
 
             // 清空赛程操作-未产生赛果情况下才可以清空
             $(document).on("tap", ".clearScheduleList", function () {
-                mui.confirm("确定清空所有赛程？", "提示", ['取消', '确定'], function (e) {
+                mui.confirm("确定清空该阶段所有赛程？", "提示", ['取消', '确定'], function (e) {
                     if (e.index == 1) {
                         var league_id = "{$league_id}";
+                        var match_stage_id = $(".match_stage").children("option:selected").val();
                         mui.ajax("{:url('api/league/clearmatchschedule','','',true)}", {
                             data: {
                                 match_id: league_id,
+                                match_stage_id: match_stage_id
                             },
                             dataType: 'json', //服务器返回json格式数据
                             type: 'post', //HTTP请求类型
@@ -731,7 +733,7 @@
                                 console.log(data)
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
-                                    setTimeout('location.reload()', 2000);
+                                    setTimeout('location.reload()', 1000);
                                 } else {
                                     mui.toast(data.msg);
                                 }
@@ -740,7 +742,6 @@
                     }
                 })
             })
-
         });
 
         // 比赛阶段
