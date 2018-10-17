@@ -1093,6 +1093,11 @@ class Match extends Base {
 
     // 联赛对阵积分表
     public function integralTableList() {
+        $matchStageInfo = $leagueS->getMatchStage(([
+            'match_id' => $this->league_id,
+            'type' => 1
+        ]);
+
         // 判断有无小组赛晋级数据 显示提交数据按钮
         $showBtn = 1;
         $leagueS = new LeagueService();
@@ -1137,6 +1142,7 @@ class Match extends Base {
 
         $this->assign('showBtn', $showBtn);
         $this->assign('canSubmit', $canSubmit);
+        $this->assign('matchStageInfo', $matchStageInfo);
         return view('Match/record/integralTableList');
     }
 

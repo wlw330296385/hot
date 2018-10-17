@@ -3576,25 +3576,31 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 检查联赛有已完成赛程记录 就不能进行操作
-        $finishScheduleCount = $leagueS->getMatchScheduleCount([
+        $map = [
             'match_id' => $match_id,
             'status' => 2
-        ]);
+        ];
+
+        if ( !empty(input('match_stage_id')) ) {
+            $map['match_stage_id'] = input('match_stage_id');
+            $data['match_stage_id'] = input('match_stage_id');
+        }
+
+        $finishScheduleCount = $leagueS->getMatchScheduleCount($map);
         if ($finishScheduleCount) {
             return json(['code' => 100, 'msg' => '联赛有已完成的赛程信息，不能清空赛程信息']);
         }
-        // 物理删除联赛所有赛程数据
+        // 物理删除联赛所有/相关赛程数据
         try {
-            $result = $leagueS->delMatchSchedule(['match_id' => $match_id], true);
+            $data['match_id'] = $match_id;
+            $result = $leagueS->delMatchSchedule($data, true);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
-        if (!$result) {
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
-        } else {
-            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
-        }
+        
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        
     }
 
     // 根据联赛分组生成预览赛程
