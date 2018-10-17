@@ -1208,17 +1208,42 @@ class Match extends Base {
      // 联赛荣誉详情（外部展示）
      public function honorInfo() {
         $honor_id = input('honor_id', 0, 'intval');
-        $leagueId = input('league_id', 0,'intval');
+        $league_id = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $honorInfo = $leagueS->getMatchHonor([
             'id' => $honor_id,
-            'match_id' => $leagueId
+            'match_id' => $league_id
         ]);
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
-        
+
+        // 检查他是否为管理员
+        $is_manager = 0;
+        $matchMember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if ( !empty($matchMember) && $matchMember['type'] >= 9) {
+            $is_manager = 1;
+        }
+
+        $honorMemberList = $leagueS->getMatchHonorMemberList([
+            'match_id' => $league_id,
+            'match_honor_id' => $honor_id
+        ]);
+
+        $tempArray1 = [];
+        $tempArray2 = [];
+        foreach ($honorMemberList as $row) {
+            array_push($tempArray1, $row['name']);
+            array_push($tempArray2, $row['team']);
+        }
+        $uniqueArray1 = array_unique($tempArray1);
+        $uniqueArray2 = array_unique($tempArray2);
+
+        $honorStr = $honorInfo["type"] == 1 ? implode("，", $uniqueArray1) : implode("，", $uniqueArray2);
+
         $this->assign('honorInfo', $honorInfo);
+        $this->assign('honorStr', $honorStr);
+        $this->assign('is_manager', $is_manager);
         return view('Match/honor/info');
     }
     // 联赛荣誉详情
