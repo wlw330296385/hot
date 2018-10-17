@@ -68,15 +68,19 @@
                     接受邀请
                 </button>
                 {elseif $memberInfo.telephone==$familyInfo.telephone }
-                <button type="button" class="mui-btn btn bggreen registerBtn">
+                <button type="button" class="mui-btn btn bggreen agreeBtn">
                     接受邀请
                 </button>
+                <button type="button" class="mui-btn btn bggred rejectBtn">
+                    拒绝
+                </button>
+                {elseif $memberInfo.id == $familyInfo.member_id && $familyInfo.status==-1}
+                    <p class="tips">您的邀请对方没有接收,您可以转发分享页面给他让他成为你家庭成员中一员哦</p>
+                {elseif $memberInfo.id == $familyInfo.member_id && $familyInfo.status==-2}
+                    <p class="tips">对方已拒绝您的邀请,您可以继续转发分享页面给他让他成为你家庭成员中一员哦</p>
                 {else/}
-                <p class="tips">您当前账号所绑定的电话号码<br />与对方邀请所需验证的号码不一致哦</p>
-                <p>如需加入请让<text class="memberName"></text>给您转发该号码的申请。<br />您当前账号所绑定的手机号码为 {$memberInfo.telephone}</p>
-                <button type="button" class="mui-btn btn bggray registerBtn" disabled="disabled">
-                    接受邀请
-                </button>
+                    <p class="tips">您当前账号所绑定的电话号码<br />与对方邀请所需验证的号码不一致哦</p>
+                    <p>如需加入请让<text class="memberName"></text>给您转发该号码的申请。<br />您当前账号所绑定的手机号码为 {$memberInfo.telephone}</p>
                 {/if}
             </div>
 
@@ -106,8 +110,11 @@
             $(".memberName").text(memberName);
             var telephoneTips = "{$familyInfo.telephone}".replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
             $("#telephoneTips").text(telephoneTips);
-
         })
+
+
+
+
     </script>
 </body>
 
