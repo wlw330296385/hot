@@ -351,5 +351,4 @@ class Member extends Base{
     public function claim(){
         return view('Member/claim');
     }
-
 }
