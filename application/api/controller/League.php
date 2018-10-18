@@ -3487,7 +3487,7 @@ class League extends Base
         }
         try {
             // $leagueS->saveMatchSchedule(['id' => $scheduleInfo['id'], 'status' => -1]);
-            $result = $leagueS->delMatchSchedule($scheduleInfo['id']);
+            $result = $leagueS->delMatchSchedule($scheduleInfo['id'], true);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -3543,7 +3543,7 @@ class League extends Base
         }
 
         try {
-            $result = $leagueS->delMatchSchedule($id_arr);
+            $result = $leagueS->delMatchSchedule($id_arr, true);
         } catch (Exception $e) {
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
@@ -3598,7 +3598,7 @@ class League extends Base
             trace('error:' . $e->getMessage(), 'error');
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
-        
+
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         
     }
@@ -4761,16 +4761,18 @@ class League extends Base
             $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
             if ($matchRecord && $matchRecord['is_record']) {
                 return json(['code' => 100, 'msg' => '比赛结果已无法修改']);
+            } else {
+                $data['id'] = $matchRecord['id'];
             }
-        }
-
-        // 检查赛程是否已有比赛结果信息
-        $checkScheduleHasRecord = $matchS->getMatchRecord([
-            'match_id' => $data['match_id'],
-            'match_schedule_id' => $data['match_schedule_id']
-        ]);
-        if ($checkScheduleHasRecord) {
-            return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息']);
+        } else {
+            // 检查赛程是否已有比赛结果信息
+            $checkScheduleHasRecord = $matchS->getMatchRecord([
+                'match_id' => $data['match_id'],
+                'match_schedule_id' => $data['match_schedule_id']
+            ]);
+            if ($checkScheduleHasRecord) {
+                return json(['code' => 100, 'msg' => '该赛程已录入比赛结果信息']);
+            }
         }
 
         // 检查球队信息真实性
@@ -5577,7 +5579,7 @@ class League extends Base
             'match_id' => $data['match_id'],
             'status' => 1
         ]);
-        if ($power < 8) {
+        if ($power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         if (input('?post.advteams') && !is_null(json_decode($data['advteams']))) {

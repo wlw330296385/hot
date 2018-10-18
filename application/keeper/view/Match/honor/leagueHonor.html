@@ -68,6 +68,14 @@
         .colactive {
             color: #dd524d !important
         }
+          .orderNum {
+            width: 7%;
+            font-size: 20px;
+            line-height: 55px;
+            text-align: center;
+            margin-right: 12px;
+            margin-top: 0;
+        }
     </style>
 </head>
 
@@ -207,7 +215,7 @@
 
         followStatus(); //判断当前的关注状态
         // getbattle(); //分组列表
-
+        toHonorList()
 
         // 关注联赛
         $(".follow").on("tap", '', function () {
@@ -272,6 +280,57 @@
                 }
             });
         }
+
+        function toHonorList() {
+            var url = "{:url('api/league/getMatchHonorList','','',true)}";
+            var league_id = "{$leagueInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id,
+                    status: 1
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    var newli = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('match/honorinfo')}" + '/honor_id/' + data.data[
+                                i].id + '/league_id/' + data.data[i].match_id;
+                            newli +=
+                                `<li class="mui-table-view-cell listli">
+                                            <a href="${urls}">
+                                                <div class="fl orderNum">${(i + 1)}</div>
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
+                                                    <p class="mui-ellipsis lineHeight20" >授奖单位：{$leagueInfo.name}</p>`
+                            if (data.data[i].honor_time == '') {
+                                newli +=
+                                    `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                            } else {
+                                newli +=
+                                    `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                            }
+                            newli += `</div></a></li>`;
+                        }
+                    }
+                    $(".honorList").empty().append(newli);
+                    if (newli == '') {
+                        $(".honorList").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
 
         // 小组列表
         function getbattle() {

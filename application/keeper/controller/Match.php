@@ -1093,55 +1093,58 @@ class Match extends Base {
 
     // 联赛对阵积分表
     public function integralTableList() {
-        $matchStageInfo = $leagueS->getMatchStage(([
+
+        $leagueS = new LeagueService();
+        $matchStageInfo = $leagueS->getMatchStage([
             'match_id' => $this->league_id,
             'type' => 1
         ]);
 
         // 判断有无小组赛晋级数据 显示提交数据按钮
-        $showBtn = 1;
-        $leagueS = new LeagueService();
+        $showBtn = 0;
+        
         $matchStageAdvteams = $leagueS->getMatchStageAdvteams([
             'match_id' => $this->league_id,
-            'match_group_id' => ['>', 0]
+            'match_group_id' => ['>', 0],
+            'match_stage_id' => $matchStageInfo['id']
         ]);
-        // 不显示按钮
-        if ($matchStageAdvteams) {
-            $showBtn = 0;
-        }
 
         // 控制能否提交排名数据：小组赛阶段赛程无完成，已发布的小组赛阶段比赛结果记录数等于已完成小组赛阶段赛程记录数
-        $canSubmit = 0;
         // 未完成分组赛程记录数
         $normalMatchScheduleCount = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
-            'status' => 1,
-            'match_group_id' => ['>', 0]
+            'status' => ['in', [0,1]],
+            'match_group_id' => ['>', 0],
+            'match_stage_id' => $matchStageInfo['id']
         ]);
+
         // 已完成分组赛程记录数
         $finishMatchScheduleCount = $leagueS->getMatchScheduleCount([
             'match_id' => $this->league_id,
             'status' => 2,
-            'match_group_id' => ['>', 0]
+            'match_group_id' => ['>', 0],
+            'match_stage_id' => $matchStageInfo['id']
         ]);
         // 未发布的分组比赛结果
-        $normalMatchRecordCount = $leagueS->getMatchRecordCount([
-            'match_id' => $this->league_id,
-            'match_group_id' => ['>', 0],
-            'is_record' => 0
-        ]);
+        // $normalMatchRecordCount = $leagueS->getMatchRecordCount([
+        //     'match_id' => $this->league_id,
+        //     'match_group_id' => ['>', 0],
+        //     'is_record' => 0,
+        //     'match_stage_id' => $matchStageInfo['id']
+        // ]);
         // 已发布的分组比赛结果
         $isRecordMatchRecordCount = $leagueS->getMatchRecordCount([
             'match_id' => $this->league_id,
             'match_group_id' => ['>', 0],
-            'is_record' => 1
+            'is_record' => 1,
+            'match_stage_id' => $matchStageInfo['id']
         ]);
-        if ( !$normalMatchScheduleCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && $finishMatchScheduleCount == $isRecordMatchRecordCount) {
-            $canSubmit = 1;
+        if ( !$matchStageAdvteams && !$normalMatchScheduleCount && $finishMatchScheduleCount && $isRecordMatchRecordCount && 
+            $finishMatchScheduleCount == $isRecordMatchRecordCount) {
+            $showBtn = 1;
         }
 
         $this->assign('showBtn', $showBtn);
-        $this->assign('canSubmit', $canSubmit);
         $this->assign('matchStageInfo', $matchStageInfo);
         return view('Match/record/integralTableList');
     }
@@ -1205,17 +1208,42 @@ class Match extends Base {
      // 联赛荣誉详情（外部展示）
      public function honorInfo() {
         $honor_id = input('honor_id', 0, 'intval');
-        $leagueId = input('league_id', 0,'intval');
+        $league_id = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $honorInfo = $leagueS->getMatchHonor([
             'id' => $honor_id,
-            'match_id' => $leagueId
+            'match_id' => $league_id
         ]);
         if (!$honorInfo) {
             $this->error('找不到该荣誉信息');
         }
-        
+
+        // 检查他是否为管理员
+        $is_manager = 0;
+        $matchMember = $leagueS->getMatchMember(['match_id' => $this->league_id, 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        if ( !empty($matchMember) && $matchMember['type'] >= 9) {
+            $is_manager = 1;
+        }
+
+        $honorMemberList = $leagueS->getMatchHonorMemberList([
+            'match_id' => $league_id,
+            'match_honor_id' => $honor_id
+        ]);
+
+        $tempArray1 = [];
+        $tempArray2 = [];
+        foreach ($honorMemberList as $row) {
+            array_push($tempArray1, $row['name']);
+            array_push($tempArray2, $row['team']);
+        }
+        $uniqueArray1 = array_unique($tempArray1);
+        $uniqueArray2 = array_unique($tempArray2);
+
+        $honorStr = $honorInfo["type"] == 1 ? implode("，", $uniqueArray1) : implode("，", $uniqueArray2);
+
         $this->assign('honorInfo', $honorInfo);
+        $this->assign('honorStr', $honorStr);
+        $this->assign('is_manager', $is_manager);
         return view('Match/honor/info');
     }
     // 联赛荣誉详情
