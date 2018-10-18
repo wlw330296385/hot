@@ -41,6 +41,8 @@
             font-size: 12px;
         }
         .myFamily li { border-bottom: 1px solid #EEE; }
+        .myFamily li a { float: right; margin-right: 15px; }
+
     </style>
 </head>
 
@@ -117,19 +119,21 @@
                 </a>
             </div>
 
-            <div class="page-header">
-                <span class="course">家庭成员</span>
-                <div class="fr"><a href="{:url('member/myFamily',['member_id'=>$memberInfo['id']])}" class="f12 mui-navigate-right" style="padding-right:15px;">管理</a></div>
-            </div>
+            {if $memberInfo.id>0 }
             <ul class="mui-table-view list mb myFamily">
-                    {volist name="familyList" id="vol" empty="<li class='mui-table-view-cell listli' style='padding:15px;'>还没有家庭成员</li>" }
-                     <a href="/frontend/camp/clientofcamp/camp_id/9">
-                        <li class="mui-table-view-cell listli" style="padding:15px;">
-                            <img src="{$vol.avatar}" class="img24"> {$vol.member} <span class="mui-navigate-right">{$vol.type}</span>
+                    
+                        <li class="mui-table-view-cell listli" style="line-height: 36px;">
+                            家庭成员
+                            <span>
+                            {volist name="familyList" id="vol" empty="还没有成员，<text class='gotoAddFamily colororange'>立即邀请</text>" }
+                            <a href="{:url('member/myFamilyMember/')}{$vol.member_id}"><img src="{$vol.avatar}" class="img32"></a>
+                            {/volist}
+                            <a href="{:url('member/myFamily',['member_id'=>$memberInfo['id']])}" class="f12 mui-navigate-right" style="padding-right:15px;"></a>
+                            </span>
                         </li>
-                    </a>
-                    {/volist}
+                    
             </ul>
+            {/if}
 
             <!-- 机构训练营主页 -->
             {if $o_id!=0 }
@@ -248,6 +252,12 @@
         $(".goConfirm").click(function () {
             mui.toast('暂未开放，敬请期待');
         })
+
+        //未开发提示
+        $(".gotoAddFamily").click(function () {
+            location.href = "{:url('member/myFamily',['member_id'=>$memberInfo['id']])}?tab=invitation";
+        })
+
 
         //判断是否为机构版训练营  是的话就显示训练营主页
         var o_id = "{$o_id}";

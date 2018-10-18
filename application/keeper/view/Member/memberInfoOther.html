@@ -17,20 +17,24 @@
             background-color: #FFF;
             margin: 0px 0px 5px;
         }
+
         .mui-input-group .h-auto {
             padding-top: 14px;
             padding-bottom: 16px;
         }
+
         .punchList {
-            padding-right:20px;
+            padding-right: 20px;
             display: block;
+            font-size: 14px;
+            padding-left: 15px;
         }
-        .punchList img{
-            margin-right:4%;
+
+        .punchList img {
+            margin-right: 4%;
             width: 20% !important;
             height: auto !important;
         }
-
     </style>
 </head>
 
@@ -42,51 +46,50 @@
     </header>
 
     <div class="mui-content">
-        
-            <ul class="mui-row">
-                <li class="mui-col-xs-2 mui-col-sm-2">
-                    <img src="{$memberInfo.avatar}" class="img50">
-                </li>
-                <li class="mui-col-xs-6 mui-col-sm-6" style="padding: 5px 10px">
-                    <text class="f16">{$memberInfo.member}</text> <i class="icon iconfont icon-sex{$memberInfo.sex}"></i><br />
-                    <text class="f12 colorgray">昵称：{$memberInfo.nickname}</text>
-                </li>
-                <li class="mui-col-xs-4 mui-col-sm-4 mui-text-right">
-                    <span class="f12">{$memberInfo['city']} {$memberInfo['area']}</span>
-                </li>
-            </ul>
+
+        <ul class="mui-row">
+            <li class="mui-col-xs-2 mui-col-sm-2">
+                <img src="{$memberInfo.avatar}" class="img50">
+            </li>
+            <li class="mui-col-xs-6 mui-col-sm-6" style="padding: 5px 10px">
+                <text class="f16">{$memberInfo.member}</text> <i class="icon iconfont icon-sex{$memberInfo.sex}"></i><br />
+                <text class="f12 colorgray">昵称：{$memberInfo.nickname}</text>
+            </li>
+            <li class="mui-col-xs-4 mui-col-sm-4 mui-text-right">
+                <span class="f12">{$memberInfo['city']} {$memberInfo['area']}</span>
+            </li>
+        </ul>
 
 
-            <div class="mui-input-group mb">
-                <div class="mui-input-row">
-                    <label>基本信息</label>
-                    <span><text class="showage"></text> 身高 {$memberInfo['height']}cm / 体重 {$memberInfo['weight']}kg</span>
-                </div>
-                <div class="mui-input-row">
-                    <label>个人宣言</label>
-                    <span>{$memberInfo.descri}</span>
-                </div>
+        <div class="mui-input-group mb">
+            <div class="mui-input-row">
+                <label>基本信息</label>
+                <span><text class="showage"></text> 身高 {$memberInfo['height']}cm / 体重 {$memberInfo['weight']}kg</span>
             </div>
-
-
-            <div class="mui-input-group mb">
-                <div class="mui-input-row">
-                    <label>运动轨迹</label>
-                    <span>运动打卡 <text class="punchTotal colororange">0</text> 次</span>
-                </div>
-                <div class="mui-input-row h-auto">
-                     <a href="{:url('/keeper/punch/memberHomePage',['member_id'=>$memberInfo.id])}" class="mui-navigate-right punchList"></a>
-                </div>
+            <div class="mui-input-row">
+                <label>个人宣言</label>
+                <span>{$memberInfo.descri}</span>
             </div>
+        </div>
 
-            <div class="mui-input-group mb">
-                <div class="mui-input-row">
-                    <a href="{:url('/keeper/team/memberpersoninfo',['member_id'=>$memberInfo.id])}" class="mui-navigate-right">
+        <div class="mui-input-group mb">
+            <div class="mui-input-row">
+                <label>运动轨迹</label>
+                <span>运动打卡 <text class="punchTotal colororange">0</text> 次</span>
+            </div>
+            <div class="mui-input-row h-auto">
+                <a href="{:url('/keeper/punch/memberHomePage',['member_id'=>$memberInfo.id])}" class="mui-navigate-right punchList"></a>
+            </div>
+        </div>
+
+        <div class="mui-input-group mb">
+            <div class="mui-input-row">
+                <a href="{:url('/keeper/team/memberpersoninfo',['member_id'=>$memberInfo.id])}" class="mui-navigate-right">
                     <label>球员数据</label>
                     <span>查看</span>
-                    </a>
-                </div>
+                </a>
             </div>
+        </div>
 
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -99,21 +102,19 @@
             $(".showage").text(getAge);
 
             //获取当前会员运动记录
-            toPunchList(1,1); 
+            toPunchList(1, 1);
 
         })
 
-        function ages(str)   
-          {   
-                var r = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);     
-                if(r==null)return   false;     
-                var d = new Date(r[1], r[3]-1, r[4]);     
-                if (d.getFullYear()==r[1]&&(d.getMonth()+1)==r[3]&&d.getDate()==r[4])   
-                {
-                    var Y = new   Date().getFullYear();   
-                      return((Y-r[1])+"岁");   
-                }
-        }  
+        function ages(str) {
+            var r = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);
+            if (r == null) return false;
+            var d = new Date(r[1], r[3] - 1, r[4]);
+            if (d.getFullYear() == r[1] && (d.getMonth() + 1) == r[3] && d.getDate() == r[4]) {
+                var Y = new Date().getFullYear();
+                return ((Y - r[1]) + "岁");
+            }
+        }
 
         //获取我的打卡记录列表
         function toPunchList(page, gType) {
@@ -135,8 +136,9 @@
                     var newli = "";
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i].image_url + '" />';
-                            if(i==3){
+                            newli += '<img class="mui-media-object mui-pull-left" src="' + data.data.data[i]
+                                .image_url + '" />';
+                            if (i == 3) {
                                 break;
                             }
                         }

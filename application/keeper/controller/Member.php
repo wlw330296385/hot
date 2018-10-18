@@ -347,4 +347,8 @@ class Member extends Base{
         return view('Member/memberConstitution');
     }
 
+    // 认领数据
+    public function claim(){
+        return view('Member/claim');
+    }
 }

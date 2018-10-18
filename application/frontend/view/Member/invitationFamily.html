@@ -30,6 +30,7 @@
         #telephone{ display: none; }
         .tjbtn { height: auto !important; }
         .tips { color:#F00; text-align: center; }
+        #shareGuide.mui-popover, #shareGuide.mui-popover .mui-popover-arrow { top: 50px !important; right: 0px !important; width: 80% }
     </style>
 </head>
 
@@ -44,9 +45,9 @@
                 <div class="img16x9" style="background-image:url('/static/frontend/images/membercenter-bg.jpg')"></div>
                 <div class="invInfo">
                     <p><img src="{$familyInfo.avatar}" class="img24"></p>
-                    <p>您的弟弟（<text class="memberName" class="colororange"></text>）邀请您加入他的家庭，<br />请获取并输入您的验证码。</p>
+                    <p>您的弟弟（<text class="memberName" class="colororange">{$familyInfo.member}</text>）邀请您加入他的家庭，<br />请获取并输入您的验证码。</p>
                 </div>
-                 <form class="mui-input-group" style="margin:0 10%">
+                 <form class="mui-input-group" style="margin:0 8%">
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
                     <div class="mui-input-row">
                         <label>验证手机号</label>
@@ -59,28 +60,32 @@
                         <input type="button" class="code-btn" value="获取验证码" onclick="sendCode(this)" style="width: 30%;">
                         <input id="code" type="text" class="input reg_code" placeholder="输入验证码" style="width: 35%;" >
                     </div>
+                    <div class="mui-input-row mName">
+                        <label>会员名</label>
+                        <input type="text" name="member" value="" placeholder="请填写您要使用的会员名">
+                    </div>
                     {/if}
                 </form>
 
             <div class="tjbtn">
-                {if $memberInfo.id == 0}
-                <button type="button" class="mui-btn btn bggreen registerBtn">
+                {if $familyInfo.status == 1}
+                <button type="button" class="mui-btn btn bggray" disabled="disabled">
+                    已接受邀请
+                </button>
+                {elseif $memberInfo.id == 0}
+                <button type="button" class="mui-btn btn bggreen" id="guestSubmit">
                     接受邀请
                 </button>
                 {elseif $memberInfo.telephone==$familyInfo.telephone }
-                <button type="button" class="mui-btn btn bggreen agreeBtn">
+                <button type="button" class="mui-btn btn bggreen" id="memberSubmit">
                     接受邀请
                 </button>
-                <button type="button" class="mui-btn btn bggred rejectBtn">
-                    拒绝
-                </button>
-                {elseif $memberInfo.id == $familyInfo.member_id && $familyInfo.status==-1}
-                    <p class="tips">您的邀请对方没有接收,您可以转发分享页面给他让他成为你家庭成员中一员哦</p>
-                {elseif $memberInfo.id == $familyInfo.member_id && $familyInfo.status==-2}
-                    <p class="tips">对方已拒绝您的邀请,您可以继续转发分享页面给他让他成为你家庭成员中一员哦</p>
                 {else/}
-                    <p class="tips">您当前账号所绑定的电话号码<br />与对方邀请所需验证的号码不一致哦</p>
-                    <p>如需加入请让<text class="memberName"></text>给您转发该号码的申请。<br />您当前账号所绑定的手机号码为 {$memberInfo.telephone}</p>
+                <p class="tips">您当前账号所绑定的电话号码<br />与对方邀请所需验证的号码不一致哦</p>
+                <p>如需加入请让<text class="memberName">{$familyInfo.member}</text>给您转发该号码的申请。<br />您当前账号所绑定的手机号码为 {$memberInfo.telephone}</p>
+                <button type="button" class="mui-btn btn bggray" disabled="disabled">
+                    接受邀请
+                </button>
                 {/if}
             </div>
 
@@ -94,26 +99,326 @@
     </div>
 
 
+    <!--分享-->
+    <div id="shareGuide" class="mui-popover">
+        <div class="shareGuideText">1、点击右上角的
+            <span class="shareEllipsis">···</span>
+            <img src="/static/frontend/images/esp.png" alt="">
+        </div>
+        <div class="shareGuideText">2、选择发送给指定的好友</div>
+    </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/wooApi.js"></script>
+<script src="/static/frontend/libs/yzvalidate.js"></script>
+<script src="/static/frontend/js/common.js"></script>
+<script src="/static/frontend/js/city.data-3.js"></script>
+<script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
+<script src="/static/frontend/js/smsCode.js"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
 
-        var memberName = wooApi.GetQueryString('memberName');
+        //定义全局变量
+        var flagPhone = false;
+        var flagSMS = false;
+        var flagMember = false;
+        var flagCreate = true;
+        var memberID = "{$memberInfo.id}";
+
 
         $(function () {
 
-            $(".memberName").text(memberName);
+           //如果是私密课程就显示显示引导页
+            var isShare = wooApi.GetQueryString('isShare');
+            if (isShare == 1) {
+                mui('#shareGuide').popover('toggle')
+            }
+
             var telephoneTips = "{$familyInfo.telephone}".replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
             $("#telephoneTips").text(telephoneTips);
+
+
+            // 已登录并邀请所验证的电话一致，直接更新
+            $('#memberSubmit').on('click', function () {
+                
+                var fID = "{$familyInfo.id}";
+                //判断是否已经注册的会员手机号
+                mui.ajax("{:url('api/family/updateFamilyApi')}", {
+                data: {
+                    'f_id': fID,
+                    'status':1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                async: false,
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                         mui.alert(data.msg, '恭喜，已经成功接受邀请', '确定', function () {
+                             location.href = "{:url('/frontend/camp/index')}"
+                        })
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+                });
+
+            })
+
+
+            {if $memberInfo.id == 0}
+            ////////////////////////////////////////////// 新用户操作部分：开始 //////////////////////////////////////////////
+
+            //  获取定位省市区
+            var getLocationTB = getLocationApi("{:url('api/Location/getLocation')}");
+            var gCity = getLocationTB['city'];
+            var gProvince = getLocationTB['province'];
+            var gArea = getLocationTB['area'];
+            if (gCity == null || gCity == "undefined") {
+                gCity = "";
+            }
+            if (gProvince == null || gProvince == "undefined") {
+                gProvince = "";
+            }
+            if (gArea == null || gArea == "undefined") {
+                gArea = "";
+            }
+
+
+            //判断该手机号是否存在
+            hasMemberPhone()
+
+            // //验证短信验证码
+            $('#code').on("blur", function () {
+                var code = document.getElementById('code').value;
+                var codeReg = /^\d{6,6}$/;
+                if (!codeReg.test(code)) {
+                    mui.toast('请填写正确的验证码');
+                    flagSMS = false;
+                } else {
+                    var telephone = $("#telephone").val();
+                    var result = smsCode.validateSmsCodeApi(telephone, code, "{:url('api/sms/validateSmsCodeApi','','',true)}");
+                    if (result.code == 200) {
+                        flagSMS = true;
+                        mui.toast(result.msg);
+                    } else {
+                        flagSMS = false;
+                        mui.toast(result.msg);
+                    }
+                }
+            });
+
+            //新注册的会员检测会员名是否符合规则并且没被使用
+            $("input[name='member']").on("blur", function () {
+
+                var member = $.trim($(this).val());
+                $(this).val(member);
+
+                //判断会员名格式
+                if (((/\s/).test(member)) === true) {
+                    flagMember = false;
+                    mui.alert("会员名不许有空格");
+                    return false;
+                } else if ((/^[\u4E00-\u9FA5A-Za-z0-9_]{2,15}$/).test(member) === false) {
+                    flagMember = false;
+                    mui.alert("会员名只能包含英文、数字或中文，长度为2-15位");
+                    return false;
+                }
+
+                //判断用户名是否存在
+                hasMemberName(member)
+            });
+
+
+            // 已登录并邀请所验证的电话一致，直接更新
+            $('#guestSubmit').on('click', function () {
+
+
+                var addMember = $.trim($("input[name='member']").val());
+                var addTelephone = $("#telephone").val();
+                var token = $('input[name=__token__]').val();
+                var pid = "{$familyInfo.member_id}"
+
+                if (flagMember == false) {
+                    mui.alert("提交失败，会员名填写有误，请重新填写！");
+                    return false;
+                };
+                if (flagPhone == false) {
+                    mui.alert("提交失败，该手机号已经");
+                    return false;
+                };
+                if (flagSMS == false) {
+                    mui.alert("提交失败，验证码填写有误");
+                    return false;
+                };
+                //如已经通过以上验证则创建会员账号
+                mui.ajax("{:url('api/login/registerApi')}", {
+                    data: {
+                        member: addMember,
+                        telephone: addTelephone,
+                        province: gProvince,
+                        city: gCity,
+                        area: gArea,
+                        __token__: token,
+                        pid: pid,
+                        ismyself: 1
+                    },
+                    dataType: 'json',//服务器返回json格式数据
+                    type: 'post',//HTTP请求类型
+                    async: false,
+                    timeout: 10000,//超时时间设置为10秒；
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 100) {
+                            flagCreate = false;
+                        } else {
+                            flagCreate = true;
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        flagCreate = false;
+                        console.log(type);
+                    }
+                });
+
+                 //如果是非会员，检查是否成功注册会员，没成功就中断流程
+                if (flagCreate == false) {
+                    mui.alert('网络延时，请稍后再试！', '提交失败', '确定', function () {
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    })
+                    return false;
+                }
+
+                
+                var fID = "{$familyInfo.id}";
+                //判断是否已经注册的会员手机号
+                mui.ajax("{:url('api/family/updateFamilyApi')}", {
+                data: {
+                    'f_id': fID,
+                    'status':1
+                },
+                dataType: 'json',//服务器返回json格式数据
+                type: 'post',//HTTP请求类型
+                async: false,
+                timeout: 10000,//超时时间设置为10秒；
+                headers: {'Content-Type': 'application/json'},
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                         mui.alert(data.msg, '恭喜，已经成功接受邀请', '确定', function () {
+                             location.href = "{:url('/frontend/camp/index')}"
+                        })
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+                });
+
+            })
+
+
+            ////////////////////////////////////////////// 新用户操作部分：开始 //////////////////////////////////////////////
+            {/if}
+
+
         })
 
 
 
+    // 发送短信验证码
+    function sendCode(obj) {
+        var telephone = $("#telephone").val();
+        var telephoneReg = /^1[34578]\d{9}$/;
+        if (!telephoneReg.test(telephone)) {
+            mui.toast('请填写正确的手机号码');
+        } else {
+            var result = smsCode.getMobileCodeApi(obj, telephone, "{:url('api/sms/getMobileCodeApi','','',true)}");
+            if (result.code == 200) {
+                mui.toast(result.msg);
+            } else {
+                mui.toast(result.msg);
+
+            }
+        }
+    }
+
+
+    //判断用户名是否存在
+    function hasMemberName(memberName) {
+        mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
+            data: {
+                'field': 'member',
+                'value': memberName
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            async: false,
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            success: function (data) {
+                console.log(data);
+                if (data.msg == 1) {
+                    flagMember = false;
+                    mui.alert("该会员名称已经存在，请使用其他名称！");
+                    return false;
+                } else {
+                    flagMember = true;
+                    $("input[name='realname']").val(memberName);
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                console.log(type);
+            }
+        });
+    }
+
+     //判断该手机号是否存在
+    function hasMemberPhone() {
+        //判断是否已经注册的会员手机号
+        var telephone = $("#telephone").val();
+        mui.ajax("{:url('api/login/isFieldRegisterApi')}", {
+            data: {
+                'field': 'telephone',
+                'value': telephone
+            },
+            dataType: 'json',//服务器返回json格式数据
+            type: 'post',//HTTP请求类型
+            async: false,
+            timeout: 10000,//超时时间设置为10秒；
+            headers: {'Content-Type': 'application/json'},
+            success: function (data) {
+                console.log(data);
+                //判断该手机号码是否已经是注册会员
+                if (data.msg == 1) {
+                    mui.alert("该手机号码是本平台已注册会员、请让本人自行操作，谢谢！");
+                    flagPhone = false;
+                } else {
+                    flagPhone = true;
+                }
+            },
+            error: function (xhr, type, errorThrown) {
+                console.log(type);
+            }
+        });
+    }
 
     </script>
 </body>

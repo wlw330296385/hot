@@ -5981,4 +5981,63 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
     }
+
+    public function delMatchTeam() {
+
+        if (empty(input('post.league_id'))) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')."league_id"]);
+        } else {
+            $data['match_id'] = input('post.league_id');
+        }
+
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if (!$power) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        if ( !empty(input('post.team_id')) ) {
+            $data['team_id'] = input('post.team_id');
+        } else {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')."team_id"]);
+        }
+
+        // 判断是否已有相关赛程
+        $res1 = $leagueS->getMatchGroupTeams([
+            "team_id" => $data['team_id']
+        ]); 
+        if ($res1) {
+            return json(['code' => 100, 'msg' => "该球队已有分组，请先删除相关分组"]);
+        }
+
+        $res2 = $leagueS->getMatchScheduleCount([
+            "home_team_id|away_team_id" => $data['team_id']
+        ]);
+        if ($res2) {
+            return json(['code' => 100, 'msg' => "该球队已被安排了赛程，请先删除相关赛程"]);
+        }
+
+
+        $matchTeamInfo = $leagueS->getMatchTeam($data);
+        if (!$matchTeamInfo) {
+            return json(['code' => 100, 'msg' => "未找到该球队"]);
+        }
+
+        Db::startTrans();
+        try {
+            $res = $leagueS->delMatchTeam($matchTeamInfo['id'], true);
+            $res = $leagueS->delMatchTeamMember(['team_id' => $matchTeamInfo['team_id']], true);
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            trace('error:' . $e->getMessage(), 'error');
+            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+        }
+
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
 }
