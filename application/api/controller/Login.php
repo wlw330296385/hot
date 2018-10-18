@@ -34,9 +34,10 @@ class Login extends Base{
             // 推荐人id
             if (Cookie::has('pid')) {
                 $data['pid'] = Cookie::get('pid');
+                $pid = Cookie::get('pid');
             }
             $memberInfo = session('memberInfo', '', 'think');
-            $memberS = new \app\service\MemberService;
+            $MemberService = new \app\service\MemberService;
             // myself: 标识是否本人电话与微信存入同一会员数据
             $data['ismyself'] = input('ismyself', 1, 'intval');
             if ($data['ismyself'] == 0) {
@@ -48,14 +49,14 @@ class Login extends Base{
             // 如果有微信授权信息
             if (isset($memberInfo['openid']) && !empty($memberInfo['openid']) && $data['ismyself'] == 1) {
 
-                $isMember = $memberS->getMemberInfo(['openid' => $memberInfo['openid']]);
+                $isMember = $MemberService->getMemberInfo(['openid' => $memberInfo['openid']]);
                 if ($isMember) {
                     return json(['code' => 100, 'msg' => '您的微信号已注册成为会员']);
                 } else {
                     $data['openid'] = $memberInfo['openid'];
                     $data['nickname'] = $memberInfo['nickname'];
                     // 下载微信头像文件到本地
-                    $data['avatar'] = $memberS->downwxavatar($memberInfo['avatar']);
+                    $data['avatar'] = $MemberService->downwxavatar($memberInfo['avatar']);
                 }
             } 
             // 性别获取wxuserinfo
@@ -67,9 +68,9 @@ class Login extends Base{
             $register_score = $json_score['register'];
             $data['score'] = $register_score;
 
-        	$response = $memberS->saveMemberInfo($data);
+        	$response = $MemberService->saveMemberInfo($data);
         	if ($response['code'] ==200) {
-                $result = $memberS->saveLogin($response['id']);
+                $result = $MemberService->saveLogin($response['id']);
                 if($result){
                     $lasturl = cookie('url');
                     // 从首页跳注册页进行操作 注册成功前往注册成功页
@@ -82,14 +83,14 @@ class Login extends Base{
                         $response['goto'] = url('frontend/member/registerSuccess');
                     }
 
-                    if($data['pid']){
+                    if($pid){
                         $referer_score = $register_score['referer'];
-                        db('member')->where(['id'=>$data['pid']])->inc('score',$referer_score)->update();
+                        db('member')->where(['id'=>$pid])->inc('score',$referer_score)->update();
                         //记录积分
                         db('score')->insert(
                             [
                                 'score'=>$referer_score,
-                                'member_id'=>$data['pid'],
+                                'member_id'=>$pid,
                                 'member'=>$data['member'],
                                 'create_time'=>time(),
                                 'date_str'=>date('Ymd',time()),

@@ -34,7 +34,7 @@ class PunchService {
     public function createPunch($data){
         $stakes = ceil($data['stakes']);
         $hot_coin = session('memberInfo.hot_coin');
-        $score = session('emberInfo.score');
+        $score = session('memberInfo.score');
         if($stakes > $hot_coin){
             return ['code'=>100,'msg'=>'热币不足'];
         }
@@ -68,7 +68,7 @@ class PunchService {
             $score_rule = json_decode($setting['score_rule'],true);
             $punch_score = $score_rule['punch_score'];
             db('member')->where(['id'=>$data['member_id']])->inc('score',$punch_score)->update();
-            session('memberInfo.hot_coin',($score+$punch_score));
+            session('memberInfo.score',($score+$punch_score));
             //记录积分
             db('score')->insert(
                 [
@@ -115,8 +115,6 @@ class PunchService {
                             'url'=>url('keeper/punch/punchInfo',['punch_id'=>$data['punch_id']],'',true),
                             'member_id'=>$data['to_member_id'],
                              'steward_type' =>2,
-                            // 'member'    =>$data['to_member'],
-                            // 'avatar'    =>$data['to_avatar'],
                         ];
             }else{
                 $messageData = [
