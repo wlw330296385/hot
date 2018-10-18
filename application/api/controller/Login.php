@@ -85,7 +85,7 @@ class Login extends Base{
                     }
 
                     if($pid){
-                        $referer_score = $register_score['referer'];
+                        $referer_score = $json_score['referer'];
                         db('member')->where(['id'=>$pid])->inc('score',$referer_score)->update();
                         //记录积分
                         db('score')->insert(
