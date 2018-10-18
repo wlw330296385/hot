@@ -46,11 +46,14 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            <li class="mui-table-view-cell mui-col-xs-10 opli bggreen show1">
+            <li class="mui-table-view-cell mui-col-xs-5 opli bggreen show1">
                 <a href="{:url('match/createTeamOfLeague',['league_id'=>$leagueInfo.id])}">创建球队</a>
             </li>
-            <li class="mui-table-view-cell mui-col-xs-5 opli bgblue show2 hide">
+            <li class="mui-table-view-cell mui-col-xs-5 opli bgblue show2">
                 <a href="{:url('match/createGroups',['league_id'=>$leagueInfo.id])}">创建分组</a>
+            </li>
+            <li class="mui-table-view-cell mui-col-xs-5 opli bgblue show3 hide">
+                <a href="{:url('match/groupslistofleague',['league_id'=>$leagueInfo.id])}">分组列表</a>
             </li>
         </ul>
     </div>
@@ -175,11 +178,6 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        // 判断底部按钮
-                        if (data.data.data.length >= 2) {
-                            $(".show2").show();
-                            $(".show1").removeClass("mui-col-xs-10").addClass("mui-col-xs-5");
-                        }
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
                             var urls = "{:url('match/teamInfoOfLeague')}" + '/league_id/' + data.data.data[
                                 i].match_id + '/team_id/' + data.data.data[i].team.id;
@@ -201,7 +199,32 @@
                             newli += `</a></li>`;
                         }
 
-                        // 用于判断底部按钮
+                        // 有分组显示分组列表按钮
+                        mui.ajax("{:url('api/league/leaguegroupwithteamspage','','',true)}", {
+                            data: {
+                                league_id: league_id
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data)
+                                if (data.code == 200) {
+                                    if (data.data.data != '') {
+                                        $(".show3").show();
+                                        $(".show2").hide();
+                                    }
+                                }
+                            },
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
+
+                        // 有已完成比赛，分组按钮不显示
                         mui.ajax("{:url('api/league/matchrecordlistbystage','','',true)}", {
                             data: {
                                 league_id: league_id
@@ -216,6 +239,7 @@
                                 console.log(data)
                                 if (data.code == 200) {
                                     $(".show2").hide();
+                                    $(".show3").hide();
                                     $(".show1").removeClass("mui-col-xs-5").addClass(
                                         "mui-col-xs-10");
                                 }
@@ -224,6 +248,8 @@
                                 mui.toast('网络异常,请稍候再试');
                             }
                         });
+
+
                     }
 
                     if (gType == 1) {
