@@ -240,7 +240,7 @@ class TeamService
         if (!empty($condition)) {
             $res = $model->allowField(true)->save($data, $condition);
             if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200')];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -250,7 +250,7 @@ class TeamService
         if (isset($data['id'])) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200')];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
@@ -280,6 +280,18 @@ class TeamService
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    public function delTeamMembers($data, $force = false)
+    {
+        $model = new TeamMember();
+        return $model::destroy($data, $force);
+    }
+
+    public function delTeamMemberRoles($data, $force = false)
+    {
+        $model = new TeamMemberRole();
+        return $model::destroy($data, $force);
     }
 
     // 移除球队-成员关联（team_member)
@@ -338,6 +350,15 @@ class TeamService
         }
     }
 
+    public function getTeammemberListwithRole($map = [], $order='id desc') {
+        $model = new TeamMember();
+        $res = $model->with('team_member_role')->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+
+        }
+    }
+
     public function getTeamMembers($map = [], $order='id desc') {
         $model = new TeamMember();
         $res = $model->with('team')->where($map)->order($order)->select();
@@ -369,6 +390,13 @@ class TeamService
             }
         }
         return $result;
+    }
+
+    public function getTeamMemberListOnly($map, $order = 'id asc')
+    {
+        $model = new TeamMember();
+        $res = $model->where($map)->order($order)->select();
+        return $res;
     }
 
     // 获取球队成员列表
@@ -1358,13 +1386,20 @@ class TeamService
     }
 
     // 获取球员权限
-    public function getTeamMemberRole($map=[]) {
+    public function getTeamMemberRole($map=[], $order='type desc') {
         $model = new TeamMemberRole();
-        $res = $model->where($map)->find();
+        $res = $model->where($map)->order($order)->find();
         if (!$res) {
             return $res;
         }
         $result = $res->toArray();
+        return $result;
+    }
+
+    // 获取球员权限
+    public function getTeamMemberRoleList($map, $order='id asc') {
+        $model = new TeamMemberRole();
+        $res = $model->where($map)->order($order)->select();
         return $result;
     }
 
@@ -1453,7 +1488,7 @@ class TeamService
         if (isset($data['id'])) {
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200')];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];

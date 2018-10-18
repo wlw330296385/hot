@@ -1457,6 +1457,21 @@ class Match extends Base {
         $teamS = new TeamService();
         $teamInfo = $teamS -> getTeamOnly(['id' => $team_id]);
 
+        $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
+
+        $teamInfo["team_member_list"] = [];
+        if(!empty($teamMemberList)) {
+            foreach ($teamMemberList as $row) {
+                $teamMemberRole = $teamS->getTeamMemberRole(['name' =>$row['name']]);
+                $temp = [
+                    'name' => $row['name'],
+                    'telephone' => $row['telephone'],
+                    'role' => $teamMemberRole['type']
+                ];
+                array_push($teamInfo["team_member_list"], $temp);
+            }
+        }
+
         $this->assign('teamInfo', $teamInfo);
         $this->assign('league_id', $league_id);
         return view('Match/team/updateTeamOfLeague');

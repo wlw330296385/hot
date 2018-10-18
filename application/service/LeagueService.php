@@ -524,7 +524,7 @@ class LeagueService
             // 更新数据
             $res = $model->allowField(true)->isUpdate(true)->save($data);
             if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200')];
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];
