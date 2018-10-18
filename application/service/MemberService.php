@@ -90,6 +90,7 @@ class MemberService{
 
         //验证规则
 		$res = $MemberModel->validate('MemberVal')->save($request);
+        // $res = $MemberModel->save($request);
 		if ($res === false) {
             return [ 'code' => 100, 'msg' => $MemberModel->getError()];
         } else {

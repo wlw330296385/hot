@@ -61,6 +61,7 @@ class Login extends Base{
             } 
             // 性别获取wxuserinfo
             $data['sex'] = $memberInfo['sex'];
+
             $setting = db('setting')->find();
 
             // 注册送100积分;
