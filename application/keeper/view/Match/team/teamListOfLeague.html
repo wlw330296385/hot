@@ -158,6 +158,48 @@
                 }, 100);
             }
 
+
+            //删除单个赛程
+            $(document).on('tap', '.delTeam', function () {
+                var elem = this;
+                var li = elem.parentNode.parentNode;
+                var team_id = elem.getAttribute('data-team_id');
+                var teamName = elem.getAttribute("data-name");
+                var btnArray = ["取消", "确认"]
+                mui.confirm('确认删除"'+teamName+'"球队?', '提示', btnArray, function (e) {
+                    if (e.index == 1) {
+                        var apiurl = "{:url('api/league/delMatchTeam')}";
+                        mui.ajax(apiurl, {
+                            data: {
+                                league_id: league_id,
+                                team_id: team_id,
+                            },
+                            dataType: 'json',
+                            type: 'post',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                if (data.code == 200) {
+                                    li.parentNode.removeChild(li);
+                                    location.reload();
+                                } else {
+                                    mui.toast(data.msg);
+                                    mui.swipeoutClose(li);
+                                }
+                            },
+                            error: function (xhr, type, errotThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
+                    } else {
+                        setTimeout(function () {
+                            mui.swipeoutClose(li);
+                        }, 0);
+                    }
+                });
+            });
+
         })
 
         // 接口获取数据并追加到页面
@@ -182,11 +224,14 @@
                             var urls = "{:url('match/teamInfoOfLeague')}" + '/league_id/' + data.data.data[
                                 i].match_id + '/team_id/' + data.data.data[i].team.id;
                             var updateurls = "{:url('match/updateTeamOfLeague')}" + '/league_id/' +
-                                data.data
-                                .data[i].match_id + '/team_id/' + data.data.data[i].team.id +
-                                '?team_id=' +
-                                data.data.data[i].team.id;
+                                data.data.data[i].match_id + '/team_id/' + data.data.data[i].team.id +
+                                '?team_id=' + data.data.data[i].team.id;
                             newli += `<li class="mui-table-view-cell listli">`;
+                            newli +=
+                                `<div class="mui-slider-right mui-disabled">
+                                            <span class="mui-btn mui-btn-red delTeam" data-name="${data.data.data[i].team.name}" data-team_id="${data.data.data[i].team.id}">删除</span>
+                                        </div>
+                                        <div class="mui-slider-handle"> `
                             if (data.data.data[i].team.member_id == -1) {
                                 newli += `<a href="${updateurls}">`
                             } else {
@@ -196,7 +241,7 @@
                                 `<img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}" style="margin-right:12px;">
                                     <div class="mui-media-body lineHeight20"><p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
                                     <p>${data.data.data[i].members_num}人参赛</p></div>`
-                            newli += `</a></li>`;
+                            newli += `</a></div></li>`;
                         }
 
                         // 有分组显示分组列表按钮
