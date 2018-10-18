@@ -30,9 +30,9 @@
     <header id="header" class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
-                <a class="mui-action-back mui-control-item mui-icon mui-icon-left-nav"></a>
+                <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('camp/index')}"></a>
                 <a class="mui-control-item mui-active" href="#tabmyfamily">家庭成员</a>
-                <a class="mui-control-item" href="#tabinvitation">添加邀请</a>
+                <a class="mui-control-item tabinvitation" href="#tabinvitation">添加邀请</a>
             </div>
         </div>
     </header>
@@ -97,15 +97,25 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
     <script>
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
 
-        mui(".mui-content").on("tap", "a", function () {
+        mui("body").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
+
+        var getTab = wooApi.GetQueryString('tab');
+        if(getTab!=""&&getTab!=null){
+            $(".mui-control-item").removeClass("mui-active");
+            $(".tabinvitation").addClass("mui-active");
+            $(".mui-control-content").removeClass("mui-active");
+            $("#tabinvitation").addClass("mui-active");
+        }
 
         $(function () {
 
@@ -159,7 +169,7 @@
                                 //服务器返回响应，根据响应结果，分析是否登录成功；
                                 if (data.code == 200) {
                                     mui.toast(data.msg);
-                                   location.href = "{:url('/frontend/member/invitationFamily/f_id/')}"+data.data+"?membername={$memberInfo.member}"
+                                   location.href = "{:url('/frontend/member/invitationFamily/f_id/')}"+data.data+"?isShare=1"
                                 } else {
                                     mui.toast(data.msg);
                                 }
@@ -236,7 +246,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "#";
+                            var urls = "{:url('/frontend/member/invitationFamily/f_id/')}"+ data.data[i].id +"?isShare=1";
                             newli += '<li class="mui-table-view-cell mui-media listli">'
                             newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].to_member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].to_member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame">我是他' + data.data[i].type + '</div>';
                             newli += '</a></li>';
