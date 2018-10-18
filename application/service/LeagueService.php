@@ -742,6 +742,12 @@ class LeagueService
         return $model->id;
     }
 
+    // 删除联赛参赛球队 $force 是否强制删除
+    public function delMatchTeam($data, $force = false)
+    {
+        return MatchTeam::destroy($data, $force);
+    }
+
     // 删除联赛参赛球队球员数据 $force 是否强制删除
     public function delMatchTeamMember($data, $force = false)
     {
