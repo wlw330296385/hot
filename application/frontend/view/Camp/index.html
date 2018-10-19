@@ -42,6 +42,7 @@
         }
         .myFamily li { border-bottom: 1px solid #EEE; }
         .myFamily li a { float: right; margin-right: 15px; }
+        .gotoAddFamily { margin-right: 15px; }
 
     </style>
 </head>
@@ -122,15 +123,15 @@
             {if $memberInfo.id>0 }
             <ul class="mui-table-view list mb myFamily">
                     
-                        <li class="mui-table-view-cell listli" style="line-height: 36px;">
-                            家庭成员
-                            <span>
-                            {volist name="familyList" id="vol" empty="还没有成员，<text class='gotoAddFamily colororange'>立即邀请</text>" }
-                            <a href="{:url('member/myFamilyMember/')}{$vol.member_id}"><img src="{$vol.avatar}" class="img32"></a>
-                            {/volist}
-                            <a href="{:url('member/myFamily',['member_id'=>$memberInfo['id']])}" class="f12 mui-navigate-right" style="padding-right:15px;"></a>
-                            </span>
-                        </li>
+                <li class="mui-table-view-cell listli" style="line-height: 36px;">
+                    家庭成员
+                    <span>
+                    {volist name="familyList" id="vol" empty="您还没有成员，<text class='gotoAddFamily colororange'>立即邀请</text>" }
+                    <a href="{:url('member/myFamilyMember',['f_id'=>$vol.id])}"><img src="{$vol.avatar}" class="img32"></a>
+                    {/volist}
+                    <a href="{:url('member/myFamily')}" class="f12 mui-navigate-right" style="padding-right:15px;"></a>
+                    </span>
+                </li>
                     
             </ul>
             {/if}

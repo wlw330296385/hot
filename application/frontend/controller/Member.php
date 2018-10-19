@@ -369,4 +369,25 @@ class Member extends Base{
         return view('Member/invitationFamily');
     }
 
+
+    // 分享邀请家庭成员页面
+    public function myFamilyMember(){
+
+        $f_id = input('param.f_id');
+        if($f_id){
+            $familyInfo = db('family')->where(['id'=>$f_id])->find();
+            //输出对方的memberInfo信息
+
+            //列出对方的训练营学生列表
+
+
+            $this->assign('familyInfo',$familyInfo);
+
+        }else{
+           $this->error('权限不足');
+        }
+
+
+        return view('Member/myFamilyMember');
+    }
 }
