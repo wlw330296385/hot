@@ -396,7 +396,10 @@ class TeamService
     {
         $model = new TeamMember();
         $res = $model->where($map)->order($order)->select();
-        return $res;
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 
     // 获取球队成员列表
@@ -1395,7 +1398,18 @@ class TeamService
         $result = $res->toArray();
         return $result;
     }
-
+    public function getTeamMemberRoleText($key) {
+        $type = [
+            1 => '队委',
+            2 => '副队长',
+            3 => '队长',
+            4 => '教练',
+            5 => '经理',
+            6 => '领队',
+            0 => '队员'
+        ];
+        return $type[$key];
+    }
     // 获取球员权限
     public function getTeamMemberRoleList($map, $order='id asc') {
         $model = new TeamMemberRole();

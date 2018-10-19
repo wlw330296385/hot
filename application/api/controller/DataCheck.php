@@ -30,4 +30,15 @@ class DataCheck extends Base{
     //     }
     //     return 'ok';
     // }
+
+
+    // public function checkMatchGroupTeam() {
+    //     $list = Db::table('match_team')->where(['match_id' => 31])->select();
+    //     foreach ($list as $row) {
+    //         $res = Db::table('match_group_team')->where(['team_id' => $row['team_id']])->update(['team' => $row['team']]);
+
+    //         // $update_res = Db::query("UPDATE `match_record_member`  SET `name`=:name  WHERE  `id` = :id", ['name'=>$res['name'], 'id'=>$row['id']]);
+    //     }
+    //     return 'ok';
+    // }
 }

@@ -4,6 +4,8 @@ use app\keeper\controller\Base;
 use app\service\MemberService;
 use app\service\StudentService;
 use app\service\WechatService;
+use app\service\TeamService;
+use app\service\LeagueService;
 use think\Db;
 class Member extends Base{
     private $MemberService;
@@ -349,6 +351,43 @@ class Member extends Base{
 
     // 认领数据
     public function claim(){
+        $claimList = [];
+        if (!empty($this->memberInfo['id']) && !empty($this->memberInfo['telephone'])) {
+
+            $teamS = new TeamService();
+            $leagueS = new LeagueService();
+            $teamMemberList = $teamS->getTeamMemberListOnly(["member_id" => -1, "telephone" => $this->memberInfo['telephone']]);
+            if (!empty($teamMemberList)) {
+                foreach($teamMemberList as $row) {
+                    $matchTeamMember = $leagueS->getMatchTeamMember(["team_member_id" => $row["id"]]);
+                    if (!empty($matchTeamMember)) {
+                        $teamMemberRole = $teamS->getTeamMemberRole(["member_id" => -1, "name" => $row["name"]]);
+
+                        $maxRole = $teamS->getTeamMemberRole(["team_id" => $row["team_id"]], "type desc");
+                        if (!empty($maxRole) && $maxRole['type'] == 3) {
+                            $leader = $maxRole['name'];
+                        } else {
+                            $leader = "暂无";
+                        }
+                        $role = empty($teamMemberRole) ? 0 : $teamMemberRole['type'];
+
+                        $temp = [
+                            "team_id" => $row['team_id'],
+                            "team" => $row['team'],
+                            "team_logo" => $matchTeamMember['team_logo'],
+                            "team_member_id" => $row['id'],
+                            "name" => $row['name'],
+                            "role" => $teamS->getTeamMemberRoleText($role),
+                            "leader" => $leader,
+                            "match_id" => $matchTeamMember["match_id"],
+                            "match" => $matchTeamMember["match"]
+                        ];
+                        array_push($claimList, $temp);
+                    }
+                }
+            }
+        }
+        $this->assign('claimList',$claimList);
         return view('Member/claim');
     }
 }

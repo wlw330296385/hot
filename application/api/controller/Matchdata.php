@@ -762,9 +762,18 @@ class Matchdata extends Base
         // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
         $matchS = new MatchService();
         $matchInfo = $matchS->getMatchOnly(['id' => $data['match_id']]);
-        $matchOrgMemberS = new MatchOrgMemberService();
-        $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
-        if ($matchOrgMmeberInfo['type_num'] < 9) {
+        // $matchOrgMemberS = new MatchOrgMemberService();
+        // $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
+        // if ($matchOrgMmeberInfo['type_num'] < 9) {
+        //     return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        // }
+        $leagueS = new LeagueService();
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id'],
+            'status' => 1
+        ]);
+        if ($power < 7) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
 

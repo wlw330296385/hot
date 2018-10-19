@@ -18,6 +18,15 @@
             background-color: #FFF;
             margin: 0px 0px 5px;
         }
+        ul.list{
+            border-bottom: 1px solid #EEE;
+        }
+        span.tips { 
+            width: 100% !important;
+            text-align: center !important;
+            padding: 0px !important;
+            font-size: 12px !important;
+        }
     </style>
 </head>
 
@@ -27,9 +36,9 @@
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title f12">
         {if $familyInfo.member_id==$memberInfo.id}
-            我邀请的
+            我邀请{$familyInfo.type}
         {else/}
-            邀请我的
+            {$familyInfo.type}邀请我
         {/if}
     </h1>
     </header>
@@ -41,13 +50,24 @@
                     <img src="{$memberInfo.avatar}" class="img50">
                 </li>
                 <li class="mui-col-xs-6 mui-col-sm-6" style="padding: 5px 10px">
-                    <text class="f16">{$memberInfo.member}</text> <i class="icon iconfont icon-sex{$memberInfo.sex}"></i><br />
-                    <text class="f12 colorgray">昵称：{$memberInfo.nickname}</text>
+                    <text class="f16">{$theMemebrInfo.member}</text> <i class="icon iconfont icon-sex{$theMemebrInfo.sex}"></i><br />
+                    <text class="f12 colorgray">昵称：{$theMemebrInfo.nickname}</text>
                 </li>
                 <li class="mui-col-xs-4 mui-col-sm-4 mui-text-right">
-                    <span class="f12">{$memberInfo['city']} {$memberInfo['area']}</span>
+                    <span class="f12">{$theMemebrInfo['city']} {$theMemebrInfo['area']}</span>
                 </li>
             </ul>
+
+            <div class="mui-input-group mb">
+                <div class="mui-input-row">
+                    {if $familyInfo.member_id==$memberInfo.id}
+                        <span class="tips">我分享给{$familyInfo.type}以下信息</span>
+                    {else/}
+                        <span class="tips">{$familyInfo.type}分享给我以下信息</span>
+                    {/if}
+                    
+                </div>
+            </div>
 
             {volist name="campList" id="vol"}
             <div class="page-header">
@@ -56,7 +76,7 @@
             <ul class="mui-table-view list detalis-list">
                 {volist name="vol.studentList" id="v"}
                 <li class="mui-table-view-cell listli listinitial ">
-                    <a class="mui-navigate-right" href="{:url('student/studentInfoOfCamp')}">
+                    <a class="mui-navigate-right" href="{:url('student/studentInfoOfCamp',['type'=>1,'student_id'=>$v['student_id'],'camp_id'=>$vol['camp_id']])}">
                     {$v.student}
                     </a>
                 </li>

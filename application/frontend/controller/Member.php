@@ -361,6 +361,11 @@ class Member extends Base{
         $f_id = input('param.f_id');
         if($f_id){
             $familyInfo = db('family')->where(['id'=>$f_id])->find();
+            if($familyInfo==""){
+                $this->error('无效页面');
+            }
+            $theMemebrInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();
+            $this->assign('theMemebrInfo',$theMemebrInfo);
             $this->assign('familyInfo',$familyInfo);
         }else{
            $this->error('无效页面');
@@ -380,7 +385,11 @@ class Member extends Base{
                 $this->error('权限不足');
             }
             //输出对方的memberInfo信息
-            $theMemebrInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();
+            if($familyInfo['member_id']==$this->memberInfo['id']){
+                $theMemebrInfo = db('member')->where(['id'=>$familyInfo['to_member_id']])->find();
+            }else{
+               $theMemebrInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();
+            }
             //列出对方的训练营学生列表
             $campList = db('camp_member')->where(['member_id'=>$familyInfo['member_id'],'type'=>1])->select();
         
