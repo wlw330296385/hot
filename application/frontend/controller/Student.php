@@ -33,7 +33,7 @@ class Student extends Base
 		if($studentInfo['member_id'] <> ($this->memberInfo['id'])){
 			// 先判断family	
 			$isFamily = db('family')->where(['to_member_id'=>$this->memberInfo['id'],'member_id'=>$studentInfo['member_id'],'status'=>1])->find();
-			dump($isFamily);die;
+		
         	if(!$isFamily){
         		// 获取当前用户身份
 		        $power = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
