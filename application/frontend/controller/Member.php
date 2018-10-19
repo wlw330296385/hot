@@ -375,16 +375,28 @@ class Member extends Base{
 
         $f_id = input('param.f_id');
         if($f_id){
-            $familyInfo = db('family')->where(['id'=>$f_id])->find();
+            $familyInfo = db('family')->where(['id'=>$f_id,'status'=>1])->find();
+            if($familyInfo['member_id']<>$this->memberInfo['id']&&$familyInfo['to_member_id']<>$this->memberInfo['id']){
+                $this->error('权限不足');
+            }
             //输出对方的memberInfo信息
-
+            $theMemebrInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();
             //列出对方的训练营学生列表
+            $campList = db('camp_member')->where(['member_id'=>$familyInfo['member_id'],'type'=>1])->select();
+        
+            foreach ($campList as $key => $value) {
+                $studentList = db('lesson_member')->where(['camp_id'=>$value['camp_id'],'member_id'=>$value['member_id']])->group('student_id')->select();
+                $campList[$key]['studentList'] = $studentList;
+            }
 
 
+
+            $this->assign('theMemebrInfo',$theMemebrInfo);
+            $this->assign('campList',$campList);
             $this->assign('familyInfo',$familyInfo);
 
         }else{
-           $this->error('权限不足');
+           $this->error('找不到绑定关系');
         }
 
 
