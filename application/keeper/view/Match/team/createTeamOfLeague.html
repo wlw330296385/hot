@@ -59,7 +59,22 @@
                 <div class="mui-input-row">
                     <label class="wd45">添加队员</label>
                 </div>
-                <div class="box"></div>
+                <div class="box">
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                            <div class="mui-col-xs-1 order">1</div>
+                            <div class="mui-col-xs-3"><input type="text" name="name" value="" placeholder="姓名" class="mui-text-center"></div>
+                            <div class="mui-col-xs-2">
+                                <select name="role" class="role">
+                                    <option value="3">队长</option>
+                                </select>
+                            </div>
+                            <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机"
+                                    class="mui-text-left"></div>
+                            <input type="checkbox" >
+                        </div>
+                    </div>
+                </div>
                 <div class="operation-btn">
                     <span class="mui-badge">0</span>
                     <a class="all">全选</a>
@@ -117,7 +132,7 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
+        var flagPhone = false;
         $(function () {
             // 添加队员
             $(".addMember").on("tap", "", function () {
@@ -129,13 +144,12 @@
                             <div class="mui-col-xs-3"><input type="text" name="name" value="" placeholder="姓名" class="mui-text-center"></div>
                             <div class="mui-col-xs-2">
                                 <select name="role" class="role">
-                                    <option value="">选择职务</option>
-                                    <option value="">暂无</option>
+                                    <option value="">队员</option>
+                                    <option value="6">领队</option>
                                     <option value="5">经理</option>
                                     <option value="4">教练</option>
-                                    <option value="3">队长</option>
                                     <option value="2">副队长</option>
-                                    <option value="1">队委</option>
+                                    <option value="1">后勤</option>
                                 </select>
                             </div>
                             <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机" class="mui-text-left"></div>
@@ -166,6 +180,37 @@
                 totalNum = thisBox.find(".checkboxCont").length;
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
+
+            // 
+            $(document).on("change", ".role", function () {
+                var thisRole = $(this).find("option:selected").val();
+                console.log(thisRole)
+                $(".checkboxCont").each(function () {
+                    var otherRole = $(".checkboxCont").find(".role option:selected").val();
+                    console.log(thisRole)
+                })
+            })
+
+
+            // 判断手机号码不能重复
+            $(document).on("blur", "input[name=telephone]", function () {
+                var numberCount = 0;
+                var thisNumber = $(this).val();
+                $(".checkboxCont input[name=telephone]").each(function () {
+                    if (thisNumber === $(this).val() && thisNumber !== '') {
+                        numberCount++;
+                    }
+                });
+                if (numberCount > 1) {
+                    mui.toast("手机号码不能重复");
+                    $(this).val('');
+                    $(this).focus();
+                    flagPhone = false;
+                    return false;
+                } else {
+                    flagPhone = true
+                }
+            });
         });
 
         // 获取数据并进行提交
@@ -177,10 +222,14 @@
                 mui.toast("请填写球队名称");
                 return false;
             }
+            // if (flagPhone == false) {
+            //     mui.toast("手机号码不能重复");
+            //     return false;
+            // }
             if (logo == '') {
                 $("input[name=logo]").val('/static/frontend/images/basketball.jpg');
             }
-            var isOk = true  //用变量记住状态
+            var isOk = true //用变量记住状态
             var team_member_list = [];
             $(".checkboxCont").each(function () {
                 var name = $(this).find("input[name=name]").val();
@@ -193,7 +242,7 @@
                 if (telephone == '') {
                     mui.toast("请填写队员联系电话");
                     return isOk = false;
-                } 
+                }
                 if (!(/^1[34578]\d{9}$/).test(telephone)) {
                     mui.toast("请输入正确的手机格式");
                     return isOk = false;
@@ -205,7 +254,9 @@
                     telephone
                 })
             });
-            if (!isOk) { return isOk }
+            if (!isOk) {
+                return isOk
+            }
             console.log(team_member_list)
 
             var data = wooApi.getInputData('input', 'data');
@@ -213,7 +264,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.team_member_list = JSON.stringify(team_member_list); 
+            objData.team_member_list = JSON.stringify(team_member_list);
             var url = "{:url('api/team/saveVirtualTeam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

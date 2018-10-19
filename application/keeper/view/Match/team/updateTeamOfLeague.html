@@ -17,10 +17,11 @@
             width: 100%;
         }
 
-        /* .mui-popover {
-            height: 370px;
-            background: #fff !important;
-        } */
+         .role{
+            margin:0;
+            direction: inherit !important;
+            color:#737373
+        }
     </style>
 </head>
 
@@ -55,12 +56,50 @@
             </div>
 
             <p class="pline"></p>
-
             <div class="operation-box mb" style="padding:15px;">
                 <div class="mui-input-row">
                     <label class="wd45">添加队员</label>
                 </div>
-                <div class="box"></div>
+                <div class="box">
+                    {if condition="empty($teamInfo.team_member_list)"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                            <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                                <div class="mui-col-xs-1 order">1</div>
+                                <div class="mui-col-xs-3"><input type="text" name="name" value="" placeholder="姓名" class="mui-text-center"></div>
+                                <div class="mui-col-xs-2">
+                                    <select name="role" class="role">
+                                        <option value="3">队长</option>
+                                    </select>
+                                </div>
+                                <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机"
+                                        class="mui-text-left"></div>
+                                <input type="checkbox" >
+                            </div>
+                        </div>
+                    {/if}
+                    {volist name="$teamInfo.team_member_list" id="vo"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <div class="mui-row mui-text-center f14" style="line-height: 41px;">
+                            <div class="mui-col-xs-1 order">{$key+1}</div>
+                            <div class="mui-col-xs-3"><input type="text" name="name" value="{$vo.name}" placeholder="姓名"
+                                    class="mui-text-center"></div>
+                            <div class="mui-col-xs-2">
+                                <select name="role" class="role" value="1">
+                                    <option value="">选择职务</option>
+                                    <option value="" {if condition="$vo.role == ''" } selected="true" {/if}>队员 </option>
+                                        <option value="6" {if condition="$vo.role == 6" } selected="true" {/if}>领队 </option>
+                                        <option value="5" {if condition="$vo.role == 5" } selected="true" {/if}>经理 </option>
+                                        <option value="4" {if condition="$vo.role == 4" } selected="true" {/if}>教练 </option>
+                                        <option value="3" {if condition="$vo.role == 3" } selected="true" {/if}>队长 </option>
+                                        <option value="2" {if condition="$vo.role == 2" } selected="true" {/if}>副队长 </option>
+                                        <option value="1" {if condition="$vo.role == 1" } selected="true" {/if}>后勤 </option>
+                                        </select> </div> <div class="mui-col-xs-5"><input type="text" name="telephone"
+                                            value="{$vo.telephone}" placeholder="手机" class="mui-text-left"></div>
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                    {/volist}
+                </div>
                 <div class="operation-btn">
                     <span class="mui-badge">0</span>
                     <a class="all">全选</a>
@@ -112,6 +151,7 @@
         var team_id = wooApi.GetQueryString('team_id');
         $("input[name=team_id]").val(team_id)
 
+        var flagPhone = false;
         $(function () {
             // 添加队员
             $(".addMember").on("tap", "", function () {
@@ -123,13 +163,12 @@
                             <div class="mui-col-xs-3"><input type="text" name="name" value="" placeholder="姓名" class="mui-text-center"></div>
                             <div class="mui-col-xs-2">
                                 <select name="role" class="role">
-                                    <option value="">选择职务</option>
-                                    <option value="">暂无</option>
+                                    <option value="">队员</option>
+                                    <option value="6">领队</option>
                                     <option value="5">经理</option>
                                     <option value="4">教练</option>
-                                    <option value="3">队长</option>
                                     <option value="2">副队长</option>
-                                    <option value="1">队委</option>
+                                    <option value="1">后勤</option>
                                 </select>
                             </div>
                             <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机" class="mui-text-left"></div>
@@ -139,6 +178,8 @@
                 $(".mui-badge").text(listLength)
                 $(".box").append(str);
             });
+            // 进入页面赋值条数
+            $(".mui-badge").text($(".checkboxCont").length)
 
             //全选
             $(".all").on('tap', function () {
@@ -160,6 +201,43 @@
                 totalNum = thisBox.find(".checkboxCont").length;
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
+
+            // 第一个队长席位不能删除
+            $(".checkboxCont").first().find("input[type=checkbox]").attr("disabled", true)
+            $(".checkboxCont").first().find(".role option").each(function () {
+                var roleVal = $(this).val()
+                if (roleVal != 3) {
+                    $(this).remove();
+                }
+            })
+            // 其他没有队长的选项判断
+            $(".checkboxCont").not(":first").find(".role option").each(function () {
+                var otherVal = $(this).val()
+                if (otherVal == 3) {
+                    $(this).remove();
+                }
+            })
+
+            // 判断手机号码不能重复
+            $(document).on("blur", "input[name=telephone]", function () {
+                var numberCount = 0;
+                var thisNumber = $(this).val();
+                $(".checkboxCont input[name=telephone]").each(function () {
+                    if (thisNumber === $(this).val() && thisNumber !== '') {
+                        numberCount++;
+                    }
+                });
+                if (numberCount > 1) {
+                    mui.toast("手机号码不能重复");
+                    $(this).val('');
+                    $(this).focus();
+                    flagPhone = false;
+                    return false;
+                } else {
+                    flagPhone = true
+                }
+            });
+
         });
 
         // 获取数据并进行提交
@@ -170,7 +248,11 @@
                 mui.toast("请填写球队名称");
                 return false;
             }
-            var isOk = true  //用变量记住状态
+            // if (flagPhone == false) {
+            //     mui.toast("手机号码不能重复");
+            //     return false;
+            // }
+            var isOk = true //用变量记住状态
             var team_member_list = [];
             $(".checkboxCont").each(function () {
                 var name = $(this).find("input[name=name]").val();
@@ -183,7 +265,7 @@
                 if (telephone == '') {
                     mui.toast("请填写队员联系电话");
                     return isOk = false;
-                } 
+                }
                 if (!(/^1[34578]\d{9}$/).test(telephone)) {
                     mui.toast("请输入正确的手机格式");
                     return isOk = false;
@@ -195,7 +277,9 @@
                     telephone
                 })
             });
-            if (!isOk) { return isOk }
+            if (!isOk) {
+                return isOk
+            }
             console.log(team_member_list)
 
             var data = wooApi.getInputData('input', 'data');
@@ -203,7 +287,7 @@
             // 获取其他标签值
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
-            objData.team_member_list = JSON.stringify(team_member_list); 
+            objData.team_member_list = JSON.stringify(team_member_list);
             var url = "{:url('api/team/saveVirtualTeam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
@@ -248,34 +332,6 @@
                 alert(msg);
             }
         });
-        // var pc = new PhotoClip('.clipArea1', {
-        //     size: 260,
-        //     outputSize: 640,
-        //     adaptive: ['80%', '60%'],
-        //     file: '.file1',
-        //     view: '.view1',
-        //     ok: '.clipBtn1',
-        //     loadStart: function () {
-        //         console.log('开始读取照片');
-        //     },
-        //     loadComplete: function () {
-        //         console.log('照片读取完成');
-        //     },
-        //     done: function (dataURL) {
-        //         console.log(dataURL);
-        //         mui.post("{:url('api/upload/imgcropupload')}", {
-        //             dataurl: dataURL,
-        //             path: 'cert'
-        //         }, function (res) {
-        //             console.log(res);
-        //             $("input[name=cover]").val(res.path)
-        //             mui("#txpopover1").popover("toggle");
-        //         }, 'json');
-        //     },
-        //     fail: function (msg) {
-        //         alert(msg);
-        //     }
-        // });
     </script>
 
 </body>
