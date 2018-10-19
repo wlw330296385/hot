@@ -2,7 +2,9 @@
 // 联赛api
 namespace app\api\controller;
 
+use app\model\Team;
 use app\model\TeamMember;
+use app\model\TeamMemberRole;
 use app\model\MatchTeamMember;
 use app\model\MatchStatistics;
 use app\model\MatchRecordMember;
@@ -28,9 +30,34 @@ class Claim extends Base
         if (empty($teamMember)) {
             return json(['code' => 100, 'msg' => "认领的数据与您不匹配"]);
         }
-        $teamMemberIdStr = $teamMember['id'];
         
+        // 如果是队长则给球队创始人
+        $is_leader = 0;
+        $teamMemberRoleList = TeamMemberRole::all(["member_id" => -1, "name" => $teamMember["name"]]);
+        $teamMemberRoleIdStr = '';
+        if (!empty($teamMemberRoleList)) {
+            $teamMemberRoleIdArray = [];
+            foreach($teamMemberRoleList as $row) {
+                array_push($teamMemberRoleIdArray, $row['id']);
+                if ($row['type'] == 3) {
+                    $is_leader = 1;
+                }
+            }
+            $teamMemberRoleIdStr = implode($teamMemberRoleIdArray, ',');
+        }
+
+        $teamIdStr = '';
+        if ($is_leader) {
+            $team = Team::get(["member_id" => -1, "team_id" => $teamMember["team_id"]]);
+            if (empty($team)) {
+                $is_leader = 0;
+            } else {
+                $teamIdStr = $team['id'];
+            }
+        }
+
         $matchTeamMemberList = MatchTeamMember::all(["team_member_id" => $teamMember["id"]]);
+        $matchTeamMemberIdStr = '';
         if (!empty($matchTeamMemberList)) {
             $matchTeamMemberIdArray = [];
             foreach($matchTeamMemberList as $row) {
@@ -40,6 +67,7 @@ class Claim extends Base
         }
 
         $matchStatisticsList = MatchStatistics::all(["team_member_id" => $teamMember["id"]]);
+        $matchStatisticsIdStr = '';
         if (!empty($matchStatisticsList)) {
             $matchStatisticsIdArray = [];
             foreach($matchStatisticsList as $row) {
@@ -49,6 +77,7 @@ class Claim extends Base
         }
 
         $matchRecordMemberList = MatchRecordMember::all(["team_member_id" => $teamMember["id"]]);
+        $matchRecordMemberIdStr = '';
         if (!empty($matchTeamMemberList)) {
             $matchRecordMemberIdArray = [];
             foreach($matchRecordMemberList as $row) {
@@ -56,36 +85,73 @@ class Claim extends Base
             }
             $matchRecordMemberIdStr = implode($matchRecordMemberIdArray, ',');
         }
-
+$changes = [
+    "team_member" => $teamMemberIdStr,
+    "team_member_role" => $teamMemberRoleIdStr,
+    "team" => $teamIdStr,
+    "match_team_member" => $matchTeamMemberIdStr,
+    "match_statistics" => $matchStatisticsIdStr,
+    "match_record_member" => $matchRecordMemberIdStr
+];
+dump($changes);exit;
+        $now = time();
         Db::startTrans();
         try {
-            $res1 = Db::table('team_member')->where('id', $teamMemberIdStr)->update([
+            Db::table('team_member')->where(['id', ['in', $teamMemberIdStr]])->update([
                 'member_id' => $memberInfo['id'],
                 'member' => $memberInfo['member'],
+                'update_time' => $now
             ]);
 
-            if (!empty($matchTeamMemberList)) {
-                $res2 = Db::table('match_team_member')->where('id', $matchTeamMemberIdStr)->update([
+            if (!empty($matchRecordMemberList)) {
+                Db::table('team_member_role')->where(['id', ['in', $teamMemberRoleIdStr]])->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
-                    'avatar' => $memberInfo['avatar']
+                    'update_time' => $now
+                ]);
+            }
+
+            if ($is_leader) {
+                Db::table('team')->where(['id', ['in', $matchTeamMemberIdStr]])->update([
+                    'member_id' => $memberInfo['id'],
+                    'member' => $memberInfo['member'],
+                    'avatar' => $memberInfo['avatar'],
+                    'update_time' => $now
+                ]);
+            }
+            if (!empty($matchTeamMemberList)) {
+                Db::table('match_team_member')->where(['id', ['in', $matchTeamMemberIdStr]])->update([
+                    'member_id' => $memberInfo['id'],
+                    'member' => $memberInfo['member'],
+                    'avatar' => $memberInfo['avatar'],
+                    'update_time' => $now
                 ]);
             }
 
             if (!empty($matchStatisticsList)) {
-                $res3 = Db::table('match_statistics')->where('id', $matchStatisticsIdStr)->update([
+                Db::table('match_statistics')->where(['id', ['in', $matchStatisticsIdStr]])->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
+                    'update_time' => $now
                 ]);
             }
 
             if (!empty($matchRecordMemberList)) {
-                $res4 = Db::table('match_record_member')->where('id', $matchRecordMemberIdStr)->update([
+                Db::table('match_record_member')->where(['id', ['in', $matchRecordMemberIdStr]])->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
-                    'avatar' => $memberInfo['avatar']
+                    'avatar' => $memberInfo['avatar'],
+                    'update_time' => $now
                 ]);
             }
+
+            
+            $logData = [
+                'member_id' => $memberInfo['id'],
+                'changes' => $changes,
+                'create_time' => $now
+            ];
+            Db::table('log_claim')->save($logData);
 
             Db::commit();
         } catch (\Exception $e) {
@@ -94,7 +160,7 @@ class Claim extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
         }
 
-        return json(['code' => 200, 'data' => ""]);
+        return json(['code' => 200, 'msg' => _lang('MSG_200')]);
         
     }
 
