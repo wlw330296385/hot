@@ -105,7 +105,7 @@ class Claim extends Base
             }
 
             if ($is_leader) {
-                Db::table('team')->where('id', 'in', $matchTeamMemberIdStr)->update([
+                Db::table('team')->where('id', 'in', $teamIdStr)->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'update_time' => $now
