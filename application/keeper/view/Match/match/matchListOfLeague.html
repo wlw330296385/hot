@@ -195,11 +195,25 @@
                                                     <p class="f14">
                                                         <img class="img24" src="${dataSchedule.away_team_logo}" alt="">${dataSchedule.away_team}
                                                     </p>
+                                                </div>`
+                                if ("{$power}" == 7 || "{$power}" == 8) {
+                                    newli +=
+                                        `
+                                                <div class="price-frame mui-text-left" style="padding:10px 0 10px 6px;;border-left: 1px solid #ddd">
+                                                    <p><a href="${urlsRecord}"><button class="opclick bggreen">比赛结果</button></a></p>
                                                 </div>
-                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">
-                                                        <p style="margin-bottom:8px;"><a href="${urlsEdit}"><button class="opclick bgred">赛程编辑</button></a></p>
-                                                <p><a href="${urlsRecord}"><button class="opclick bggreen">比赛结果</button></a></p></div>
                                                 `
+                                } else {
+                                    newli +=
+                                        `
+                                                <div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">
+                                                    <p style="margin-bottom:8px;">
+                                                        <a href="${urlsEdit}"><button class="opclick bgred">赛程编辑</button></a>
+                                                    </p>
+                                                    <p><a href="${urlsRecord}"><button class="opclick bggreen">比赛结果</button></a></p>
+                                                </div>
+                                                `
+                                }
                                 newli += `</li>`
                             }
                             if (data.data[i].stage.schedules != '') {
@@ -279,7 +293,7 @@
                                     var urlsRecord = "{:url('match/editMatchofleague')}" +
                                         '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 }
-                               
+
                                 newli +=
                                     `<li class="mui-table-view-cell listli">
                                         <div class="fl" style="line-height:62px;margin-right:10px;">${dataRecord.match_group}</div>
@@ -321,7 +335,7 @@
                                             <p class="lineHeight32 colorred">${dataRecord.home_score}</p>
                                             <p class="lineHeight32 colorred">${dataRecord.away_score}</p>
                                         </div>`
-                               
+
                                 newli += `</div></li>`
                             }
                             newli += `</ul >`
