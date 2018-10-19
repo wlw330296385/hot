@@ -182,7 +182,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span class="hoemTeamScore">{$matchRecordInfo.home_score}</span>
+                            <span class="hoemTeamScore colororange">{$matchRecordInfo.home_score}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>球衣颜色</label>
@@ -201,7 +201,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span class="awayTeamScore">{$matchRecordInfo.away_score}</span>
+                            <span class="awayTeamScore colororange">{$matchRecordInfo.away_score}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>球衣颜色</label>
@@ -354,11 +354,20 @@
                                 <a class="mui-navigate-right">
                                     <div class="mui-row">
                                         <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
-                                        <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
-                                        </div>
-                                        <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>`
+                        if (data.data[i].number == null) {
+                            newli +=
+                                ` <div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="" placeholder="球衣号码(可填)" >
+                                        </div>`
+                        } else {
+                            newli +=
+                                ` <div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
+                                        </div>`
+                        }
+                            newli +=
+                            `<div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
                                             </text>
@@ -496,11 +505,20 @@
                                 <a class="mui-navigate-right">
                                     <div class="mui-row">
                                         <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
-                                        <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
-                                        </div>
-                                        <div class="mui-col-xs-4 mui-text-center dataIcon">
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>`
+                        if (data.data[i].number == null) {
+                            newli +=
+                                ` <div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="" placeholder="球衣号码(可填)" >
+                                        </div>`
+                        } else {
+                            newli +=
+                                ` <div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
+                                        </div>`
+                        }
+                        newli +=
+                            `<div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
                                             </text>
@@ -607,7 +625,6 @@
             }
         });
     }
-
     // 提交数据
     $(".submitAction").on("tap", function () {
         var members = [];
