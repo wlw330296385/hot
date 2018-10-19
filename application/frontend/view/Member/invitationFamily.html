@@ -31,6 +31,9 @@
         .tjbtn { height: auto !important; }
         .tips { color:#F00; text-align: center; }
         #shareGuide.mui-popover, #shareGuide.mui-popover .mui-popover-arrow { top: 50px !important; right: 0px !important; width: 80% }
+        .personalFrame .tmFrameLeft {
+            padding: 55px 0 0px 40px;
+        }
     </style>
 </head>
 
@@ -72,7 +75,7 @@
             </div>
 
                 <div class="invInfo">
-                    <p>您的弟弟（<text class="memberName" class="colororange">{$familyInfo.member}</text>）邀请您加入他的家庭，<br />请获取并输入您的验证码。</p>
+                    <p>您的{$familyInfo.type}（<text class="memberName" class="colororange">{$familyInfo.member}</text>）邀请您加入他的家庭组，<br />请获取并输入您的验证码。</p>
                 </div>
                  <form class="mui-input-group" style="margin:0 8%">
                     <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
@@ -348,7 +351,8 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
-                         mui.alert(data.msg, '恭喜，已经成功接受邀请', '确定', function () {
+                        var qrcodeFollow ='<img src="/static/frontend/images/qrcode_hot.jpg" width="100%" /><p>请关注微信公众号【篮球管家】<br />以便随时查看您家人的信息！</p>'
+                         mui.alert(qrcodeFollow, '恭喜，已经成功接受邀请', '确定', function () {
                              location.href = "{:url('/frontend/camp/index')}"
                         })
                     } else {
@@ -470,19 +474,19 @@
         wx.ready(function () {
             // 分享到朋友圈
             wx.onMenuShareTimeline({
-                title: '{$familyInfo.member}邀请您加入他的家庭组',
-                desc: '篮球管家',
+                title: '{$familyInfo.member}邀请您加入家庭组',
+                desc: '分享他在篮球管家的资料给你哦！',
                 link: "{$shareurl}/pid/{$familyInfo.member_id}",
-                imgUrl: "{:request()->root(true)}/static/frontend/images/minebg.png",
+                imgUrl: "{:request()->root(true)}{$familyInfo.avatar}",
                 success: function () { },
                 cancel: function () { }
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
-                title: '{$familyInfo.member}邀请您加入他的家庭组',
-                desc: '篮球管家',
+                title: '{$familyInfo.member}邀请您加入家庭组',
+                desc: '分享他在篮球管家的资料给你哦！',
                 link: "{$shareurl}/pid/{$familyInfo.member_id}",
-                imgUrl: "{:request()->root(true)}/static/frontend/images/minebg.png",
+                imgUrl: "{:request()->root(true)}{$familyInfo.avatar}",
                 type: "",
                 dataUrl: '',
                 success: function () { },
