@@ -69,7 +69,7 @@
                                     <option value="3">队长</option>
                                 </select>
                             </div>
-                            <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机"
+                            <div class="mui-col-xs-5"><input type="text" name="telephone" value="" class="mui-text-left captain" placeholder="手机"
                                     class="mui-text-left"></div>
                             <input type="checkbox" >
                         </div>
@@ -93,6 +93,8 @@
             </p>
             <div class="publicText">
                 <p>1、球队名称必填，球队logo选填，队员可选填</p>
+                <p>2、队长手机号码必须，供认领球队数据使用</p>
+                <p>3、手机号码供球员认领数据使用</p>
             </div>
         </div>
 
@@ -193,24 +195,24 @@
 
 
             // 判断手机号码不能重复
-            $(document).on("blur", "input[name=telephone]", function () {
-                var numberCount = 0;
-                var thisNumber = $(this).val();
-                $(".checkboxCont input[name=telephone]").each(function () {
-                    if (thisNumber === $(this).val() && thisNumber !== '') {
-                        numberCount++;
-                    }
-                });
-                if (numberCount > 1) {
-                    mui.toast("手机号码不能重复");
-                    $(this).val('');
-                    $(this).focus();
-                    flagPhone = false;
-                    return false;
-                } else {
-                    flagPhone = true
-                }
-            });
+            // $(document).on("blur", "input[name=telephone]", function () {
+            //     var numberCount = 0;
+            //     var thisNumber = $(this).val();
+            //     $(".checkboxCont input[name=telephone]").each(function () {
+            //         if (thisNumber === $(this).val() && thisNumber !== '') {
+            //             numberCount++;
+            //         }
+            //     });
+            //     if (numberCount > 1) {
+            //         mui.toast("手机号码不能重复");
+            //         $(this).val('');
+            //         $(this).focus();
+            //         flagPhone = false;
+            //         return false;
+            //     } else {
+            //         flagPhone = true
+            //     }
+            // });
         });
 
         // 获取数据并进行提交
@@ -218,14 +220,15 @@
 
             var name = $("input[name=name]").val();
             var logo = $("input[name=logo]").val();
+            var captain = $(".captain").val();
             if (name == '') {
                 mui.toast("请填写球队名称");
                 return false;
             }
-            // if (flagPhone == false) {
-            //     mui.toast("手机号码不能重复");
-            //     return false;
-            // }
+            if (captain == '') {
+                mui.toast("请填写队长手机号码");
+                return false;
+            }
             if (logo == '') {
                 $("input[name=logo]").val('/static/frontend/images/basketball.jpg');
             }
@@ -239,14 +242,14 @@
                     mui.toast("请填写队员真实姓名");
                     return isOk = false;
                 }
-                if (telephone == '') {
-                    mui.toast("请填写队员联系电话");
-                    return isOk = false;
-                }
-                if (!(/^1[34578]\d{9}$/).test(telephone)) {
-                    mui.toast("请输入正确的手机格式");
-                    return isOk = false;
-                };
+                // if (telephone == '') {
+                //     mui.toast("请填写队员联系电话");
+                //     return isOk = false;
+                // }
+                // if (!(/^1[34578]\d{9}$/).test(telephone)) {
+                //     mui.toast("请输入正确的手机格式");
+                //     return isOk = false;
+                // };
 
                 team_member_list.push({
                     name,

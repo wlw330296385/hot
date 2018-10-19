@@ -155,7 +155,7 @@
 
                         <div class="page-header bggray2">
                             <span class="course wd45">
-                                <strong>记录员</strong>
+                                <strong>记录员</strong>{if condition="empty($matchRecordInfo.scorers_list)"}（暂无）{/if}
                             </span>
                         </div>
                         <div class="box">
@@ -322,6 +322,8 @@
         });
         homeTeam();
         awayTeam();
+
+
     });
 
     // 主队球员数据
@@ -357,12 +359,12 @@
                         if (data.data[i].number == null) {
                             newli +=
                                 `<div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="暂无" disabled>
+                                            <input type="text" name="number" class="addInput" value="" placeholder="球号">
                                         </div>`
                         } else {
                             newli +=
                                 `<div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
+                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
                                         </div>`
                         }
                         newli +=
@@ -488,6 +490,13 @@
                     }
                     $(".homeList").empty().append(newli);
                     mui('.mui-switch').switch();
+                    // 遍历查找如果数据为0，清除数据
+                    $(".dataCollapse").find("input").each(function () {
+                        var inputVal = $(this).val();
+                        if (inputVal == 0) {
+                            $(this).val('');
+                        }
+                    });
                 } else {
                     $(".homeList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
                 }
@@ -531,12 +540,12 @@
                         if (data.data[i].number == null) {
                             newli +=
                                 `<div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="暂无" disabled>
+                                            <input type="text" name="number" class="addInput" value="" placeholder="球号">
                                         </div>`
                         } else {
                             newli +=
                                 `<div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" disabled>
+                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
                                         </div>`
                         }
                         newli +=
@@ -662,6 +671,13 @@
                     }
                     $(".awayList").empty().append(newli);
                     mui('.mui-switch').switch();
+                    // 遍历查找如果数据为0，清除数据
+                    $(".dataCollapse").find("input").each(function () {
+                        var inputVal = $(this).val();
+                        if (inputVal == 0) {
+                            $(this).val('');
+                        }
+                    });
                 } else {
                     $(".awayList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
                 }

@@ -71,7 +71,7 @@
                                         <option value="3">队长</option>
                                     </select>
                                 </div>
-                                <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机"
+                                <div class="mui-col-xs-5"><input type="text" name="telephone" value="" class="caption" placeholder="手机"
                                         class="mui-text-left"></div>
                                 <input type="checkbox" >
                             </div>
@@ -244,14 +244,19 @@
         function submitAction() {
 
             var name = $("input[name=name]").val();
+            var captain = $(".captain").val();
             if (name == '') {
                 mui.toast("请填写球队名称");
                 return false;
             }
-            // if (flagPhone == false) {
-            //     mui.toast("手机号码不能重复");
-            //     return false;
-            // }
+            if (name == '') {
+                mui.toast("请填写球队名称");
+                return false;
+            }
+            if (captain == '') {
+                mui.toast("请填写队长手机号码");
+                return false;
+            }
             var isOk = true //用变量记住状态
             var team_member_list = [];
             $(".checkboxCont").each(function () {
@@ -262,14 +267,14 @@
                     mui.toast("请填写队员真实姓名");
                     return isOk = false;
                 }
-                if (telephone == '') {
-                    mui.toast("请填写队员联系电话");
-                    return isOk = false;
-                }
-                if (!(/^1[34578]\d{9}$/).test(telephone)) {
-                    mui.toast("请输入正确的手机格式");
-                    return isOk = false;
-                };
+                // if (telephone == '') {
+                //     mui.toast("请填写队员联系电话");
+                //     return isOk = false;
+                // }
+                // if (!(/^1[34578]\d{9}$/).test(telephone)) {
+                //     mui.toast("请输入正确的手机格式");
+                //     return isOk = false;
+                // };
 
                 team_member_list.push({
                     name,

@@ -57,9 +57,9 @@
                 <input type="text" name="groupNum" value="{$groupCount}" class="data" placeholder="请输入组数">
             </div>
             <div style="overflow: hidden;padding:10px 0">
-                    <button type="button" class="bgred fenpei fr" style="margin-right: 15px;">分配</button>
-                    <span style="color:#bdbdbd;padding:6px 10px 0 0;" class="fr f14">(可重新分配)</span>
-                </div>
+                <button type="button" class="bgred fenpei fr" style="margin-right: 15px;">分配</button>
+                <span style="color:#bdbdbd;padding:6px 10px 0 0;" class="fr f14">(可重新分配)</span>
+            </div>
             <div class="frame"></div>
 
         </form>
@@ -218,7 +218,9 @@
                             newli +=
                                 '<ul class="mui-table-view list border-b secendUl"><div class="page-header border-b bggray2 groupsTip"><input type="text" class="course" name="groupName" value="' +
                                 data.data[i].name +
-                                '" placeholder="请填写组名" style="padding:0;width:20%" /><input type="hidden" name="groupId" value="' + data.data[i].id + '"/><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
+                                '" placeholder="请填写组名" style="padding:0;width:20%" /><input type="hidden" name="groupId" value="' +
+                                data.data[i].id +
+                                '"/><span class="f14">(可编辑)</span><span class="f14 fr" style="color:#bfbfbfdd">序号：<text class="groupNum">' +
                                 ((data.data.slice(0, i).length + 1)) + '</text></span></div>';
                             var teams = data.data[i].group_teams;
                             for (var j = 0; j < teams.length; j++) {
@@ -328,6 +330,7 @@
 
         // 获取数据并进行提交
         function submitAction() {
+
             var isOk = true //用变量记住状态
             groupList = []
 
@@ -379,28 +382,34 @@
                 }
             }
 
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.groupList = JSON.stringify(groupList);
-            var url = "{:url('api/league/saveleaguegroup')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            console.log(ajaxResult);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '修改分组成功', '确定', function () {
-                    var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' + "{$leagueInfo.id}";
-                    window.top.location.href = goUrl;
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '修改创建');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
+            var btnArray = ["取消", "确认"]
+            mui.confirm("如果改变已存在赛程的球队，该球队所在赛程将被删除", "提示", btnArray, function (e) {
+                if (e.index == 1) {
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    objData.groupList = JSON.stringify(groupList);
+                    var url = "{:url('api/league/saveleaguegroup')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    console.log(ajaxResult);
+                    if (ajaxResult.code == 200) {
+                        mui.alert(ajaxResult.msg, '修改分组成功', '确定', function () {
+                            var goUrl = "{:url('match/groupsListOfLeague')}" + '/league_id/' +
+                                "{$leagueInfo.id}";
+                            window.top.location.href = goUrl;
+                        })
+                    } else {
+                        mui.alert(ajaxResult.msg, '修改创建');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
                     }
-                }, 'json');
-            }
+                }
+            })
 
         };
     </script>

@@ -107,10 +107,7 @@
 
         $(function () {
 
-            toList(1)
-            $(".schedule1").on("tap", function () {
-                toList(1)
-            })
+            // 点击预排显示预排赛程
             $(".schedule0").on("tap", function () {
                 toList(0)
             })
@@ -118,8 +115,14 @@
             //选择查看赛程类型
             $("#group").on("change", function () {
                 match_group_id = $(this).find("option:checked").val();
-                toList(1, match_group_id)
-                toList(0, match_group_id)
+                if (match_group_id == 0) {
+                    toList(1)
+                    toList(0)
+                } else {
+                    toList(1, match_group_id)
+                    toList(0, match_group_id)
+                }
+
             });
             getbattle();
 
@@ -146,8 +149,6 @@
                     }
                 });
             });
-
-
 
             // 发布赛程
             $(document).on("tap", ".releaseSchedule", function () {
@@ -257,7 +258,6 @@
                     }
                 });
             });
-
         })
 
         // 比赛阶段

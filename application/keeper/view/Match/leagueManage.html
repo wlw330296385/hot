@@ -131,7 +131,7 @@
                         <div class="mui-media-body">赛程</div>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 matchOpen" >
                     <a href="{:url('match/matchListOfLeague',['league_id' => $leagueInfo.id])}">
                         <span class="icon iconfont icon-training-game"></span>
                         <div class="mui-media-body">录比赛</div>
@@ -168,7 +168,8 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-                    <a href="{:url('match/recruitmentListOfLeague', ['league_id' => $leagueInfo.id])}">
+                    <!-- <a href="{:url('match/recruitmentListOfLeague', ['league_id' => $leagueInfo.id])}"> -->
+                    <a href="###">
                         <span class="icon iconfont icon-o-Dynamic"></span>
                         <div class="mui-media-body">招募</div>
                     </a>
@@ -180,9 +181,23 @@
                             <div class="mui-media-body">消息</div>
                         </a>
                     </li> -->
-
+            </ul>
+            {else/}
+            {if $matchMemberInfo.type=8 || $matchMemberInfo.type=7}
+            <div class="page-header f12">管理员版块</div>
+            <ul class="mui-table-view mui-grid-view mui-grid-9 choise-module whitebg" style="margin-bottom:7px">
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 matchOpen" >
+                    <a href="{:url('match/matchListOfLeague',['league_id' => $leagueInfo.id])}">
+                        <span class="icon iconfont icon-training-game"></span>
+                        <div class="mui-media-body">录比赛</div>
+                    </a>
+                </li>
             </ul>
             {/if}
+            {/if}
+
+            
+            
         </div>
 
     </div>
@@ -268,7 +283,7 @@
             $(".goConfirm").on("tap", function () {
                 mui.toast('暂未开放，敬请期待');
             })
-
+            
             var organization_id = "{$league_id}";
             mui.ajax("{:url('api/apply/getApplyListByPageApi','','',true)}", {
                 data: {
