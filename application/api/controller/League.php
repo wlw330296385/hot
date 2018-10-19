@@ -1173,7 +1173,7 @@ class League extends Base
             }
             // 获取数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroupPaginator($data, 'id asc');
+            $result = $leagueService->getMatchGroupPaginator($data, 'name asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
