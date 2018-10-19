@@ -147,9 +147,10 @@ class Claim extends Base
             ];
             $logData = [
                 'member_id' => $memberInfo['id'],
-                'changes' => $changes,
+                'changes' => json_encode($changes),
                 'create_time' => $now
             ];
+
             Db::table('log_claim')->insert($logData);
 
             Db::commit();
