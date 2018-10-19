@@ -1400,7 +1400,7 @@ class TeamService
     public function getTeamMemberRoleList($map, $order='id asc') {
         $model = new TeamMemberRole();
         $res = $model->where($map)->order($order)->select();
-        return $result;
+        return $res;
     }
 
     // 仅获取球队球员

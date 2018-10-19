@@ -3220,22 +3220,48 @@ class Team extends Base
             } else {
                 $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
 
+                // 1.如果球员数不同，重置
+                // 2.如果球员数相同，但有个手机号不在里面,重置
+                // 3.如果球员数相同，但有个名字不在里面，重置
+                // 4.如果球员数相同，但有个权限不在里面，重置
                 if (count($team_member_list) != count($teamMemberList)) {
                     $resetFlag = 1;
                 } else {
                     if (!empty($teamMemberList)) {
+
                         $telephoneArray = [];
                         foreach ($teamMemberList as $item) {
-                            array_push($telephoneArray, $item['telephone']);
+                            $telephoneArray[$item['name']] = $item['telephone'];
                         }
+
+                        $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
+                        $roleArray = [];
+                        if (!empty($teamMemberRoleList)) {
+                            foreach ($teamMemberRoleList as $col) {
+                                $roleArray[$col['name']] = $col['type'];
+                            }
+                        }
+
                         foreach ($team_member_list as $row) {
-                            if (!in_array($row['telephone'], $telephoneArray)) {
-                                $resetFlag = 1;
+                            if (!empty($telephoneArray)) {
+                                if (!empty($telephoneArray[$row['name']]) && $telephoneArray[$row['name']] != $row['telephone']) {
+                                    $resetFlag = 1;
+                                } else if (empty($telephoneArray[$row['name']]) && !empty($row['telephone'])) {
+                                    $resetFlag = 1;
+                                }
+                            }
+                            if (!empty($roleArray)) {
+                                if (!empty($roleArray[$row['name']]) && $roleArray[$row['name']] != $row['role']) {
+                                    $resetFlag = 1;
+                                } else if (empty($roleArray[$row['name']]) && !empty($row['role'])) {
+                                    $resetFlag = 1;
+                                }
                             }
                         }
                     }
                 }
 
+                // 1.如果 match_record_member 有一个条记录就不允许修改队员
                 if ($resetFlag) {
                     $recordMemberCount = $matchS->getMatchRecordMemberCount([
                         'match_id' => $match_id,
