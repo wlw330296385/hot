@@ -30,7 +30,8 @@ class Claim extends Base
         if (empty($teamMember)) {
             return json(['code' => 100, 'msg' => "认领的数据与您不匹配"]);
         }
-        
+        $teamMemberIdStr = $teamMember['id'];
+
         // 如果是队长则给球队创始人
         $is_leader = 0;
         $teamMemberRoleList = TeamMemberRole::all(["member_id" => -1, "name" => $teamMember["name"]]);
@@ -48,7 +49,7 @@ class Claim extends Base
 
         $teamIdStr = '';
         if ($is_leader) {
-            $team = Team::get(["member_id" => -1, "team_id" => $teamMember["team_id"]]);
+            $team = Team::get(["member_id" => -1, "id" => $teamMember["team_id"]]);
             if (empty($team)) {
                 $is_leader = 0;
             } else {
@@ -85,26 +86,18 @@ class Claim extends Base
             }
             $matchRecordMemberIdStr = implode($matchRecordMemberIdArray, ',');
         }
-$changes = [
-    "team_member" => $teamMemberIdStr,
-    "team_member_role" => $teamMemberRoleIdStr,
-    "team" => $teamIdStr,
-    "match_team_member" => $matchTeamMemberIdStr,
-    "match_statistics" => $matchStatisticsIdStr,
-    "match_record_member" => $matchRecordMemberIdStr
-];
-dump($changes);exit;
+
         $now = time();
         Db::startTrans();
         try {
-            Db::table('team_member')->where(['id', ['in', $teamMemberIdStr]])->update([
+            Db::table('team_member')->where('id', 'in', $teamMemberIdStr)->update([
                 'member_id' => $memberInfo['id'],
                 'member' => $memberInfo['member'],
                 'update_time' => $now
             ]);
 
             if (!empty($matchRecordMemberList)) {
-                Db::table('team_member_role')->where(['id', ['in', $teamMemberRoleIdStr]])->update([
+                Db::table('team_member_role')->where('id', 'in', $teamMemberRoleIdStr)->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'update_time' => $now
@@ -112,15 +105,14 @@ dump($changes);exit;
             }
 
             if ($is_leader) {
-                Db::table('team')->where(['id', ['in', $matchTeamMemberIdStr]])->update([
+                Db::table('team')->where('id', 'in', $matchTeamMemberIdStr)->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
-                    'avatar' => $memberInfo['avatar'],
                     'update_time' => $now
                 ]);
             }
             if (!empty($matchTeamMemberList)) {
-                Db::table('match_team_member')->where(['id', ['in', $matchTeamMemberIdStr]])->update([
+                Db::table('match_team_member')->where('id', 'in', $matchTeamMemberIdStr)->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'avatar' => $memberInfo['avatar'],
@@ -129,7 +121,7 @@ dump($changes);exit;
             }
 
             if (!empty($matchStatisticsList)) {
-                Db::table('match_statistics')->where(['id', ['in', $matchStatisticsIdStr]])->update([
+                Db::table('match_statistics')->where('id', 'in', $matchStatisticsIdStr)->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'update_time' => $now
@@ -137,7 +129,7 @@ dump($changes);exit;
             }
 
             if (!empty($matchRecordMemberList)) {
-                Db::table('match_record_member')->where(['id', ['in', $matchRecordMemberIdStr]])->update([
+                Db::table('match_record_member')->where('id', 'in', $matchRecordMemberIdStr)->update([
                     'member_id' => $memberInfo['id'],
                     'member' => $memberInfo['member'],
                     'avatar' => $memberInfo['avatar'],
@@ -145,22 +137,29 @@ dump($changes);exit;
                 ]);
             }
 
-            
+            $changes = [
+                "team_member" => $teamMemberIdStr,
+                "team_member_role" => $teamMemberRoleIdStr,
+                "team" => $teamIdStr,
+                "match_team_member" => $matchTeamMemberIdStr,
+                "match_statistics" => $matchStatisticsIdStr,
+                "match_record_member" => $matchRecordMemberIdStr
+            ];
             $logData = [
                 'member_id' => $memberInfo['id'],
                 'changes' => $changes,
                 'create_time' => $now
             ];
-            Db::table('log_claim')->save($logData);
+            Db::table('log_claim')->insert($logData);
 
             Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             trace('error:' . $e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
 
-        return json(['code' => 200, 'msg' => _lang('MSG_200')]);
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         
     }
 

@@ -482,7 +482,7 @@ class Match extends Base {
 
         $leagueS = new LeagueService();
         if (!empty($league_id)) {
-            $power = $leagueService->getMatchMemberType([
+            $power = $leagueS->getMatchMemberType([
                 'match_id' => $league_id,
                 'member_id' => $this->memberInfo['id'],
                 'status' => 1
