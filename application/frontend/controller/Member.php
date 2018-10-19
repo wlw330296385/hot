@@ -384,12 +384,16 @@ class Member extends Base{
             if($familyInfo['member_id']<>$this->memberInfo['id']&&$familyInfo['to_member_id']<>$this->memberInfo['id']){
                 $this->error('权限不足');
             }
-            //输出对方的memberInfo信息
             if($familyInfo['member_id']==$this->memberInfo['id']){
-                $theMemebrInfo = db('member')->where(['id'=>$familyInfo['to_member_id']])->find();
+                // 如果我是邀请人
+                $theMemberInfo = db('member')->where(['id'=>$familyInfo['to_member_id']])->find();// 被要邀请人的信息
             }else{
-               $theMemebrInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();
+                // 如果我是被邀请人
+                $theMemberInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();// 邀请人的信息
             }
+            
+            
+
             //列出对方的训练营学生列表
             $campList = db('camp_member')->where(['member_id'=>$familyInfo['member_id'],'type'=>1])->select();
         
@@ -400,10 +404,9 @@ class Member extends Base{
 
 
 
-            $this->assign('theMemebrInfo',$theMemebrInfo);
+            $this->assign('theMemberInfo',$theMemberInfo);
             $this->assign('campList',$campList);
             $this->assign('familyInfo',$familyInfo);
-
         }else{
            $this->error('找不到绑定关系');
         }
