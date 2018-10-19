@@ -27,9 +27,8 @@
         }
 
 
-        if(unReadMessage>0){
-            tips(unReadMessage);
-        }
+
+        tips(unReadMessage);
     }
 
 
@@ -51,9 +50,12 @@
                 
                 if(msg.responseJSON.code == 200){
                     sessionStorage.setItem(name,msg.responseJSON.data);
-                    tips(msg.responseJSON.data)
+                    if(msg.responseJSON.data>0){
+                        tips(msg.responseJSON.data)
+                    }else{
+                        tips(0);
+                    }
                 }else{
-                    
                     sessionStorage.setItem(name,0);
                 } 
             }
@@ -63,7 +65,20 @@
 
 
     function tips(unReadMessage){
-        var html = `<span class="mui-badge">${unReadMessage}</span>`;
+        if(unReadMessage>0){
+            var html = `<span class="mui-badge">${unReadMessage}</span>`;
+        }else{
+            var html = ``;
+        }
+        
         $('#Member').html(html);
     } 
+
+
+
+    setInterval(function(){
+        if({$memberInfo.id}>0){
+            getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:2},'unReadMessage_'+{$memberInfo.id});
+        }
+    }, 5000); 
 </script>

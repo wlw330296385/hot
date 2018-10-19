@@ -10,7 +10,7 @@ class Output extends Backend{
 
     public function index(){
         $list1 = [];
-        if(!$this->cur_camp){
+        if(!$this->Backend){
 
         }else{
             $monthStart = 20180101;

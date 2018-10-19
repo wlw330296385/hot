@@ -202,11 +202,8 @@ class Message extends Base{
             $map['member_id'] = $this->memberInfo['id'];
             $MessageMember = new \app\model\MessageMember;
             $result = $MessageMember->where($map)->count();
-            if ($result) {
-                return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
-            } else {
-                return json(['code' => 100, 'msg' => '没有这条消息']);
-            }
+
+            return json(['code' => 200, 'msg' => '获取成功', 'data' => $result]);
 
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);

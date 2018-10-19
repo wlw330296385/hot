@@ -676,6 +676,10 @@ class BillService {
     //同意退款
     public function agreeBill($map,$refund){
         try {
+
+            if(!$refund || !$map){
+                return ['code'=>100,'msg'=>'传参错误'];
+            }
             $billInfo = $this->getBill($map);   
             if($billInfo['status']!= -1){
                 return ['code'=>100,'msg'=>'该订单状态不支持该操作'];
