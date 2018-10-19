@@ -155,7 +155,7 @@
                         <div class="mui-row">
                             <div class="mui-col-xs-2  colororange">
                                 <input type="number" name="number" class="addInput mui-text-center" value="{$vol.number}"
-                                    placeholder="球号" disabled>
+                                    placeholder="球号">
                             </div>
                             <div class="mui-col-xs-5">
                                 <input type="text" name="name" class="addInput" value="{$vol.name}" data-member="{$vol.member}"
@@ -390,14 +390,9 @@
             });
         })(mui);
 
-        $(function () {
+        var flagNumber = false;
 
-            // 球衣号码为空可编辑
-            $(".dataList").find("input[name=number]").each(function () {
-                if ($(this).val() == 0) {
-                    $(this).removeAttr("disabled");
-                }
-            });
+        $(function () {
 
             // 遍历查找如果数据为0，清除数据
             $(".dataCollapse").find("input").each(function () {
@@ -523,7 +518,7 @@
                     `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
-                            <div class="mui-col-xs-2 colororange"><input type="number" name="number" class="addInput mui-text-center" value="${addtmNumber}" ${checkdisabled}  placeholder="球号" ></div>
+                            <div class="mui-col-xs-2 colororange"><input type="number" name="number" class="addInput mui-text-center" value="${addtmNumber}"  placeholder="球号" ></div>
                             <div class="mui-col-xs-5"><input type="text" name="name" class="addInput" value="${addtmName}" data-member="${addMember}"  placeholder="姓名" disabled =${checkdisabled}></div>
                             <div class="mui-col-xs-2"><input type="text" name="personScore" class="addInput mui-text-center" value="" placeholder="得分" disabled></div>
                             <div class="mui-col-xs-2 mui-text-center dataIcon">
@@ -801,7 +796,6 @@
                 };
             });
 
-
             // 判断球衣号码不能重复
             $(document).on("blur", "input[name=number]", function () {
                 var numberCount = 0;
@@ -813,10 +807,15 @@
                 });
                 if (numberCount > 1) {
                     mui.toast("球衣号码不能重复");
+                    $(this).val('');
                     $(this).focus();
+                    flagNumber = false;
                     return false;
+                } else {
+                    flagNumber = true
                 }
             });
+
 
             $(document).on("blur", "input[name=fg]", function () {
                 var fga = $(this).parents().siblings().children("input[name=fga]").val(); //二分出手数
@@ -847,9 +846,12 @@
 
         // 提交
         function submitAction() {
-
             if ($("input[name=name]").val() == '') {
                 mui.toast("请填写球员姓名！");
+                return false;
+            }
+            if (flagNumber == false) {
+                mui.toast("球衣号码不能重复");
                 return false;
             }
 

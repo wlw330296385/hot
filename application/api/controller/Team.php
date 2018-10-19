@@ -3146,7 +3146,7 @@ class Team extends Base
     // 更新虚拟球队
     public function saveVirtualTeam()
     {
-        if (empty(input('param.name')) || empty(input('param.match_id'))) {
+        if (empty(input('post.name')) || empty(input('post.match_id'))) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
 
@@ -3154,7 +3154,7 @@ class Team extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         // 处理请求参数
-        $data = input('param.');
+        $data = input('post.');
 
         $match_id = $data['match_id'];
         unset($data['match_id']);
@@ -3166,39 +3166,37 @@ class Team extends Base
 
         // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
         $matchS = new MatchService();
+        $leagueS = new LeagueService();
+        $teamS = new TeamService();
+
         $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
         if (empty($matchInfo)){
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
         }
 
-        $matchOrgMemberS = new MatchOrgMemberService();
-        $matchOrgMmeberInfo = $matchOrgMemberS->getMatchOrgMember(['match_org_id' => $matchInfo["match_org_id"], 'member_id' => $this->memberInfo['id'], 'status' => 1]);
-        if (empty($matchOrgMmeberInfo) || $matchOrgMmeberInfo['type_num'] < 9) {
+        $power = $leagueS->getMatchMemberType([
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $match_id,
+            'status' => 1
+        ]);
+        if ($power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
 
-        $data['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
-        $data['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
-        $data['type'] = !empty($data['type']) ? $data['type'] : 3; // 默认业余组织类型
-        $data['member_id'] = -1;
-        $data['member'] = "";
-        $data['leader_id'] = -1;
-        $data['leader'] = "";
-        $data['captain_id'] = -1;
-        $data['captain'] = "";
-        $data['member_num'] = -1;
-
         // 如果有传 Team_id 获取队伍信息 查询是否匹配
-        $leagueS = new LeagueService();
-        $teamS = new TeamService();
-
         // 已在联赛内的球队 更新 和 不在联赛内的球队 创建
         if (!empty($team_id)) {
             $matchTeamInfo = $leagueS->getMatchTeamInfoSimple(['match_id' => $match_id, 'team_id' => $team_id]);
             if (empty($matchTeamInfo)) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404')]);
             }
-            $data['id'] = $matchTeamInfo['team_id'];
+
+            $teamInfo = $teamS->getTeamOnly(['id' => $team_id]);
+            if (empty($teamInfo)) {
+                return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+            } else if ($teamInfo['member_id'] != -1) {
+                return json(['code' => 100, 'msg' => '该球队非联赛创建的临时球队，无法修改']);
+            }
         } else {
             $teams_count = $leagueS->getMatchTeamCount(['match_id' => $match_id, 'status' => 1]);
             if ($matchInfo["teams_max"] <= $teams_count) {
@@ -3206,34 +3204,184 @@ class Team extends Base
             }
         }
 
-        $res = $teamS->saveVirtualTeam($data);
-        if ($res["code"] != 200){
-            return json($res);
-        }  
+        // 有无修改参赛人，有则检测match_record_member表
+        $resetFlag = 0;
+        if ( !empty($data['team_member_list']) ) {
+            $team_member_list = json_decode($data['team_member_list'], true);
 
-        $map["match_id"] = $matchInfo["id"];
-        $map["match"] = $matchInfo["name"];
-        $map["team_id"] = empty($team_id) ? $res["insid"] : $team_id;
-        $map["team"] = $data["name"];
-        $map["team_logo"] = $data['logo'];
-        $map["status"] = 1;
-        if (!empty($matchTeamInfo)) {
-            $map["id"] = $matchTeamInfo["id"];
+            // if (empty($team_member_list)) {
+            //     return json(['code' => 100, 'msg' => __lang('MSG_402')."team_member_list"]);
+            // }
+            $team_member_count = count($team_member_list);
+            if ($team_member_count == 0) {
+                $resetFlag = 1;
+            } else if (empty($team_id) && $team_member_count > 0) {
+                $resetFlag = 1;
+            } else {
+                $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
+
+                // 1.如果球员数不同，重置
+                // 2.如果球员数相同，但有个手机号不在里面,重置
+                // 3.如果球员数相同，但有个名字不在里面，重置
+                // 4.如果球员数相同，但有个权限不在里面，重置
+                if (count($team_member_list) != count($teamMemberList)) {
+                    $resetFlag = 1;
+                } else {
+                    if (!empty($teamMemberList)) {
+
+                        $telephoneArray = [];
+                        foreach ($teamMemberList as $item) {
+                            $telephoneArray[$item['name']] = $item['telephone'];
+                        }
+
+                        $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
+                        $roleArray = [];
+                        if (!empty($teamMemberRoleList)) {
+                            foreach ($teamMemberRoleList as $col) {
+                                $roleArray[$col['name']] = $col['type'];
+                            }
+                        }
+
+                        foreach ($team_member_list as $row) {
+                            if (!empty($telephoneArray)) {
+                                if (!empty($telephoneArray[$row['name']]) && $telephoneArray[$row['name']] != $row['telephone']) {
+                                    $resetFlag = 1;
+                                } else if (empty($telephoneArray[$row['name']]) && !empty($row['telephone'])) {
+                                    $resetFlag = 1;
+                                }
+                            }
+                            if (!empty($roleArray)) {
+                                if (!empty($roleArray[$row['name']]) && $roleArray[$row['name']] != $row['role']) {
+                                    $resetFlag = 1;
+                                } else if (empty($roleArray[$row['name']]) && !empty($row['role'])) {
+                                    $resetFlag = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 1.如果 match_record_member 有一个条记录就不允许修改队员
+                if ($resetFlag) {
+                    $recordMemberCount = $matchS->getMatchRecordMemberCount([
+                        'match_id' => $match_id,
+                        'team_id' => $team_id
+                    ]);
+                    if ($recordMemberCount > 0) {
+                        return json(['code' => 100, 'msg' => "修改队员失败，部分队员已有该联赛的比赛记录"]);
+                    }
+                }
+            }
         }
-        $result = $leagueS->saveMatchTeam($map);
+
+        $teamData["__token__"] = $data["__token__"]; 
+        $teamData["name"] = $data["name"];
+        $teamData['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
+        $teamData['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
+        $teamData['type'] = !empty($data['type']) ? $data['type'] : 3; // 默认业余组织类型
+        $teamData['member_id'] = -1;
+        $teamData['member'] = "";
+        $teamData['leader_id'] = -1;
+        $teamData['leader'] = "";
+        $teamData['captain_id'] = -1;
+        $teamData['captain'] = "";
+        $teamData['member_num'] = !empty($team_member_count) ? $team_member_count : 0;
+        if (!empty($matchTeamInfo)) {
+            $teamData['id'] = $matchTeamInfo['team_id'];
+        }
+
+        $res = $teamS->saveVirtualTeam($teamData);
+        if ($res['code'] != 200) {
+            return json(['code' => 100, 'msg' => "创建球队失败"]);
+        }
+
+        $matchTeamData["match_id"] = $matchInfo["id"];
+        $matchTeamData["match"] = $matchInfo["name"];
+        $matchTeamData["team_id"] = empty($team_id) ? $res["insid"] : $team_id;
+        $matchTeamData["team"] = $data["name"];
+        $matchTeamData["team_logo"] = $teamData['logo'];
+        $matchTeamData["members_num"] = !empty($team_member_count) ? $team_member_count : 0;
+        $matchTeamData["status"] = 1;
+        if (!empty($matchTeamInfo)) {
+            $matchTeamData["id"] = $matchTeamInfo["id"];
+        }
+        $result = $leagueS->saveMatchTeam($matchTeamData);
+        if ($result['code'] != 200) {
+            return json(['code' => 100, 'msg' => "创建联赛内球队失败"]);
+        }
+
+        if (!empty($teamInfo)) {
+            if ( $teamInfo['name'] != $data['name'] || $teamInfo['logo'] != $data['logo'] ) {
+                Db::startTrans();
+                try {
+                    $res1 = Db::table('match_group_team')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name'], 'team_logo' => $teamData['logo']]);
+                    $res2 = Db::table('match_record')->where('home_team_id', $matchTeamData["team_id"])->update(['home_team' => $data['name'], 'home_team_logo' => $teamData['logo']]);
+                    $res3 = Db::table('match_record')->where('away_team_id', $matchTeamData["team_id"])->update(['away_team' => $data['name'], 'away_team_logo' => $teamData['logo']]);
+                    $res4 = Db::table('match_record_member')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name']]);
+                    $res5 = Db::table('match_schedule')->where('home_team_id', $matchTeamData["team_id"])->update(['home_team' => $data['name'], 'home_team_logo' => $teamData['logo']]);
+                    $res6 = Db::table('match_schedule')->where('away_team_id', $matchTeamData["team_id"])->update(['away_team' => $data['name'], 'away_team_logo' => $teamData['logo']]);
+                    $res6 = Db::table('match_stage_advteam')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name']]);
+                    $res6 = Db::table('match_rank')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name'], 'team_logo' => $teamData['logo']]);
+                    Db::commit();
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    trace('error:' . $e->getMessage(), 'error');
+                    return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+                }
+            }
+        }
+        
+        if ($resetFlag) {
+            // 删除旧队员
+            $teamS->delTeamMembers(['team_id' => $matchTeamData["team_id"]], true);
+            $teamS->delTeamMemberRoles(['team_id' => $matchTeamData["team_id"]], true);
+            $leagueS->delMatchTeamMember(['team_id' => $matchTeamData["team_id"]], true);
+
+            // 创建队员
+            if (count($team_member_list) > 0) {
+                foreach ($team_member_list as $row) {
+                    $teamMemberData = [
+                        "team_id" => $matchTeamData["team_id"],
+                        "team" => $data["name"],
+                        "name" => $row['name'],
+                        "member_id" => -1,
+                        "telephone" => $row['telephone'],
+                        "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
+                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                        "status" => 1
+                    ];
+                    $res1 = $teamS->saveTeamMember($teamMemberData);
+
+                    if (!empty($row['role'])) {
+                        $teamMemberRoleData = [
+                            "team_id" => $matchTeamData["team_id"],
+                            "member_id" => -1,
+                            "name" => $row['name'],
+                            "type" => $row['role'],
+                            "status" => 1
+                        ];
+                        $res2 = $teamS->addTeamMemberRole($teamMemberRoleData);
+                    }
+
+                    $matchTeamMemberData = [
+                        "match_team_id" => $result['data'],
+                        "match_id" => $matchInfo['id'],
+                        "match" => $matchInfo['name'],
+                        "team_id" => $matchTeamData["team_id"],
+                        "team" => $data['name'],
+                        "team_logo" => $teamData['logo'],
+                        "team_member_id" => $res1['insid'],
+                        "name" => $row['name'],
+                        "member_id" => -1,
+                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                        "status" => 1
+                    ];
+                    $res3 = $leagueS->saveMatchTeamMember($matchTeamMemberData);
+                }
+            }
+        }
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
 
-    // team表 member_num 的数据验证
-    // public function checkTeamData() {
-    //     $list = Db::table('team')->select();
-    //     foreach ($list as $row) {
-    //         $res = Db::table('team_member')->where(['team_id' => $row['id'],'status' => 1])->count();
-            
-    //         $count = empty($res) ? 0 : $res;
-    //         $update_res = Db::query("UPDATE `team`  SET `member_num`=:member_num  WHERE  `id` = :id", ['member_num'=>$count, 'id'=>$row['id']]);
-    //     }
-    //     return 'ok';
-    // }
 }
