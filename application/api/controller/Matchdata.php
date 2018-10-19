@@ -99,6 +99,12 @@ class Matchdata extends Base
         $matchS = new MatchService();
         $teamS = new TeamService();
         $memberS = new MemberService();
+
+        $teamMemberRole = $teamS->getTeamMemberRole(['team_id' => $data['team_id'], 'member_id' => $this->memberInfo['id']]);
+        if(empty($teamMemberRole)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
         // 删除球员技术统计数据
         if ( array_key_exists('delMembers', $data) && !empty($data['delMembers']) && $data['delMembers'] != '[]' ) {
             $delIds = json_decode($data['delMembers'], true);
@@ -127,9 +133,10 @@ class Matchdata extends Base
             $recordMembers = json_decode($data['members'], true);
             foreach ($recordMembers as $k => $val) {
                 // 球衣号码可为空
-                if (!isset($val['number'])) {
-                    $recordMembers[$k]['number'] = null;
+                if (!isset($val['number']) || $val['number'] == '' ) {
+                    unset($recordMembers[$k]['number']);
                 }
+                
                 // 提交了无参赛信息的球员（会员）数据 需要保存出赛会员(match_record_member)信息
                 if (!$val['match_record_member_id']) {
                     $matchRecordMemberData = [];
@@ -153,7 +160,9 @@ class Matchdata extends Base
                         $matchRecordMemberData['member'] = $teamMemberInfo['member'];
                         $matchRecordMemberData['member_id'] = $teamMemberInfo['member_id'];
                         $matchRecordMemberData['name'] = $teamMemberInfo['name'];
-                        $matchRecordMemberData['number'] = isset($val['number']) ? intval($val['number']) : null;
+                        if (isset($val['number']) && $val['number'] != '') {
+                            $matchRecordMemberData['number'] = intval($val['number']);
+                        }
                         $matchRecordMemberData['avatar'] = $teamMemberInfo['avatar'];
                         $matchRecordMemberData['contact_tel'] = $teamMemberInfo['telephone'];
                     } else {
@@ -166,7 +175,9 @@ class Matchdata extends Base
                             $matchRecordMemberData['member'] = $memberInfo['member'];
                             $matchRecordMemberData['member_id'] = $memberInfo['id'];
                             $matchRecordMemberData['name'] = $memberInfo['member'];
-                            $matchRecordMemberData['number'] = isset($val['number']) ? intval($val['number']) : null;
+                            if (isset($val['number']) && $val['number'] != '') {
+                                $matchRecordMemberData['number'] = intval($val['number']);
+                            }
                             $matchRecordMemberData['avatar'] = $memberInfo['avatar'];
                             $matchRecordMemberData['contact_tel'] = $memberInfo['telephone'];
                         } else {
@@ -174,7 +185,9 @@ class Matchdata extends Base
                             $matchRecordMemberData['member'] = $val['name'];
                             $matchRecordMemberData['member_id'] = 0;
                             $matchRecordMemberData['name'] = $val['name'];
-                            $matchRecordMemberData['number'] = isset($val['number']) ? intval($val['number']) : null;
+                            if (isset($val['number']) && $val['number'] != '') {
+                                $matchRecordMemberData['number'] = intval($val['number']);
+                            }
                             $matchRecordMemberData['avatar'] = config('default_image.member_avatar');
                             $matchRecordMemberData['contact_tel'] = 0;
                         }
@@ -193,6 +206,7 @@ class Matchdata extends Base
                         $matchRecordMemberData['id'] = $hasMatchRecordMember['id'];
                     }
                     // 保存比赛出赛球员关系数据
+                    dump($matchRecordMemberData);
                     try {
                         $resMatchRecordMember = $matchS->saveMatchRecordMember($matchRecordMemberData);
                     } catch (Exception $e) {
@@ -206,8 +220,9 @@ class Matchdata extends Base
                         $val['match_record_member_id'] = $resMatchRecordMember['data'];
                     }
                 }
+
                 // 更新球员参赛信息球衣号码
-                if ($val['match_record_member_id'] && isset($val['number'])) {
+                if ($val['match_record_member_id'] && isset($val['number']) && $val['number'] != '') {
                     $matchS->saveMatchRecordMember([
                         'id' => $val['match_record_member_id'],
                         'number' => intval($val['number'])
@@ -240,6 +255,7 @@ class Matchdata extends Base
                     $recordMembers[$k]['id'] = $memberMatchStatisticsInfo['id'];
                 }
             }
+
             // 保存球员比赛技术数据入库
             try {
                 $res = $model->allowField(true)->saveAll($recordMembers);
