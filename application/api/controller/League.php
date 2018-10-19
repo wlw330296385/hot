@@ -4751,7 +4751,7 @@ class League extends Base
             'match_id' => $data['match_id'],
             'status' => 1
         ]);
-        if ($power < 8) {
+        if ($power < 7) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
 
