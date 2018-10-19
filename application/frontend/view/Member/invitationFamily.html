@@ -42,9 +42,36 @@
 
     <div class="mui-content whitebg" style="padding: 0">
 
-                <div class="img16x9" style="background-image:url('/static/frontend/images/membercenter-bg.jpg')"></div>
+
+            <!-- xin -->
+            <div class="personalFrame">
+                <!-- 有数据 -->
+                <div class="mui-row hasMember">
+                    <div class="mui-col-sm-8 mui-col-xs-8 tmFrameLeft">
+                            <img src="{$theMemebrInfo.avatar}" alt="" class="avatarImg" style="border: 1px solid #4e4e4e;">
+                        <div class="nameFrame" style="white-space: nowrap;">
+                            <span class="tmName">{$theMemebrInfo.member}</span>
+                            <i class="icon iconfont icon-sex{$theMemebrInfo.sex}"></i>
+                            <em class="colorred">
+                                <strong class="f14">VIP</strong>
+                            </em>
+                        </div>
+                        <p class="region">{$theMemebrInfo.city} {$theMemebrInfo.area}</p>
+                    </div>
+                    <div class="mui-col-sm-4 mui-col-xs-4 tmFrameRight">
+                        <div class="tmIntegral" style="width: 95% !important">
+                            <span class="integralNum" style="font-size: 16px;padding-right: 8px">篮球管家</span>
+                        </div>
+                        <p class="integral">HOT-TECH</p>
+                        <div class="guide">
+                            <span class="guideIcon">?</span>
+                            <span>用户指南</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
                 <div class="invInfo">
-                    <p><img src="{$familyInfo.avatar}" class="img24"></p>
                     <p>您的弟弟（<text class="memberName" class="colororange">{$familyInfo.member}</text>）邀请您加入他的家庭，<br />请获取并输入您的验证码。</p>
                 </div>
                  <form class="mui-input-group" style="margin:0 8%">
@@ -115,6 +142,7 @@
 <script src="/static/frontend/js/city.data-3.js"></script>
 <script src="/static/frontend/js/wooApi.js?v={:time()}"></script>
 <script src="/static/frontend/js/smsCode.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
         //初始化
         mui.init({
@@ -420,6 +448,48 @@
         });
     }
 
+
+    </script>
+
+
+    <script>
+        wx.config({
+            //debug: true,
+            appId: "{$jsapi['appId']}",
+            timestamp: "{$jsapi['timestamp']}",
+            nonceStr: "{$jsapi['nonceStr']}",
+            signature: "{$jsapi['signature']}",
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ'
+            ]
+        });
+        wx.ready(function () {
+            // 分享到朋友圈
+            wx.onMenuShareTimeline({
+                title: '{$familyInfo.member}邀请您加入他的家庭组',
+                desc: '篮球管家',
+                link: "{$shareurl}/pid/{$familyInfo.member_id}",
+                imgUrl: "{:request()->root(true)}/static/frontend/images/minebg.png",
+                success: function () { },
+                cancel: function () { }
+            });
+            // 分享给朋友
+            wx.onMenuShareAppMessage({
+                title: '{$familyInfo.member}邀请您加入他的家庭组',
+                desc: '篮球管家',
+                link: "{$shareurl}/pid/{$familyInfo.member_id}",
+                imgUrl: "{:request()->root(true)}/static/frontend/images/minebg.png",
+                type: "",
+                dataUrl: '',
+                success: function () { },
+                cancel: function () { }
+            });
+
+        });
     </script>
 </body>
 
