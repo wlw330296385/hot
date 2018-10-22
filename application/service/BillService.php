@@ -677,7 +677,7 @@ class BillService {
     public function agreeBill($map,$refund){
         try {
 
-            if(!$refund || !$map){
+            if(!$map || !isset($refund)){
                 return ['code'=>100,'msg'=>'传参错误'];
             }
             $billInfo = $this->getBill($map);   

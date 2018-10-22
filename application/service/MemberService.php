@@ -79,8 +79,8 @@ class MemberService{
 			$request['password'] = passwd($request['password']);
         	$request['repassword'] = passwd($request['repassword']);
 		}else{
-			$request['password'] = passwd(123456);
-        	$request['repassword'] = passwd(123456);
+			$request['password'] = passwd(rand(000000,999999));
+        	$request['repassword'] = $request['password'];
 		}
         
         $request['hot_id'] = $hot_id;
