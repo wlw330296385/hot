@@ -2846,7 +2846,7 @@ class League extends Base
 
             // 数据拼接
             $temp = $matchMemberTemplate;
-            if (!empty($row['type'])) {
+            if (isset($row['type'])) {
                 $temp['type'] = $row['type'];
             }
             $temp['job_description'] = $row['job_description'];
@@ -2854,6 +2854,7 @@ class League extends Base
                 $temp['id'] = $row['id'];
             }
             array_push($finalArr, $temp);
+
         }
 
         // 修改联赛工作人员数据
