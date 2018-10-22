@@ -160,9 +160,15 @@ class Family extends Base{
                                 'remark' => ['value' => '篮球管家']                                 
                             ]
                         ];
+                         $saveData = [
+                            'title'=>"{$familyInfo['member']}与您解除家庭成员关系",
+                            'content'=>"{$familyInfo['member']}与您解除家庭成员关系,解除成功",
+                            'url'=>url('frontend/camp/index','','',true),
+                            'member_id'=>$to_memberInfo['id']
+                        ];
                         // 发送模板消息
                         $MessageService = new \app\service\MessageService;
-                        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+                        $MessageService->sendMessageMember($to_memberInfo['id'],$MessageData,$saveData);
                     }
                 } 
                 return json(['code'=>200,'msg'=>"删除成功"]);
