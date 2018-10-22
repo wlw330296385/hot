@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .jobText:empty::before,.jobText:empty::before{
+			content:attr(placeholder);
+        }
+        .editor {
+            padding: 3px 9px !important;
+        }
+    </style>
 </head>
 
 <body class=whitebg>
@@ -41,7 +49,7 @@
             </li>
         </ul>
 
-        <ul class="mui-table-view mb">
+        <ul class="mui-table-view">
             <li class="mui-table-view-cell listli mui-text-center colororange recruitmentWorker">
                 招募比赛工作人员
             </li>
@@ -49,6 +57,27 @@
 
         <!-- 工作人员名单 -->
         <ul class="mui-table-view border-b worker OA_task"></ul>
+
+        <div class="page-header">
+            <span class="course">创建人</span>
+        </div>
+        <ul class="mui-table-view list border-b type10 "></ul>
+        <div class="page-header">
+            <span class="course">管理员</span>
+        </div>
+        <ul class="mui-table-view list border-b type9"></ul>
+        <div class="page-header">
+            <span class="course">记录员</span>
+        </div>
+        <ul class="mui-table-view list border-b type8"></ul>
+        <div class="page-header">
+            <span class="course">裁判员</span>
+        </div>
+        <ul class="mui-table-view list border-b type7"></ul>
+        <div class="page-header">
+            <span class="course">工作人员</span>
+        </div>
+        <ul class="mui-table-view list border-b type0 mb44"></ul>
 
         <!-- 底部按钮 -->
         <ul class="mui-table-view operation mt">
@@ -145,47 +174,121 @@
             },
             success: function (data) {
                 console.log(data)
-                var newli = '';
+                var newli10 = '';
+                var newli9 = '';
+                var newli8 = '';
+                var newli7 = '';
+                var newli0 = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('match/workMemberInfo')}" + '/league_id/' + "{$league_id}" +
                             '/member_id/' + data.data[i].member_id;
                         var role_text = data.data[i].role_arr.join(',');
                         var job_description_text = data.data[i].job_description_arr.join(',');
-                        newli +=
-                            `<li class="mui-table-view-cell mui-collapse listli">
-                                <a class="mui-navigate-right">
-                                    <text class="realName">${data.data[i].realname}</text>
-                                    <span class="colororange" data-type="${data.data[i].type}">${role_text}</span>
-                                </a>
-                                <div class="mui-collapse-content dataCollapse">
-                                <div class="fl wd">`
-                        if (job_description_text == '') {
-                            newli += `<p>职称：暂定</p>`
-                        } else {
-                            newli += `<p>职称：${job_description_text}</p>`
-                        }
-                        if (data.data[i].telephone == 0) {
-                            newli += `<p>联系电话：暂定</p>`
-                        } else {
-                            newli += `<p>联系电话：${data.data[i].telephone}</p>`
-                        }
-                        newli += `</div>`
-                        if ("{$myInfo.type}" >= data.data[i].type) {
-                            newli +=
-                                `<a href="${urls}">
-                                    <button type="button" class="fr" style="margin-top: 6px;padding: 4px 8px;">编辑</button>
-                                 </a>`
-                        }
 
-                        newli += `</div>
-                            </li>`
+                        if (data.data[i].type == 10) {
+                            newli10 +=
+                                `<li class="mui-table-view-cell listli">
+                                    <div class="mui-row" style="line-height:27px;">
+                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-2 mui-text-right">
+                                            <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button> 
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>`
+                        }
+                        if (data.data[i].type == 9) {
+                            newli9 +=
+                                `<li class="mui-table-view-cell listli">
+                                    <div class="mui-row" style="line-height:27px;">
+                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-2 mui-text-right">
+                                            <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button> 
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>`
+                        }
+                        if (data.data[i].type == 8) {
+                            newli8 +=
+                                `<li class="mui-table-view-cell listli">
+                                    <div class="mui-row" style="line-height:27px;">
+                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-2 mui-text-right">
+                                            <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button> 
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>`
+                        }
+                        if (data.data[i].type == 7) {
+                            newli7 +=
+                                `<li class="mui-table-view-cell listli">
+                                    <div class="mui-row" style="line-height:27px;">
+                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-2 mui-text-right">
+                                            <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button> 
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>`
+                        }
+                        if (data.data[i].type == 0) {
+                            newli0 +=
+                                `<li class="mui-table-view-cell listli">
+                                    <div class="mui-row" style="line-height:27px;">
+                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-2 mui-text-right">
+                                            <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button> 
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>`
+                        }
                     }
                 }
-                $("ul.worker").empty().append(newli);
-                if (newli == '') {
-                    $("ul.worker").html('<p class="nodata">没有相关数据哦</p>');
+                if (newli10 != '') {
+                    $(".type10").empty().append(newli10);
+                } else {
+                    $(".type10").empty().append("<p class='nohave'>暂无数据</p>");
                 }
+                if (newli9 != '') {
+                    $(".type9").empty().append(newli9);
+                } else {
+                    $(".type9").empty().append("<p class='nohave'>暂无数据</p>");
+                }
+                if (newli8 != '') {
+                    $(".type8").empty().append(newli8);
+                } else {
+                    $(".type8").empty().append("<p class='nohave'>暂无数据</p>");
+                }
+                if (newli7 != '') {
+                    $(".type7").empty().append(newli7);
+                } else {
+                    $(".type7").empty().append("<p class='nohave'>暂无数据</p>");
+                }
+                if (newli0 != '') {
+                    $(".type0").empty().append(newli0);
+                } else {
+                    $(".type0").empty().append("<p class='nohave'>暂无数据</p>");
+                }
+
             },
             error: function (xhr, type, errerThrown) {
                 mui.toast('网络异常,请稍候再试');
