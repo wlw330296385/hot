@@ -24,6 +24,26 @@ class Refund extends Model {
         return $list[$value];
     }
 
+    public function getProcessTimeAttr($value){
+        if(!$value || $value==0){
+            return '';
+        }
+        return date('Y-m-d Hi:s',$value);
+    }
+
+     public function getAgreeTimeAttr($value){
+        if(!$value || $value==0){
+            return '';
+        }
+        return date('Y-m-d Hi:s',$value);
+    }
+
+    public function getFinishTimeAttr($value){
+        if(!$value || $value==0){
+            return '';
+        }
+        return date('Y-m-d Hi:s',$value);
+    }
 
     public function bill() {
         return $this->hasOne('bill','id','bill_id');

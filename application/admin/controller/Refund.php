@@ -1,7 +1,7 @@
 <?php 
 namespace app\admin\controller;
 use app\admin\controller\base\Backend;
-use app\admin\service\RefundService;
+use app\service\RefundService;
 class Refund extends Backend{
 	protected $RefundService;
 	public function _initialize(){
@@ -31,33 +31,26 @@ class Refund extends Backend{
 
         $Refund = new \app\model\Refund;
         if($keyword){
-            $hasWhere['camp|goods|student'] = ['like',"%$keyword%"];
-            $refundList = $Refund->with('bill')->hasWhere($hasWhere)->where($map)->select();
+            $keyword['camp|goods|student'] = ['like',"%$keyword%"];
+            $refundList = $Refund->with('bill')->where($keyword)->where($map)->select();
         }else{
-            $refundList = $Refund->with('bill')->hasWhere($hasWhere)->where($map)->select();
+            $refundList = $Refund->with('bill')->where($map)->select();
         }
         
 
-        if($refundList){
-            $refundList = $refundList->toArray();
-        }else{
-            $refundList = [];
-        }  
-
         $this->assign('refundList',$refundList);
-        return $this->fetch('StatisticsCamp/refundList');
+        return $this->fetch('Refund/refundList');
     }
 
-    // 退费处理(打款)
+    // 退费处理(打款/拒绝)目前只能操作已打款
     public function refundDeal(){
         $refund_id = input('param.refund_id');
         if(request()->isPost()){
             $remarks = input('param.remarks');
             $refund_type = input('param.refund_type');
-            $action = input('param.action',4);//4=已打款;
             
             $Refund = new \app\model\Refund;
-            $refundInfo = $Refund->where(['id'=>$refund_id])->find();
+            $refundInfo = db('refund')->where(['id'=>$refund_id])->find();
 
             if(!$refundInfo){
                 $this->error('传参错误,找不到退款信息');
@@ -71,44 +64,16 @@ class Refund extends Backend{
                 $this->error('训练营未同意退款,不允许操作');
             }
             
-            // if($refundInfo['rebate_type']<>1){
-            //     $this->error('非课时版训练营,不允许操作');
-            // }
+            if($refundInfo['rebate_type']<>1){
+                $this->error('非课时版训练营,不允许操作');
+            }
             $campInfo = db('camp')->where(['id'=>$refundInfo['camp_id']])->find();
             if($campInfo['rebate_type'] == 2){
                 //训练营营业额支出
-                db('output')->insert([
-                    'output'        => $refund,
-                    'camp_id'       => $refundInfo['camp_id'],
-                    'camp'          => $refundInfo['camp'],
-                    'member_id'     => $refundInfo['member_id'],
-                    'member'        => $refundInfo['member'],
-                    'type'          => 2,
-                    'e_balance'     => ($this->campInfo['balance'] - $refund),
-                    's_balance'     => $this->campInfo['balance'],
-                    'f_id'          => $refundInfo['id'],
-                    'create_time'   => time(),
-                    'update_time'   => time(),
-                ]);
+                $this->error('营业额版训练营不需要平台操作');
+            }
 
-                // 减少训练营营业额
-                db('camp')->where(['id'=>$refundInfo['camp_id']])->dec('balance',$output)->update();
-                db('camp_finance')->insert([
-                        'money'        => -($refund),
-                        'camp_id'       => $refundInfo['camp_id'],
-                        'camp'          => $refundInfo['camp'],
-                        'type'          => -3,
-                        'e_balance'     =>($campInfo['balance']-$refundInfo['buffer']),
-                        's_balance'     =>($campInfo['balance']),
-                        'f_id'          =>$refundInfo['id'],
-                        'rebate_type'   =>$refundInfo['rebate_type'],
-                        'schedule_rebate'   =>$refundInfo['schedule_rebate'],
-                        'date_str'      => date('Ymd',time()),
-                        'create_time'   => time(),
-                        'update_time'   => time(),
-                    ]);
-                $Refund->save(['status'=>3,'process_time'=>time(),'finish_time'=>time()],['id'=>$refund_id]);
-            }elseif ($campInfo['rebate_type'] == 1) {
+            if($campInfo['rebate_type'] == 1) {
                 // 训练营课时版收入
                 $income = ($refundamount-$refund)*(1-$refundInfo['refund_rebate']);//实际退费
                 $refund_fee = ($refundamount-$refund)*$refundInfo['refund_rebate'];//手续费
@@ -140,7 +105,7 @@ class Refund extends Backend{
                         's_balance'     =>($campInfo['balance']),
                         'f_id'          =>$refundInfo['id'],
                         'rebate_type'   =>$refundInfo['rebate_type'],
-                        'schedule_rebate'   =>$refundInfo['schedule_rebate'],
+                        'schedule_rebate'   =>$campInfo['schedule_rebate'],
                         'date_str'      => date('Ymd',time()),
                         'create_time'   => time(),
                         'update_time'   => time(),
@@ -158,7 +123,7 @@ class Refund extends Backend{
                         ->find();    
             $this->assign('refundInfo',$refundInfo);
 
-            return $this->fetch('StatisticsCamp/refundDeal');
+            return $this->fetch('Refund/refundDeal');
         }
         
     }

@@ -120,5 +120,60 @@ class Family extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    /**
+     *  删掉一条绑定关系|记录
+     * @param f_id  family表的id;
+     */
+    public function breakFamilyApi(){
+        try {
+            $f_id = input('param.f_id');
+            if(!$f_id){
+                return json(['code'=>100,'msg'=>'传参错误']);
+            }
+            $map = ['id'=>$f_id];
+            $familyInfo = $this->FamilyModel->where($map)->find();
+            if(!$familyInfo){
+                return json(['code'=>100,'msg'=>'没有家庭信息']);
+            }
+            if($familyInfo['member_id']<>$this->memberInfo['id']){
+                return json(['code'=>100,'msg'=>'权限不足']);
+            }
+            $result = $this->FamilyModel->where($map)->delete();
+            if($result){
+               if($familyInfo['status']==1){
+                    // 发送模板消息
+                    $to_memberInfo = db('member')->where(['id'=>$familyInfo['to_member_id']])->find();
+                    if($to_memberInfo['openid']){
+                        // 发送个人消息           
+                        $MessageData = [
+                            "touser" => $to_memberInfo['openid'],
+                            "template_id" => "b_aj8CaXc3P4d03RpCtQbLCUBLeowrj-z1SVo2uXr5M",
+                            "url" => url('frontend/camp/index','','',true),
+                            "topcolor"=>"#FF0000",
+                            "data" => [
+                                'first' => ['value' => "{$familyInfo['member']}与您解除家庭成员关系"],
+                                'keyword1' => ['value' => "解除家庭关系"],
+                                'keyword2' => ['value' => "解除成功"],
+                                'keyword3' => ['value' => date('Y-m-d H:i:s'.time())],
+                                'remark' => ['value' => '篮球管家']                                 
+                            ]
+                        ];
+                        // 发送模板消息
+                        $MessageService = new \app\service\MessageService;
+                        $MessageService->sendMessageMember($data['member_id'],$MessageData,$saveData);
+                    }
+                } 
+                return json(['code'=>200,'msg'=>"删除成功"]);
+            }else{
+                return json(['code'=>100,'msg'=>"删除失败"]);
+            }
+            
+        } catch (Exception $e) {
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
 }
 
