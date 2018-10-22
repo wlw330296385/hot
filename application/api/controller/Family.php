@@ -122,15 +122,15 @@ class Family extends Base{
                         "url" => url('frontend/camp/index','','',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
-                            'first' => ['value' => "{$this->memebrInfo['member']}接受您的家庭成员关系邀请"],
-                            'keyword1' => ['value' => $this->memberInfo['memebr']],
+                            'first' => ['value' => "{$this->memberInfo['member']}接受您的家庭成员关系邀请"],
+                            'keyword1' => ['value' => $this->memberInfo['member']],
                             'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
                             'remark' => ['value' => '篮球管家']                                 
                         ]
                     ];
                      $saveData = [
-                        'title'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
-                        'content'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
+                        'title'=>"{$this->memberInfo['member']}接受家庭成员关系邀请",
+                        'content'=>"{$this->memberInfo['member']}接受家庭成员关系邀请",
                         'url'=>url('frontend/camp/index','','',true),
                         'member_id'=>$to_memberInfo['id']
                     ];
@@ -142,16 +142,16 @@ class Family extends Base{
                         "url" => url('frontend/camp/index','','',true),
                         "topcolor"=>"#FF0000",
                         "data" => [
-                            'first' => ['value' => "{$this->memebrInfo['member']}拒绝您的家庭成员关系邀请"],
-                            'keyword1' => ['value' => $this->memberInfo['memebr']],
+                            'first' => ['value' => "{$this->memberInfo['member']}拒绝您的家庭成员关系邀请"],
+                            'keyword1' => ['value' => $this->memberInfo['member']],
                             'keyword2' => ['value' => "无"],
                             'keyword3' => ['value' => date('Y-m-d H:i:s',time())],
                             'remark' => ['value' => '篮球管家']                                 
                         ]
                     ];
                      $saveData = [
-                        'title'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
-                        'content'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
+                        'title'=>"{$this->memberInfo['member']}接受家庭成员关系邀请",
+                        'content'=>"{$this->memberInfo['member']}接受家庭成员关系邀请",
                         'url'=>url('frontend/camp/index','','',true),
                         'member_id'=>$to_memberInfo['id']
                     ];

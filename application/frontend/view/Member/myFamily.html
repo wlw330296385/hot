@@ -45,12 +45,12 @@
                     <div class="page-header organizationTitle">
                         <span class="course">邀请我的</span>
                     </div>
-                    <ul class="mui-table-view list border-b fromFamily">
+                    <ul class="mui-table-view list border-b fromFamily OA_task_family">
                     </ul>
                     <div class="page-header organizationTitle">
                         <span class="course">我邀请的</span>
                     </div>
-                    <ul class="mui-table-view list border-b toFamily">
+                    <ul class="mui-table-view list border-b toFamily OA_task_family">
                     </ul>
                 </div>
             </div>
@@ -184,6 +184,51 @@
             });
 
 
+            // //拖拽后显示操作图标，点击操作图标删除元素；
+            $('.OA_task_family').on('tap', '.mui-btn', function (event) {
+                var elem = this;
+                var li = elem.parentNode.parentNode;
+                var btnArray = ['确认', '取消'];
+                var url = "{:url('api/family/breakFamilyApi')}";
+                var fid = $(this).attr("data-id");
+                var txt = $(this).attr("data-name");
+                var dataMsg = '确认该邀请记录吗?';
+                if(txt!=""&&txt!=null){
+                    dataMsg = '确认解除与' + txt + '的关系吗?';
+                }
+                mui.confirm(dataMsg, '提示', btnArray, function (e) {
+                    if (e.index == 0) {
+                        mui.ajax({
+                            url: url,
+                            data: {
+                                f_id: fid
+                            },
+                            dataType: 'json',//服务器返回json格式数据
+                            type: 'post',//HTTP请求类型
+                            timeout: 10000,//超时时间设置为10秒；
+                            headers: { 'Content-Type': 'application/json' },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    console.log(data);
+                                    // 删除操作 移除节点元素，否则弹出提示
+                                    li.parentNode.removeChild(li);
+                                } else {
+                                    //mui.toast(data.msg);
+                                    mui.alert(data.msg);
+                                }
+                            },
+                            error: function (xhr, type, errerThrown) {
+                                mui.toast('网络异常,请稍候再试');
+                            }
+                        });
+                    } else {
+                        setTimeout(function () {
+                            mui.swipeoutClose(li);
+                        }, 0);
+                    }
+                });
+            });
 
 
         })
@@ -208,10 +253,11 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('member/myFamilyMember')}" + '/member_id/' + data.data[i].member_id;
+                            var urls = "{:url('/frontend/member/myFamilyMember')}" + '/f_id/' + data.data[i].id;
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame"><p class="address">' + data.data[i].type + '</p></div>';
-                            newli += '</a></li>';
+                            newli += '<div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-grey" data-action="del" data-id="'+data.data[i].id+'" data-name="'+data.data[i].member+'">删除</span></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame"><p class="address">' + data.data[i].type + '</p></div>';
+                            newli += '</a></div></li>';
                         }
                     }
                      $("ul.fromFamily").empty().append(newli);
@@ -244,12 +290,18 @@
                 success: function (data) {
                     console.log(data)
                     var newli = '';
+                    var urls = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('/frontend/member/invitationFamily/f_id/')}"+ data.data[i].id +"?isShare=1";
+                            if(data.data[i].status==1){
+                                urls = "{:url('/frontend/member/myFamilyMember')}" + '/f_id/' + data.data[i].id;
+                            }else{
+                                urls = "{:url('/frontend/member/invitationFamily/f_id/')}"+ data.data[i].id +"?isShare=1";
+                            }
                             newli += '<li class="mui-table-view-cell mui-media listli">'
-                            newli += '<a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].to_member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].to_member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame">我是他' + data.data[i].type + '</div>';
-                            newli += '</a></li>';
+                            newli += '<div class="mui-slider-right mui-disabled"><span class="mui-btn mui-btn-grey" data-action="del" data-id="'+data.data[i].id+'" data-name="'+data.data[i].to_member+'">删除</span></div>';
+                            newli += '<div class="mui-slider-handle"><a href="' + urls + '"><img class="mui-media-object mui-pull-left" src="' + data.data[i].to_member_avatar + '" style="border-radius:50%"><div class="mui-media-body">' + data.data[i].to_member + '<p class="mui-ellipsis">' + data.data[i].create_time + '</p></div><div class="price-frame">我是他' + data.data[i].type + '</div>';
+                            newli += '</a></div></li>';
                         }
                     }
                     $("ul.toFamily").empty().append(newli);
