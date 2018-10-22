@@ -93,7 +93,8 @@ class Member extends Base{
                 if($age<0 || $age>100){
                     $age = 0;
                 }
-                $memberS->saveTeamMember([
+                $res = $memberS->saveTeamMember([
+                    'name' => $result['data']['realname'],
                     'age' => $age,
                     'birthday' => $result['data']['birthday'],
                     'height' => $result['data']['height'],
