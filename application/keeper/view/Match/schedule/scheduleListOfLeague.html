@@ -107,6 +107,33 @@
 
         $(function () {
 
+            // 根据编辑的入口返回显示对应的tab列表
+            if (status == 0) {
+                toList(0)
+                $(".schedule0").on("tap", function () {
+                    toList(0)
+                })
+                $(".schedule1").on("tap", function () {
+                    toList(1)
+                })
+                $(".schedule1").removeClass("mui-active");
+                $(".onActive").removeClass("mui-active");
+                $(".schedule0").addClass("mui-active");
+                $(".offActive").addClass("mui-active");
+            } else {
+                toList(1)
+                $(".schedule0").on("tap", function () {
+                    toList(0)
+                })
+                $(".schedule1").on("tap", function () {
+                    toList(1)
+                })
+                $(".schedule1").addClass("mui-active");
+                $(".onActive").addClass("mui-active");
+                $(".schedule0").removeClass("mui-active");
+                $(".offActive").removeClass("mui-active");
+            }
+
             // 点击预排显示预排赛程
             $(".schedule0").on("tap", function () {
                 toList(0)
@@ -125,21 +152,6 @@
 
             });
             getbattle();
-
-            // 根据编辑的入口返回显示对应的tab列表
-            if (status == 0) {
-                toList(0)
-                $(".schedule1").removeClass("mui-active");
-                $(".onActive").removeClass("mui-active");
-                $(".schedule0").addClass("mui-active");
-                $(".offActive").addClass("mui-active");
-            } else {
-                toList(1)
-                $(".schedule1").addClass("mui-active");
-                $(".onActive").addClass("mui-active");
-                $(".schedule0").removeClass("mui-active");
-                $(".offActive").removeClass("mui-active");
-            }
 
             $(".createNextSchedule").on("tap", function () {
                 mui.confirm("你可以在此手动创建自定义赛程！", "提示", btnArray, function (e) {
