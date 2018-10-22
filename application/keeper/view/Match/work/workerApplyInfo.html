@@ -53,8 +53,18 @@
                 <textarea class="reply" value="" placeholder="请填写同意或者拒绝理由"></textarea>
             </div>
             <div class="mui-button-row h-auto operationFrame">
+                {switch name="applyInfo.status_num"}
+                {case value="1"}
                 <button class="mui-btn mui-btn-danger" type="button" onclick="check_status(2)">同意</button>&nbsp;&nbsp;
                 <button class="mui-btn" type="button" onclick="check_status(3)">拒绝</button>
+                {/case}
+                {case value="2"}
+                <button class="mui-btn mui-btn-danger" type="button" disabled="disabled">已同意</button>&nbsp;&nbsp;
+                {/case}
+                {case value="3"}
+                <button class="mui-btn mui-btn-danger" type="button" disabled="disabled">已拒绝</button>&nbsp;&nbsp;
+                {/case}
+                {/switch}
             </div>
 
             <p class="pline"></p>
@@ -202,11 +212,17 @@
                 success: function (res) {
                     if (res.code == 200) {
                         if (value == 2) {
-                            mui.toast("你同意了联赛工作人员审请")
-                            window.setTimeout("history.go(-1)", 2000);
+                            mui.toast("你同意了联赛工作人员申请")
+                            setTimeout(function () {
+                                window.location.href =
+                                    "{:url('match/worklistofleague',['league_id'=>$applyInfo.organization_id])}";
+                            }, 1500)
                         } else {
-                            mui.toast("你拒绝了联赛工作人员审请")
-                            window.setTimeout("history.go(-1)", 2000);
+                            mui.toast("你拒绝了联赛工作人员申请")
+                            setTimeout(function () {
+                                window.location.href =
+                                    "{:url('match/leagueInfo',['league_id'=>$applyInfo.organization_id])}";
+                            }, 1500)
                         }
                     } else {
                         mui.toast(res.msg);

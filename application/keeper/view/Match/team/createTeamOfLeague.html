@@ -16,10 +16,11 @@
             display: table;
             width: 100%;
         }
-        .role{
-            margin:0;
+
+        .role {
+            margin: 0;
             direction: inherit !important;
-            color:#737373
+            color: #737373
         }
     </style>
 </head>
@@ -63,15 +64,18 @@
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                             <div class="mui-col-xs-1 order">1</div>
-                            <div class="mui-col-xs-3"><input type="text" name="name" value="" placeholder="姓名" class="mui-text-center"></div>
+                            <div class="mui-col-xs-3">
+                                <input type="text" name="name" value="" placeholder="姓名" class="mui-text-center relname">
+                            </div>
                             <div class="mui-col-xs-2">
                                 <select name="role" class="role">
                                     <option value="3">队长</option>
                                 </select>
                             </div>
-                            <div class="mui-col-xs-5"><input type="text" name="telephone" value="" placeholder="手机"
-                                    class="mui-text-left"></div>
-                            <input type="checkbox" >
+                            <div class="mui-col-xs-5">
+                                <input type="text" name="telephone" value="" class="mui-text-left captain" placeholder="手机" class="mui-text-left">
+                            </div>
+                            <input type="checkbox">
                         </div>
                     </div>
                 </div>
@@ -93,6 +97,8 @@
             </p>
             <div class="publicText">
                 <p>1、球队名称必填，球队logo选填，队员可选填</p>
+                <p>2、队长手机号码必须，供认领球队数据使用</p>
+                <p>3、手机号码供球员认领数据使用</p>
             </div>
         </div>
 
@@ -193,92 +199,99 @@
 
 
             // 判断手机号码不能重复
-            $(document).on("blur", "input[name=telephone]", function () {
-                var numberCount = 0;
-                var thisNumber = $(this).val();
-                $(".checkboxCont input[name=telephone]").each(function () {
-                    if (thisNumber === $(this).val() && thisNumber !== '') {
-                        numberCount++;
-                    }
-                });
-                if (numberCount > 1) {
-                    mui.toast("手机号码不能重复");
-                    $(this).val('');
-                    $(this).focus();
-                    flagPhone = false;
-                    return false;
-                } else {
-                    flagPhone = true
-                }
-            });
+            // $(document).on("blur", "input[name=telephone]", function () {
+            //     var numberCount = 0;
+            //     var thisNumber = $(this).val();
+            //     $(".checkboxCont input[name=telephone]").each(function () {
+            //         if (thisNumber === $(this).val() && thisNumber !== '') {
+            //             numberCount++;
+            //         }
+            //     });
+            //     if (numberCount > 1) {
+            //         mui.toast("手机号码不能重复");
+            //         $(this).val('');
+            //         $(this).focus();
+            //         flagPhone = false;
+            //         return false;
+            //     } else {
+            //         flagPhone = true
+            //     }
+            // });
         });
-
         // 获取数据并进行提交
         function submitAction() {
 
             var name = $("input[name=name]").val();
             var logo = $("input[name=logo]").val();
+            var captain = $(".captain").val();
+            var relname= $(".relname").val()
             if (name == '') {
                 mui.toast("请填写球队名称");
                 return false;
             }
-            // if (flagPhone == false) {
-            //     mui.toast("手机号码不能重复");
-            //     return false;
-            // }
             if (logo == '') {
                 $("input[name=logo]").val('/static/frontend/images/basketball.jpg');
             }
-            var isOk = true //用变量记住状态
-            var team_member_list = [];
-            $(".checkboxCont").each(function () {
-                var name = $(this).find("input[name=name]").val();
-                var role = $(this).find(".role option:selected").val();
-                var telephone = $(this).find("input[name=telephone]").val();
-                if (name == '') {
-                    mui.toast("请填写队员真实姓名");
-                    return isOk = false;
-                }
-                if (telephone == '') {
-                    mui.toast("请填写队员联系电话");
-                    return isOk = false;
-                }
-                if (!(/^1[34578]\d{9}$/).test(telephone)) {
-                    mui.toast("请输入正确的手机格式");
-                    return isOk = false;
-                };
+           
+            var btnArray = ["取消", "继续提交"]
+            if (relname == '' || captain == '') {
+                mui.confirm("请填写队长的真实姓名个电话号码，便于队长认领球队数据", "提示", btnArray, function (e) {
+                    if (e.index == 1) {
+                        $(".box .checkboxCont").remove()
 
-                team_member_list.push({
-                    name,
-                    role,
-                    telephone
-                })
-            });
-            if (!isOk) {
-                return isOk
-            }
-            console.log(team_member_list)
+                        var team_member_list = [];
+                        var isOk = true //用变量记住状态
+                        $(".checkboxCont").each(function () {
+                            var name = $(this).find("input[name=name]").val();
+                            var role = $(this).find(".role option:selected").val();
+                            var telephone = $(this).find("input[name=telephone]").val();
+                            // if (name == '') {
+                            //     mui.toast("请填写队员真实姓名");
+                            //     return isOk = false;
+                            // }
+                            // if (telephone == '') {
+                            //     mui.toast("请填写队员联系电话");
+                            //     return isOk = false;
+                            // }
+                            // if (!(/^1[34578]\d{9}$/).test(telephone)) {
+                            //     mui.toast("请输入正确的手机格式");
+                            //     return isOk = false;
+                            // };
 
-            var data = wooApi.getInputData('input', 'data');
-            datas = wooApi.getInputData('select', 'data', data);
-            // 获取其他标签值
-            arrData = wooApi.getDomData('domData', datas);
-            var objData = wooApi.arrTOobj(arrData);
-            objData.team_member_list = JSON.stringify(team_member_list);
-            var url = "{:url('api/team/saveVirtualTeam')}";
-            var ajaxResult = wooApi.asyncF(url, objData);
-            if (ajaxResult.code == 200) {
-                mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
-                    window.history.go(-1);
-                })
-            } else {
-                mui.alert(ajaxResult.msg, '创建失败');
-                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    if (data.code === 200) {
-                        $('input[name=__token__]').val(data.data);
+                            team_member_list.push({
+                                name,
+                                role,
+                                telephone
+                            })
+                        });
+                        if (!isOk) {
+                            return isOk
+                        }
+                        console.log(team_member_list)
+                        var data = wooApi.getInputData('input', 'data');
+                        datas = wooApi.getInputData('select', 'data', data);
+                        // 获取其他标签值
+                        arrData = wooApi.getDomData('domData', datas);
+                        var objData = wooApi.arrTOobj(arrData);
+                        objData.team_member_list = JSON.stringify(team_member_list);
+                        var url = "{:url('api/team/saveVirtualTeam')}";
+                        var ajaxResult = wooApi.asyncF(url, objData);
+                        if (ajaxResult.code == 200) {
+                            mui.alert(ajaxResult.msg, '球队创建成功', '确定', function () {
+                                window.history.go(-1);
+                            })
+                        } else {
+                            mui.alert(ajaxResult.msg, '创建失败');
+                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                if (data.code === 200) {
+                                    $('input[name=__token__]').val(data.data);
+                                }
+                            }, 'json');
+                        }
                     }
-                }, 'json');
+                })
             }
+
         };
     </script>
     <script>

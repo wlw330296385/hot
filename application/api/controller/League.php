@@ -1173,7 +1173,7 @@ class League extends Base
             }
             // 获取数据
             $leagueService = new LeagueService();
-            $result = $leagueService->getMatchGroupPaginator($data, 'id asc');
+            $result = $leagueService->getMatchGroupPaginator($data, 'name asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
             }
@@ -2586,14 +2586,17 @@ class League extends Base
         }
         // 发送消息给联赛组织人员
         // 获取联赛组织人员
-        $orgmembers = $leagueService->getMatchOrgMembers([
-            'match_org_id' => $match['match_org_id'],
+
+        $matchMembers = $leagueService->getMatchMembers([
+            'match_id' => $data['match_id'],
+            'type' => ['>=', 9],
             'status' => 1
         ]);
         $memberIdsReviceMessage = [];
-        foreach ($orgmembers as $val) {
+        foreach ($matchMembers as $val) {
             $memberIdsReviceMessage[]['id'] = $val['member_id'];
         }
+
         $messageS = new MessageService();
         $message = [
             'title' => '会员' . $this->memberInfo['member'] . '申请担任联赛' . $match['name'] . $typeStr,
@@ -2637,12 +2640,12 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         // 检查当前会员联赛组织人员信息（操作权限）
-        $checkorgmember = $leagueS->getMatchOrgMember([
-            'match_org_id' => $match['match_org_id'],
+        $checkMatchMember = $leagueS->getMatchMember([
+            'match_id' => $match['id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
-        if (!$checkorgmember || $checkorgmember['status'] != 1) {
+        if (!$checkMatchMember) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // apply（申请表）职位文案
@@ -2843,7 +2846,7 @@ class League extends Base
 
             // 数据拼接
             $temp = $matchMemberTemplate;
-            if (!empty($row['type'])) {
+            if (isset($row['type'])) {
                 $temp['type'] = $row['type'];
             }
             $temp['job_description'] = $row['job_description'];
@@ -2851,6 +2854,7 @@ class League extends Base
                 $temp['id'] = $row['id'];
             }
             array_push($finalArr, $temp);
+
         }
 
         // 修改联赛工作人员数据
@@ -3614,7 +3618,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
         // 查询联赛分组数据
-        $orderby = ['group_id' => 'asc', 'group_number' => 'asc'];
+        $orderby = ['group_name' => 'asc', 'group_number' => 'asc'];
         $battle = []; // 定义对阵关系数组
         $berger = new \Berger();
         // 传入分组id 以分组单位生成对阵预览
@@ -3659,7 +3663,7 @@ class League extends Base
             $groups = $leagueS->getMatchGroups([
                 'match_id' => $data['match_id'],
                 'status' => 1
-            ], ['id' => 'asc']);
+            ], ['name' => 'asc']);
             if (!$groups) {
                 return json(['code' => 100, 'msg' => '分组' . __lang('MSG_000')]);
             }

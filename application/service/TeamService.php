@@ -240,7 +240,7 @@ class TeamService
         if (!empty($condition)) {
             $res = $model->allowField(true)->save($data, $condition);
             if ($res || ($res === 0)) {
-                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
             } else {
                 trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
                 return ['code' => 100, 'msg' => __lang('MSG_400')];

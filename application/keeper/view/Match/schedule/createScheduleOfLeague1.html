@@ -72,7 +72,7 @@
 
 <body>
     <header class="mui-bar mui-bar-nav subheader">
-        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+        <a href="{:url('match/scheduleListOfLeague',['league_id'=>$league_id])}" class="mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
             <button type="button" class="bgblue addSchedule" style="margin-top: 6px;">添加日程</button>
         </h1>
@@ -307,6 +307,10 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             })
         })(mui);
+        // a标签跳转
+        mui("header").on("tap", "a", function () {
+            window.top.location.href = this.href;
+        });
 
         //选择器
         (function ($, doc) {
@@ -367,9 +371,7 @@
 
             // 添加日程
             $(".addSchedule").on("tap", "", function () {
-                var listLength = $(".scheduleList").length + 1 + {
-                    $dayCount
-                };
+                var listLength = $(".scheduleList").length + 1 + {$dayCount};
                 var str =
                     `<div class="scheduleList" data-num="${listLength}">
                 <div class="page-header bggray2 border-b">

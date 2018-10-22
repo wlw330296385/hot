@@ -476,6 +476,20 @@ class Match extends Base {
 
     // 联赛比赛
     public function matchListOfLeague() {
+
+        $league_id = input('league_id', 0, 'intval');
+        $power = 0;
+
+        $leagueS = new LeagueService();
+        if (!empty($league_id)) {
+            $power = $leagueS->getMatchMemberType([
+                'match_id' => $league_id,
+                'member_id' => $this->memberInfo['id'],
+                'status' => 1
+            ]);
+        }
+
+        $this->assign('power',$power);
         return view('Match/match/matchListOfLeague');
     }
 

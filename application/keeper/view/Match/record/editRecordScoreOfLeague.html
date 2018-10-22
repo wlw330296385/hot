@@ -200,7 +200,6 @@
                 <label>联系方式</label>
                 <span name="telephone">134646465456</span>
             </div>{/if}
-
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli f14" style="line-height: 40px; color: #737373;">
                     <span class="h-auto">比赛花絮</span>
@@ -211,7 +210,13 @@
                         </div>
                     </a>
                 </li>
-                <li class="mui-table-view-cell listli albumBox"></li>
+                <li class="mui-table-view-cell listli albumBox">
+                    {volist name="matchRecordInfo.album" id="vol"}
+                    <div class="fl albumImg">
+                        <i class="delbtn mui-icon mui-icon-close"></i>
+                        <img src="{$vol}">
+                    </div>{/volist}
+                </li>
             </ul>
 
         </form>
@@ -362,6 +367,7 @@
             toRefereelist(); //裁判列表
             toScorelist(); //记录员列表
             toScorersInital(); // 记录员赋值
+
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
                 var court = $(this).find("font").text();
