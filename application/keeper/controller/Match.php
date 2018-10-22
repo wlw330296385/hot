@@ -1207,6 +1207,7 @@ class Match extends Base {
             'match_id' => $leagueId
         ]);
 
+        $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
         $this->assign('matchRecordInfo', $matchRecordInfo);
         return view('Match/record/editRecordScoreOfLeague');
     }
