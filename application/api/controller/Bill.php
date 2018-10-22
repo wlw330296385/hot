@@ -87,7 +87,7 @@ class Bill extends Frontend{
     public function refundBillApi(){
         try {
             $bill_id = input('param.bill_id');
-            $remarks = input('post.remarks');
+            $remarks = input('param.remarks');
             $result = $this->BillService->refundBill(['id'=>$bill_id],$remarks);
             return json($result);
         } catch (Exception $e) {
@@ -100,7 +100,7 @@ class Bill extends Frontend{
     public function agreeBillApi(){
         try {
             $bill_id = input('param.bill_id');
-            $refund = input('post.refund');
+            $refund = input('param.refund');
             $result = $this->BillService->agreeBill(['id'=>$bill_id],$refund);
             return json($result);
         } catch (Exception $e) {
@@ -114,7 +114,7 @@ class Bill extends Frontend{
     public function rejectBillApi(){
         try {
             $bill_id = input('param.bill_id');
-            $remarks = input('post.remarks');
+            $remarks = input('param.remarks');
             $result = $this->BillService->rejectBill(['id'=>$bill_id],$remarks);
             return json($result);
         } catch (Exception $e) {

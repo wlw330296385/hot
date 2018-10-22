@@ -114,7 +114,7 @@ class Family extends Base{
             }
             if($res){
                 // 发送个人消息
-                $to_memberInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();         
+                $to_memberInfo = db('member')->where(['id'=>$result['member_id']])->find();         
                 if($status==1){
                     $MessageData = [
                         "touser" => $to_memberInfo['openid'],
