@@ -64,6 +64,7 @@ class Family extends Base{
             $data['status'] = -1;
             $res = $this->FamilyModel->save($data);
             if($res){
+                
                 return json(['code'=>200,'msg'=>'邀请成功','data'=>$this->FamilyModel->id]);
             }else{
                 return json(['code'=>100,'msg'=>'邀请失败']);
@@ -112,6 +113,54 @@ class Family extends Base{
                 $res = $this->FamilyModel->save($data,$map);
             }
             if($res){
+                // 发送个人消息
+                $to_memberInfo = db('member')->where(['id'=>$familyInfo['member_id']])->find();         
+                if($status==1){
+                    $MessageData = [
+                        "touser" => $to_memberInfo['openid'],
+                        "template_id" =>"68DeWPCsdhaPuLJfPCPwPhrjhxo3m2ZUqa7b9j8XIfg",
+                        "url" => url('frontend/camp/index','','',true),
+                        "topcolor"=>"#FF0000",
+                        "data" => [
+                            'first' => ['value' => "{$this->memebrInfo['member']}接受您的家庭成员关系邀请"],
+                            'keyword1' => ['value' => $this->memberInfo['memebr']],
+                            'keyword2' => ['value' => date('Y-m-d H:i:s',time())],
+                            'remark' => ['value' => '篮球管家']                                 
+                        ]
+                    ];
+                     $saveData = [
+                        'title'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
+                        'content'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
+                        'url'=>url('frontend/camp/index','','',true),
+                        'member_id'=>$to_memberInfo['id']
+                    ];
+                }
+                if($status==-2){
+                    $MessageData = [
+                        "touser" => $to_memberInfo['openid'],
+                        "template_id" =>"oajS06HPl02rKIH-Xsvqm5_ogdPQv9cxl-Gs782Ifrg",
+                        "url" => url('frontend/camp/index','','',true),
+                        "topcolor"=>"#FF0000",
+                        "data" => [
+                            'first' => ['value' => "{$this->memebrInfo['member']}拒绝您的家庭成员关系邀请"],
+                            'keyword1' => ['value' => $this->memberInfo['memebr']],
+                            'keyword2' => ['value' => "无"],
+                            'keyword3' => ['value' => date('Y-m-d H:i:s',time())],
+                            'remark' => ['value' => '篮球管家']                                 
+                        ]
+                    ];
+                     $saveData = [
+                        'title'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
+                        'content'=>"{$this->memebrInfo['member']}接受家庭成员关系邀请",
+                        'url'=>url('frontend/camp/index','','',true),
+                        'member_id'=>$to_memberInfo['id']
+                    ];
+                }
+                              
+
+                // 发送模板消息
+                $MessageService = new \app\service\MessageService;
+                $MessageService->sendMessageMember($to_memberInfo['id'],$MessageData,$saveData);
                 return json(['code'=>200,'msg'=>'操作成功']);
             }else{
                 return json(['code'=>100,'msg'=>'操作失败']);
@@ -156,7 +205,7 @@ class Family extends Base{
                                 'first' => ['value' => "{$familyInfo['member']}与您解除家庭成员关系"],
                                 'keyword1' => ['value' => "解除家庭关系"],
                                 'keyword2' => ['value' => "解除成功"],
-                                'keyword3' => ['value' => date('Y-m-d H:i:s'.time())],
+                                'keyword3' => ['value' => date('Y-m-d H:i:s',time())],
                                 'remark' => ['value' => '篮球管家']                                 
                             ]
                         ];
