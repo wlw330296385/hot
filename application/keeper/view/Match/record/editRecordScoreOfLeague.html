@@ -198,7 +198,7 @@
             </div>
             <div class="mui-input-row">
                 <label>联系方式</label>
-                <span name="telephone">134646465456</span>
+                <span name="telephone"></span>
             </div>{/if}
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli f14" style="line-height: 40px; color: #737373;">
@@ -569,6 +569,12 @@
             });
 
 
+             //删除操作
+             $(document).on('tap', '.delbtn', function () {
+                $(this).parent().remove();
+            });
+
+
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
                 data: {
@@ -821,6 +827,7 @@
                         var objData = wooApi.arrTOobj(arrData);
                         var remarks = $('textarea.remarks').val();
                         objData.remarks = remarks;
+                        objData.album = JSON.stringify(album);
                         var url = "{:url('api/league/publishmatchrecord')}";
                         var ajaxResult = wooApi.asyncF(url, objData);
                         if (ajaxResult.code == 200) {
