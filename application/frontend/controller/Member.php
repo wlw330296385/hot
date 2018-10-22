@@ -351,7 +351,9 @@ class Member extends Base{
 
     // 家庭成员列表
     public function myFamily(){
-        
+        if($this->memberInfo['id']==0){
+                $this->error('权限不足');
+        }
 
         return view('Member/myFamily');
     }
