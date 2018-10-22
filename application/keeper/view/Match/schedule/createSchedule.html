@@ -253,6 +253,8 @@
             getbattle(); //获取对阵信息
             matchStage(); //获取比赛阶段数据
 
+
+
             // 当赛程数量大于等于1条的时候显示清空按钮
             if ($(".scheduleList").length >= 1) {
                 $(".clearOperation").show();
@@ -540,12 +542,10 @@
                     console.log(data)
                     var newli = ''
                     if (data.code == 200) {
-                        // $("input[name=match_stage]").val(data.data[0].name);
-                        // $("input[name=match_stage_id]").val(data.data[0].id);
-                        // $(".match_stage").text(data.data[0].name);
+
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                ` <option value="${data.data[i].id}">${data.data[i].name}</option>x`
+                                ` <option value="${data.data[i].id}" data-type="${data.data[i].type}" data-id="${data.data[i].id}">${data.data[i].name}</option>`
                         }
                         $(".match_stage").append(newli)
                     } else {
@@ -555,6 +555,15 @@
                                 "{:url('Match/creatematchstage',['league_id'=>$leagueInfo.id])}";
                         });
                     }
+
+                    var stageChecked = $(".match_stage").find("option:selected").attr("data-type");
+                    var stageCheckedId =$(".match_stage").find("option:selected").attr("data-id");
+                    if (stageChecked != 1) {
+                        window.location.href =
+                        "{:url('match/createScheduleOfLeague1',['league_id'=>$league_id])}/" +
+                        "?match_stage_id=" + stageCheckedId
+                    }
+
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
