@@ -3614,7 +3614,7 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
         // 查询联赛分组数据
-        $orderby = ['group_id' => 'asc', 'group_number' => 'asc'];
+        $orderby = ['group_name' => 'asc', 'group_number' => 'asc'];
         $battle = []; // 定义对阵关系数组
         $berger = new \Berger();
         // 传入分组id 以分组单位生成对阵预览
@@ -3659,7 +3659,7 @@ class League extends Base
             $groups = $leagueS->getMatchGroups([
                 'match_id' => $data['match_id'],
                 'status' => 1
-            ], ['id' => 'asc']);
+            ], ['name' => 'asc']);
             if (!$groups) {
                 return json(['code' => 100, 'msg' => '分组' . __lang('MSG_000')]);
             }
