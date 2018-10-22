@@ -186,9 +186,9 @@ class Family extends Base{
             if(!$familyInfo){
                 return json(['code'=>100,'msg'=>'没有家庭信息']);
             }
-            if($familyInfo['member_id']<>$this->memberInfo['id']){
-                return json(['code'=>100,'msg'=>'权限不足']);
-            }
+            // if($familyInfo['member_id']<>$this->memberInfo['id']){
+            //     return json(['code'=>100,'msg'=>'权限不足']);
+            // }
             $result = $this->FamilyModel->where($map)->delete();
             if($result){
                if($familyInfo['status']==1){
