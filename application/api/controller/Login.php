@@ -28,14 +28,15 @@ class Login extends Base{
         try{
         	$data = input('post.');
             $pid = input('param.pid');
-            if($pid){
-                $data['pid'] = $pid;
-            }
-            // 推荐人id
-            if (Cookie::has('pid')) {
-                $data['pid'] = Cookie::get('pid');
+            if(!$pid){
                 $pid = Cookie::get('pid');
-            }
+                if ($pid) {
+                    $data['pid'] = $pid;
+                }else{
+                    $pid = 0;
+                }
+            }    
+            $data['pid'] = $pid;
             $memberInfo = session('memberInfo', '', 'think');
             $MemberService = new \app\service\MemberService;
             // myself: 标识是否本人电话与微信存入同一会员数据
@@ -84,7 +85,7 @@ class Login extends Base{
                         $response['goto'] = url('frontend/member/registerSuccess');
                     }
 
-                    if($pid){
+                    if($pid>0){
                         $referer_score = $json_score['referer'];
                         db('member')->where(['id'=>$pid])->inc('score',$referer_score)->update();
                         //记录积分
@@ -99,7 +100,6 @@ class Login extends Base{
                             ]
                         );
                     }
-
 
                 }else{
                     return json(['code'=>100,'msg'=>'请重新登陆']);
