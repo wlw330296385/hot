@@ -2586,14 +2586,17 @@ class League extends Base
         }
         // 发送消息给联赛组织人员
         // 获取联赛组织人员
-        $orgmembers = $leagueService->getMatchOrgMembers([
-            'match_org_id' => $match['match_org_id'],
+
+        $matchMembers = $leagueService->getMatchMembers([
+            'match_id' => $data['match_id'],
+            'type' => ['>=', 9],
             'status' => 1
         ]);
         $memberIdsReviceMessage = [];
-        foreach ($orgmembers as $val) {
+        foreach ($matchMembers as $val) {
             $memberIdsReviceMessage[]['id'] = $val['member_id'];
         }
+
         $messageS = new MessageService();
         $message = [
             'title' => '会员' . $this->memberInfo['member'] . '申请担任联赛' . $match['name'] . $typeStr,
@@ -2637,12 +2640,12 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
         // 检查当前会员联赛组织人员信息（操作权限）
-        $checkorgmember = $leagueS->getMatchOrgMember([
-            'match_org_id' => $match['match_org_id'],
+        $checkMatchMember = $leagueS->getMatchMember([
+            'match_id' => $match['id'],
             'member_id' => $this->memberInfo['id'],
             'status' => 1
         ]);
-        if (!$checkorgmember || $checkorgmember['status'] != 1) {
+        if (!$checkMatchMember) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // apply（申请表）职位文案
