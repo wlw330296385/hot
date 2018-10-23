@@ -4890,7 +4890,7 @@ class League extends Base
         $refereeS = new RefereeService();
 
         // 裁判1（主裁判）
-        if (input('?post.referee1_id') && input('post.referee1_id')) {
+        if (input('?post.referee1_id') && input('post.referee1_id') > 0) {
             $referee1Info = $refereeS->getReferee(['id' => $data['referee1_id']]);
             $referee1MatchReferee = $matchS->getMatchRefereeOnly([
                 'referee_id' => $data['referee1_id'],
@@ -4922,7 +4922,7 @@ class League extends Base
             array_push($matchRefereeData, $_array);
         }
         // 裁判2（副裁判）
-        if (input('?post.referee2_id') && input('post.referee2_id')) {
+        if (input('?post.referee2_id') && input('post.referee2_id') > 0) {
             $referee2Info = $refereeS->getReferee(['id' => $data['referee2_id']]);
             $referee2MatchReferee = $matchS->getMatchRefereeOnly([
                 'referee_id' => $data['referee2_id'],
@@ -4954,7 +4954,7 @@ class League extends Base
             array_push($matchRefereeData, $_array);
         }
         // 裁判3（副裁判）
-        if (input('?post.referee3_id') && input('post.referee3_id')) {
+        if (input('?post.referee3_id') && input('post.referee3_id') > 0) {
             $referee3Info = $refereeS->getReferee(['id' => $data['referee3_id']]);
             $referee3MatchReferee = $matchS->getMatchRefereeOnly([
                 'referee_id' => $data['referee3_id'],
