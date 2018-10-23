@@ -159,12 +159,12 @@
         });
 
         // 联赛工作人员列表
-        var url = "{:url('api/league/getMatchMembersWithTag','','',true)}";
+        var url = "{:url('api/league/getMatchMembers','','',true)}";
         var match_id = "{$leagueInfo.id}";
         mui.ajax({
             url: url,
             data: {
-                match_id: match_id
+                league_id: match_id
             },
             dataType: 'json', //服务器返回json格式数据
             type: 'post', //HTTP请求类型
@@ -183,8 +183,8 @@
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('match/workMemberInfo')}" + '/league_id/' + "{$league_id}" +
                             '/member_id/' + data.data[i].member_id;
-                        var role_text = data.data[i].role_arr.join(',');
-                        var job_description_text = data.data[i].job_description_arr.join(',');
+                        // var role_text = data.data[i].role_arr.join(',');
+                        // var job_description_text = data.data[i].job_description_arr.join(',');
 
                         if (data.data[i].type == 10) {
                             newli10 +=
@@ -192,7 +192,7 @@
                                     <div class="mui-row" style="line-height:27px;">
                                         <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
-                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>
                                         <div class="mui-col-xs-2 mui-text-right">
                                             <a href="${urls}">
                                                 <button type="button" class="btn editor">编辑</button> 
@@ -207,7 +207,7 @@
                                     <div class="mui-row" style="line-height:27px;">
                                         <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
-                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>
                                         <div class="mui-col-xs-2 mui-text-right">
                                             <a href="${urls}">
                                                 <button type="button" class="btn editor">编辑</button> 
@@ -222,7 +222,7 @@
                                     <div class="mui-row" style="line-height:27px;">
                                         <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
-                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>
                                         <div class="mui-col-xs-2 mui-text-right">
                                             <a href="${urls}">
                                                 <button type="button" class="btn editor">编辑</button> 
@@ -237,7 +237,7 @@
                                     <div class="mui-row" style="line-height:27px;">
                                         <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
-                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>
                                         <div class="mui-col-xs-2 mui-text-right">
                                             <a href="${urls}">
                                                 <button type="button" class="btn editor">编辑</button> 
@@ -252,7 +252,7 @@
                                     <div class="mui-row" style="line-height:27px;">
                                         <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>
-                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${job_description_text}</div>
+                                        <div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>
                                         <div class="mui-col-xs-2 mui-text-right">
                                             <a href="${urls}">
                                                 <button type="button" class="btn editor">编辑</button> 
