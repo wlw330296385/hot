@@ -20,6 +20,7 @@ use app\model\MatchTeam;
 use app\model\MatchTeamMember;
 use app\model\MatchHonor;
 use app\model\MatchHonorMember;
+use app\model\MatchReferee;
 use think\Db;
 
 class LeagueService
@@ -1455,6 +1456,13 @@ class LeagueService
     public function delMatchHonorMember($map)
     {
         $model = new MatchHonorMember();
+        $res = $model->where($map)->delete(true);
+        return $res;
+    }
+
+    public function delMatchReferee($map)
+    {
+        $model = new MatchReferee();
         $res = $model->where($map)->delete(true);
         return $res;
     }

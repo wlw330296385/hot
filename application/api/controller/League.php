@@ -4806,7 +4806,7 @@ class League extends Base
         $data['is_record'] = 1;
 
         // record_time重新定义为发布时间，发布后该时间就不会修改了
-        if (empty($matchRecord) || $matchRecord['is_record'] === 0) {
+        if (empty($matchRecord) || empty($matchRecord['is_record'])) {
             $data['record_time'] = time();
         }
 
@@ -4871,14 +4871,22 @@ class League extends Base
             return json($result);
         }
 
+
         // 保存比赛结果数据 比赛双方球队比赛数+1，相关裁判执裁比赛记录
         $matchRecordId = (input('?post.id')) ? input('post.id') : $result['data'];
+
+        $delResult = $leagueS->delMatchReferee([
+            'match_id' => $data['match_id'],
+            'match_record_id' => $matchRecordId
+        ]);
+        
         $refereeIds = $matchRefereeData = [];
         $refereeS = new RefereeService();
+
         // 裁判1（主裁判）
         if (input('?post.referee1_id') && input('post.referee1_id')) {
             $referee1Info = $refereeS->getReferee(['id' => $data['referee1_id']]);
-            $referee1MatchRefereeId = $matchS->getMatchReferee([
+            $referee1MatchReferee = $matchS->getMatchReferee([
                 'referee_id' => $data['referee1_id'],
                 'match_id' => $data['match_id'],
                 'match_record_id' => $matchRecordId
@@ -4896,8 +4904,8 @@ class League extends Base
                 'is_attend' => 2,
                 'status' => 1
             ];
-            if ($referee1MatchRefereeId) {
-                $_array['id'] = $referee1MatchRefereeId;
+            if ($referee1MatchReferee) {
+                $_array['id'] = $referee1MatchReferee['id'];
             } else {
                 array_push($refereeIds, $referee1Info['id']);
             }
@@ -4906,7 +4914,7 @@ class League extends Base
         // 裁判2（副裁判）
         if (input('?post.referee2_id') && input('post.referee2_id')) {
             $referee2Info = $refereeS->getReferee(['id' => $data['referee2_id']]);
-            $referee2MatchRefereeId = $matchS->getMatchReferee([
+            $referee2MatchReferee = $matchS->getMatchReferee([
                 'referee_id' => $data['referee1_id'],
                 'match_id' => $data['match_id'],
                 'match_record_id' => $matchRecordId
@@ -4924,8 +4932,8 @@ class League extends Base
                 'is_attend' => 2,
                 'status' => 1
             ];
-            if ($referee2MatchRefereeId) {
-                $_array['id'] = $referee2MatchRefereeId;
+            if ($referee2MatchReferee) {
+                $_array['id'] = $referee2MatchReferee['id'];
             } else {
                 array_push($refereeIds, $referee2Info['id']);
             }
@@ -4934,7 +4942,7 @@ class League extends Base
         // 裁判3（副裁判）
         if (input('?post.referee3_id') && input('post.referee3_id')) {
             $referee3Info = $refereeS->getReferee(['id' => $data['referee3_id']]);
-            $referee3MatchRefereeId = $matchS->getMatchReferee([
+            $referee3MatchReferee = $matchS->getMatchReferee([
                 'referee_id' => $data['referee1_id'],
                 'match_id' => $data['match_id'],
                 'match_record_id' => $matchRecordId
@@ -4952,8 +4960,8 @@ class League extends Base
                 'is_attend' => 2,
                 'status' => 1
             ];
-            if ($referee3MatchRefereeId) {
-                $_array['id'] = $referee3MatchRefereeId;
+            if ($referee3MatchReferee) {
+                $_array['id'] = $referee3MatchReferee['id'];
             } else {
                 array_push($refereeIds, $referee3Info['id']);
             }
