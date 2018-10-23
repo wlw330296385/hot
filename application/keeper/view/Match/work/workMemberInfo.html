@@ -199,6 +199,7 @@
             var btnArray = ['取消', '确认'];
             var id = $(this).attr("data-id");
             var roleText = $(this).text();
+            var liLength = $(".myWorkerList li").length
             mui.confirm('确认删除该' + roleText + '职位吗', '提示', btnArray, function (e) {
                 if (e.index == 1) {
                     var apiurl = "{:url('api/league/delmatchmember')}";
@@ -213,8 +214,13 @@
                         },
                         success: function (data) {
                             if (data.code == 200) {
-                                mui.toast(data.msg);
-                                window.location.reload();
+                                if (liLength == 1) {
+                                    mui.toast(data.msg);
+                                    setTimeout(function () {
+                                        window.location.href =
+                                            "{:url('match/worklistofleague',['league_id'=>$league_id])}"
+                                    }, 1000)
+                                }
                             } else {
                                 mui.toast(data.msg);
                             }
