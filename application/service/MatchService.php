@@ -754,6 +754,16 @@ class MatchService {
         return $result;
     }
 
+    public function getMatchRefereeOnly($map) {
+        $model = new MatchReferee();
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
     // 获取比赛-裁判关系记录数
     public function getMatchRefereeCount($map) {
         $model = new MatchReferee();
@@ -1012,6 +1022,16 @@ class MatchService {
     public function getMatchList($map, $page=1, $order='id desc', $limit=10) {
         $model = new Match();
         $res = $model->where($map)->order($order)->page($page)->limit($limit)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    public function getMatchRefereeListOnly($map, $order='id desc') {
+        $model = new MatchReferee();
+        $res = $model->where($map)->order($order)->select();
         if (!$res) {
             return $res;
         }

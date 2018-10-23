@@ -4875,18 +4875,24 @@ class League extends Base
         // 保存比赛结果数据 比赛双方球队比赛数+1，相关裁判执裁比赛记录
         $matchRecordId = (input('?post.id')) ? input('post.id') : $result['data'];
 
-        $delResult = $leagueS->delMatchReferee([
+        $matchRefereeList = $matchS->getMatchRefereeListOnly([
             'match_id' => $data['match_id'],
             'match_record_id' => $matchRecordId
         ]);
-        
+        $delRefereeIds = [];
+        if (!empty($matchRefereeList)) {
+            foreach ($matchRefereeList as $row) {
+                array_push($delRefereeIds, $row['referee_id']);
+            }
+        }
+
         $refereeIds = $matchRefereeData = [];
         $refereeS = new RefereeService();
 
         // 裁判1（主裁判）
         if (input('?post.referee1_id') && input('post.referee1_id')) {
             $referee1Info = $refereeS->getReferee(['id' => $data['referee1_id']]);
-            $referee1MatchReferee = $matchS->getMatchReferee([
+            $referee1MatchReferee = $matchS->getMatchRefereeOnly([
                 'referee_id' => $data['referee1_id'],
                 'match_id' => $data['match_id'],
                 'match_record_id' => $matchRecordId
@@ -4906,6 +4912,10 @@ class League extends Base
             ];
             if ($referee1MatchReferee) {
                 $_array['id'] = $referee1MatchReferee['id'];
+                $key = array_search($referee1MatchReferee['referee_id'], $delRefereeIds);
+                if ($key !== false) {
+                    unset($delRefereeIds[$key]);
+                }
             } else {
                 array_push($refereeIds, $referee1Info['id']);
             }
@@ -4914,8 +4924,8 @@ class League extends Base
         // 裁判2（副裁判）
         if (input('?post.referee2_id') && input('post.referee2_id')) {
             $referee2Info = $refereeS->getReferee(['id' => $data['referee2_id']]);
-            $referee2MatchReferee = $matchS->getMatchReferee([
-                'referee_id' => $data['referee1_id'],
+            $referee2MatchReferee = $matchS->getMatchRefereeOnly([
+                'referee_id' => $data['referee2_id'],
                 'match_id' => $data['match_id'],
                 'match_record_id' => $matchRecordId
             ]);
@@ -4934,6 +4944,10 @@ class League extends Base
             ];
             if ($referee2MatchReferee) {
                 $_array['id'] = $referee2MatchReferee['id'];
+                $key = array_search($referee2MatchReferee['referee_id'], $delRefereeIds);
+                if ($key !== false) {
+                    unset($delRefereeIds[$key]);
+                }
             } else {
                 array_push($refereeIds, $referee2Info['id']);
             }
@@ -4942,8 +4956,8 @@ class League extends Base
         // 裁判3（副裁判）
         if (input('?post.referee3_id') && input('post.referee3_id')) {
             $referee3Info = $refereeS->getReferee(['id' => $data['referee3_id']]);
-            $referee3MatchReferee = $matchS->getMatchReferee([
-                'referee_id' => $data['referee1_id'],
+            $referee3MatchReferee = $matchS->getMatchRefereeOnly([
+                'referee_id' => $data['referee3_id'],
                 'match_id' => $data['match_id'],
                 'match_record_id' => $matchRecordId
             ]);
@@ -4962,6 +4976,10 @@ class League extends Base
             ];
             if ($referee3MatchReferee) {
                 $_array['id'] = $referee3MatchReferee['id'];
+                $key = array_search($referee3MatchReferee['referee_id'], $delRefereeIds);
+                if ($key !== false) {
+                    unset($delRefereeIds[$key]);
+                }
             } else {
                 array_push($refereeIds, $referee3Info['id']);
             }
@@ -5004,16 +5022,31 @@ class League extends Base
             ]
         ];
 
-
         // 启动事务
         Db::startTrans();
         try {
             // 双方球队比赛场数+1
-            db('team')->where('id', $data['home_team_id'])->setInc('match_num', 1);
-            db('team')->where('id', $data['away_team_id'])->setInc('match_num', 1);
+            if (empty($matchRecord) || empty($matchRecord['is_record']) ) {
+                db('team')->where('id', $data['home_team_id'])->setInc('match_num', 1);
+                db('team')->where('id', $data['away_team_id'])->setInc('match_num', 1);
+            }
+            if (!empty($delRefereeIds)) {
+                // dump($delRefereeIds);exit;
+                $mapDel = [
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $matchRecordId,
+                    'referee_id' => ['in', $delRefereeIds]
+                ];
+                
+                db('match_referee')->where($mapDel)->delete();
+                db('referee')->where('id', 'in', $delRefereeIds)->setDec('total_played', 1);
+            }
+
             // 相关裁判 保存比赛-执裁数据
             if (!empty($matchRefereeData)) {
-                $matchS->saveAllMatchReferee($matchRefereeData);
+                foreach ($matchRefereeData as $row) {
+                    $matchS->saveMatchReferee($row);
+                }
             }
             if (!empty($refereeIds)) {
                 db('referee')->where('id', 'in', $refereeIds)->setInc('total_played', 1);
