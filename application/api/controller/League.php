@@ -4763,7 +4763,7 @@ class League extends Base
         if (input('?post.id')) {
             // 获取比赛成绩数据
             $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
-            if ($matchRecord && $matchRecord['is_record']) {
+            if ($matchRecord && $matchRecord['is_record'] && (time() - $matchRecord['record_time'] > 3600*24*3)) {
                 return json(['code' => 100, 'msg' => '比赛结果已无法修改']);
             } else {
                 $data['id'] = $matchRecord['id'];
@@ -4804,7 +4804,11 @@ class League extends Base
             $winTeamName = $data['away_team'];
         }
         $data['is_record'] = 1;
-        $data['record_time'] = time();
+
+        // record_time重新定义为发布时间，发布后该时间就不会修改了
+        if (empty($matchRecord) || $matchRecord['is_record'] === 0) {
+            $data['record_time'] = time();
+        }
 
         // 检查:若联赛有设置小组赛阶段判断淘汰赛/决赛 需要小组赛是否全部完成
         $dataAdvteam = [];
