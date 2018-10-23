@@ -50,6 +50,7 @@ class Student extends Base
 		            $is_power = db('grade_member')
 		            			->where(['student_id'=>$student_id])
 		            			->where('grade_id','in',$gradeIDS)
+		            			->where(['camp_id'=>$camp_id])
 		            			->value('grade_id');
 		            if(!$is_power){
 		            	$this->error('它不是您的学生,不可查看该学生信息');
@@ -85,6 +86,7 @@ class Student extends Base
 		$finishedSchedule = db('schedule_member')
 							->where([
 									'user_id'=>$student_id,
+									'camp_id'=>$camp_id,
 									'status'=>1,
 									'type' =>1,
 									'is_school'=>-1
