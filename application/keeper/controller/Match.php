@@ -1476,7 +1476,8 @@ class Match extends Base {
 
         $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
 
-        $teamInfo["team_member_list"] = [];
+        $teamInfo["teamManagers"] = [];
+        $teamInfo["teamMates"] = [];
         if(!empty($teamMemberList)) {
             foreach ($teamMemberList as $row) {
                 $teamMemberRole = $teamS->getTeamMemberRole(['name' =>$row['name']]);
@@ -1485,7 +1486,11 @@ class Match extends Base {
                     'telephone' => $row['telephone'],
                     'role' => $teamMemberRole['type']
                 ];
-                array_push($teamInfo["team_member_list"], $temp);
+                if ($teamMemberRole) {
+                    array_push($teamInfo["teamManagers"], $temp);
+                } else {
+                    array_push($teamInfo["teamMates"], $temp);
+                }
             }
         }
 
