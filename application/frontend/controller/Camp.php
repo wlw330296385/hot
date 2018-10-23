@@ -262,12 +262,7 @@ class Camp extends Base{
         $camp_id = input('param.camp_id');
         $campInfo = $this->CampService->getCampInfo(['id'=>$camp_id]);
         $LessonMember = new \app\model\LessonMember;
-        $objStudentList = $LessonMember->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->select();
-        if($objStudentList){
-            $studentList = $objStudentList->toArray();
-        }else{
-            $studentList = [];
-        }
+        $studentList = $LessonMember->where(['member_id'=>$this->memberInfo['id'],'camp_id'=>$camp_id])->group('student_id')->select();
         $Grade = new \app\model\Grade;
         $leaderList = $Grade->where(['camp_id'=>$camp_id,'leader_id'=>$this->memberInfo['id']])->select();
 

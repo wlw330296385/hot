@@ -755,6 +755,7 @@ class Matchdata extends Base
             // 获取球队logo
             $teamInfo = $teamS->getTeam(['id' => $value['team_id']]);
             $data[$key]['cover'] = $teamInfo['cover'];
+            $data[$key]['logo'] = $teamInfo['logo'];
         }
         return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $data]);
     }

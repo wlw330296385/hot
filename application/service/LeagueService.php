@@ -20,6 +20,7 @@ use app\model\MatchTeam;
 use app\model\MatchTeamMember;
 use app\model\MatchHonor;
 use app\model\MatchHonorMember;
+use app\model\MatchReferee;
 use think\Db;
 
 class LeagueService
@@ -356,10 +357,10 @@ class LeagueService
     }
 
     // 获取会员的联赛工作人员角色权限
-    public function getMatchMemberType($map)
+    public function getMatchMemberType($map, $order = 'type desc')
     {
         $model = new MatchMember();
-        $res = $model->where($map)->value('type');
+        $res = $model->where($map)->order($order)->value('type');
         return ($res) ? $res : 0;
     }
 
@@ -1455,6 +1456,13 @@ class LeagueService
     public function delMatchHonorMember($map)
     {
         $model = new MatchHonorMember();
+        $res = $model->where($map)->delete(true);
+        return $res;
+    }
+
+    public function delMatchReferee($map)
+    {
+        $model = new MatchReferee();
         $res = $model->where($map)->delete(true);
         return $res;
     }

@@ -435,10 +435,10 @@ class MessageService
                 $log_sendTemplateData['status'] = 0;
             }
             db('log_sendtemplatemsg')->insert($log_sendTemplateData);
-
+            $content = "{$data['content']},活动内容:{$data['keyword1']}最新课时,活动时间:{$data['keyword2']}";
             db('message_member')->insert([
                 'title' => $data['title'],
-                'content' => $data['content'],
+                'content' => $content,
                 'url' => $sendTemplateData['url'],
                 'member_id' => $val['id'],
                 'create_time' => time(),

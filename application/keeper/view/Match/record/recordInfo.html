@@ -76,6 +76,133 @@
         .nav-list .nav-list-frame .navli {
             width: 16.5%;
         }
+
+        /* 花絮 */
+        .mui-preview-image.mui-fullscreen {
+            position: fixed;
+            z-index: 20;
+            background-color: #000;
+        }
+
+        .mui-preview-header,
+        .mui-preview-footer {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            z-index: 10;
+        }
+
+        .mui-preview-header {
+            height: 44px;
+            top: 0;
+        }
+
+        .mui-preview-footer {
+            height: 50px;
+            bottom: 0px;
+        }
+
+        .mui-preview-header .mui-preview-indicator {
+            display: block;
+            line-height: 50px;
+            color: #fff;
+            text-align: center;
+            margin: 15px auto 4;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .mui-preview-image {
+            display: none;
+            -webkit-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+        }
+
+        .mui-preview-image.mui-preview-in {
+            -webkit-animation-name: fadeIn;
+            animation-name: fadeIn;
+        }
+
+        .mui-preview-image.mui-preview-out {
+            background: none;
+            -webkit-animation-name: fadeOut;
+            animation-name: fadeOut;
+        }
+
+        .mui-preview-image.mui-preview-out .mui-preview-header,
+        .mui-preview-image.mui-preview-out .mui-preview-footer {
+            display: none;
+        }
+
+        .mui-zoom-scroller {
+            position: absolute;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .mui-preview-image img.mui-transitioning {
+            -webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        @-webkit-keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -167,7 +294,7 @@
                     </div>
                     <ul class="mui-table-view mb refereeContent">
                         <li class="mui-table-view-cell listli">
-                            {if $matchRecordInfo.referee2_id ==''}
+                            {if $matchRecordInfo.referee1_id ==''}
                             <label>
                                 <span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
                             <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span>{else/}
@@ -213,7 +340,7 @@
                         {volist name="matchRecordInfo.scorers_list" id="vol"}
                         <div class="mui-input-row mui-checkbox">
                             <label>{$key+1}
-                                <font style="margin-left: 15px;">{$vol.realname}</font>
+                                <font style="margin-left: 15px;" >{$vol.realname}</font>
                             </label>
                         </div>
                         {/volist}
@@ -227,12 +354,13 @@
                     <div class="page-header">
                         <span class="course">比赛花絮</span>
                     </div>
-                    {notempty name="matchInfo.record.album"}
+
+                    {notempty name="matchRecordInfo.album"}
                     <div class="mui-content-padded whitebg" style="margin: 0">
                         <div class="mui-row" style="min-height: 97px;max-height:299px;overflow-y: hidden;">
-                            {volist name="matchInfo.record.album" id="vol"}
+                            {volist name="matchRecordInfo.album" id="vol"}
                             <div class="mui-col-xs-4 mui-col-sm-4" style="padding:0 2px">
-                                <img src="{$vol}" style="width: 100%;height: 6rem;">
+                                <img src="{$vol}" data-preview-src="" data-preview-group="1" style="width: 100%;height: 6rem;">
                             </div>
                             {/volist}
                         </div>
@@ -364,7 +492,10 @@
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/static/frontend/js/mui.zoom.js"></script>
+    <script src="/static/frontend/js/mui.previewimage.js"></script>
     <script>
+         mui.previewImage();
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
