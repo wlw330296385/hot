@@ -160,7 +160,6 @@
         var flagPhone = false;
         var flagSMS = false;
         var flagMember = false;
-        var flagCreate = true;
         var memberID = "{$memberInfo.id}";
 
 
@@ -315,58 +314,59 @@
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
                         if (data.code == 100) {
-                            flagCreate = false;
+                           mui.alert('网络延时，请稍后再试！', '提交失败', '确定', function () {
+                                mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                    if (data.code === 200) {
+                                        $('input[name=__token__]').val(data.data);
+                                    }
+                                }, 'json');
+                            })
+                            return false;
                         } else {
-                            flagCreate = true;
+                            //会员注册成功后进行绑定
+                            var fID = "{$familyInfo.id}";
+                            mui.ajax("{:url('api/family/updateFamilyApi')}", {
+                                data: {
+                                    'f_id': fID,
+                                    'status':1
+                                },
+                                dataType: 'json',//服务器返回json格式数据
+                                type: 'post',//HTTP请求类型
+                                async: false,
+                                timeout: 10000,//超时时间设置为10秒；
+                                headers: {'Content-Type': 'application/json'},
+                                success: function (data) {
+                                    console.log(data);
+                                    if (data.code == 200) {
+                                        var qrcodeFollow ='<img src="/static/frontend/images/qrcode_hot.jpg" width="100%" /><p>请关注微信公众号【篮球管家】<br />以便随时查看您家人的信息！</p>'
+                                         mui.alert(qrcodeFollow, '恭喜，已经成功接受邀请', '确定', function () {
+                                             location.href = "{:url('/frontend/camp/index')}"
+                                        })
+                                    } else {
+                                        mui.toast(data.msg);
+                                    }
+                                },
+                                error: function (xhr, type, errorThrown) {
+                                    console.log(type);
+                                }
+                            });
                         }
                     },
                     error: function (xhr, type, errorThrown) {
                         //异常处理；
-                        flagCreate = false;
+                       mui.alert('网络延时，请稍后再试！', '提交失败', '确定', function () {
+                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                                if (data.code === 200) {
+                                    $('input[name=__token__]').val(data.data);
+                                }
+                            }, 'json');
+                        })
+                        return false;
                         console.log(type);
                     }
                 });
-
-                 //如果是非会员，检查是否成功注册会员，没成功就中断流程
-                if (flagCreate == false) {
-                    mui.alert('网络延时，请稍后再试！', '提交失败', '确定', function () {
-                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                            if (data.code === 200) {
-                                $('input[name=__token__]').val(data.data);
-                            }
-                        }, 'json');
-                    })
-                    return false;
-                }
-
                 
-                var fID = "{$familyInfo.id}";
-                //判断是否已经注册的会员手机号
-                mui.ajax("{:url('api/family/updateFamilyApi')}", {
-                data: {
-                    'f_id': fID,
-                    'status':1
-                },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                async: false,
-                timeout: 10000,//超时时间设置为10秒；
-                headers: {'Content-Type': 'application/json'},
-                success: function (data) {
-                    console.log(data);
-                    if (data.code == 200) {
-                        var qrcodeFollow ='<img src="/static/frontend/images/qrcode_hot.jpg" width="100%" /><p>请关注微信公众号【篮球管家】<br />以便随时查看您家人的信息！</p>'
-                         mui.alert(qrcodeFollow, '恭喜，已经成功接受邀请', '确定', function () {
-                             location.href = "{:url('/frontend/camp/index')}"
-                        })
-                    } else {
-                        mui.toast(data.msg);
-                    }
-                },
-                error: function (xhr, type, errorThrown) {
-                    console.log(type);
-                }
-                });
+                
 
             })
 
