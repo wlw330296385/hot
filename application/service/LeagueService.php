@@ -356,10 +356,10 @@ class LeagueService
     }
 
     // 获取会员的联赛工作人员角色权限
-    public function getMatchMemberType($map)
+    public function getMatchMemberType($map, $order = 'type desc')
     {
         $model = new MatchMember();
-        $res = $model->where($map)->value('type');
+        $res = $model->where($map)->order($order)->value('type');
         return ($res) ? $res : 0;
     }
 

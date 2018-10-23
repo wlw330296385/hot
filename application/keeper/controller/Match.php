@@ -1190,7 +1190,9 @@ class Match extends Base {
             'id' => $id,
             'match_id' => $leagueId
         ]);
-
+        if(!empty($matchRecordInfo['album'])) {
+            $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
+        }
         $this->assign('matchRecordInfo', $matchRecordInfo);
         return view('Match/record/recordInfo');
     }
