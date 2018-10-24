@@ -14,70 +14,17 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .mui-popover-arrow {
-            left: auto;
-            right: 6px;
-        }
-
-        .mui-input-row a {
-            display: table;
-            width: 100%;
-        }
 
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
 
-        .addInput {
-            padding: 0 !important;
-            height: 21px !important;
-        }
-
-        .dataCollapse .dataTitle {
-            border: 1px solid #ddd;
-            padding: 9px;
-        }
-
-        .dataCollapse,
-        .dataCollapse input {
-            text-align: center;
-        }
-
-        .dataCollapse input::-webkit-input-placeholder {
-            color: #ff7f00;
-        }
-
-        .dataCollapse input {
-            border-left: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-            border-right: 1px solid #ddd;
-            color: #ff7f00;
-        }
-
-        .dataCollapse .dataText {
-            padding: 9px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .dataCollapse .dataTextLeft {
-            border-left: 1px solid #ddd;
-        }
-
-        .dataCollapse .sfText {
-            padding: 9px;
-        }
-
-        .dataCollapse .sfButton,
-        .dataCollapse .confirmBtn,
-        .dataCollapse .clearBtn {
-            padding: 5px;
-        }
 
         .nav-list .nav-list-frame .navli {
             width: 16.5%;
         }
 
-        /* 花絮 */
+        /* 花絮样式 */
         .mui-preview-image.mui-fullscreen {
             position: fixed;
             z-index: 20;
@@ -240,15 +187,13 @@
         }
 
         /* 裁判评价 */
-        .scoreCont {
-            background-color: #fff;
-        }
 
         .scoreStart {
-            width: 66%;
-            padding: 15px 0;
+            width: 90%;
+            padding: 15px;
             margin: 0 auto;
             text-align: center;
+            border-bottom: 1px solid #ddd;
             font-size: 14px;
         }
 
@@ -257,7 +202,7 @@
         }
 
         .mui-icon-star-filled {
-            font-size: 35px !important;
+            font-size: 20px !important;
             color: #FFB400;
         }
 
@@ -271,7 +216,19 @@
         }
 
         .scoreStart .mui-icon {
-            font-size: 35px;
+            font-size: 20px;
+        }
+        .anonymousCont{
+            text-align: left;
+            padding-left: 30px;
+            padding-top: 3px;
+        }
+        .anonymousCont input{
+            top:0 !important;
+            left: 0 !important;
+        }
+        .anonymousCont input::before{
+            font-size: 24px !important;
         }
     </style>
 </head>
@@ -370,33 +327,39 @@
                             <span>暂无</span>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
-                                <div class="mui-col-xs-4"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
-                                <div class="mui-col-xs-4 mui-text-center thisReferee">{$matchRecordInfo.referee1}</div>
-                                <div class="mui-col-xs-4 mui-text-right"><a href="#score"><button class="btn pjBtn">去评价</button></a></div>
+                                <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee">{$matchRecordInfo.referee1}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore">0</text>&nbsp;分</div>
+                                <div class="mui-col-xs-3 mui-text-right"><a href="#score"><button class="btn pjBtn"
+                                            data-num="1">去评价</button></a></div>
                             </div>
                             {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee2_id ==''}
-                            <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
+                            <label><span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁判</label>
                             <span>暂无</span>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
-                                <div class="mui-col-xs-4"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
-                                <div class="mui-col-xs-4 mui-text-center thisReferee">{$matchRecordInfo.referee2}</div>
-                                <div class="mui-col-xs-4 mui-text-right"><a href="#score"><button class="btn pjBtn">去评价</button></a></div>
+                                <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;副裁判</div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee">{$matchRecordInfo.referee2}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore">0</text>&nbsp;分</div>
+                                <div class="mui-col-xs-3 mui-text-right"><a href="#score"><button class="btn pjBtn"
+                                            data-num="2">去评价</button></a></div>
                             </div>
                             {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee3_id ==''}
-                            <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
+                            <label><span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁判</label>
                             <span>暂无</span>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
-                                <div class="mui-col-xs-4"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
-                                <div class="mui-col-xs-4 mui-text-center thisReferee">{$matchRecordInfo.referee3}</div>
-                                <div class="mui-col-xs-4 mui-text-right"><a href="#score"><button class="btn pjBtn">去评价</button></a></div>
+                                <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;副裁判</div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee">{$matchRecordInfo.referee3}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore">0</text>&nbsp;分</div>
+                                <div class="mui-col-xs-3 mui-text-right"><a href="#score"><button class="btn pjBtn"
+                                            data-num="3">去评价</button></a></div>
                             </div>
                             {/if}
                         </li>
@@ -450,11 +413,7 @@
                             <span class="thumbup_count">0</span>
                         </span>
                     </div>
-                    <ul class="mui-table-view comment-list coach">
-                        <li class="nodata"><i class="icon iconfont icon-logo-Big"></i>
-                            <p>还没有评论哦，你来说几句吧！</p>
-                        </li>
-                    </ul>
+                    <ul class="mui-table-view comment-list coach"></ul>
                 </div>
             </div>
 
@@ -561,32 +520,95 @@
     </div>
 
     <!-- 弹出框-评分内容 -->
-    <div id="score" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="height: 400px;">
-        <div class="scoreCont">
+    <div id="score" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="height: 565px;">
+        <div class="scoreCont whitebg">
 
             <h5 class="mui-text-left border-b">评价裁判
                 <a class="mui-icon mui-icon-closeempty" href="#score"></a>
             </h5>
-
             <div class="refereeInfo">
                 <p><img src="{$matchRecordInfo.home_team_logo}" class="img50" alt=""></p>
-                <p class="refereeName">张伟峰</p>
+                <p class="refereeName">没有信息</p>
             </div>
             <button id="submit" style="display: none"></button>
             <div id='image-list' id="question" style="display:none"></div>
-            <div class="mui-row scoreStart" style="border-top: 1px solid #efefef;">
-                <div class="icons mui-inline">
-                    <i data-index="1" class="mui-icon mui-icon-star"></i>
-                    <i data-index="2" class="mui-icon mui-icon-star"></i>
-                    <i data-index="3" class="mui-icon mui-icon-star"></i>
-                    <i data-index="4" class="mui-icon mui-icon-star"></i>
-                    <i data-index="5" class="mui-icon mui-icon-star"></i>
-                </div>
-                <input type="hidden" name="score" value="">
-            </div>
             <div class="mui-row scoreStart">
-                <textarea rows="3" placeholder="感谢您的评价，其他意见和评价。" name="comment" class="data f14"></textarea>
+                <div class="mui-col-xs-3 mui-col-sm-3">公平公正</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2">
+                    <span class="domData score_item1" name="score_item1">0</span>分
+                </div>
             </div>
+
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">是否准时</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2">
+                    <span class="domData score_item2" name="score_item2">0</span>分
+                </div>
+            </div>
+
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">专业程度</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2">
+                    <span class="domData score_item3" name="score_item3">0</span>分
+                </div>
+            </div>
+
+            <div class="mui-row scoreStart">
+                <div class="mui-col-xs-3 mui-col-sm-3">执裁态度</div>
+                <div class="mui-col-xs-7 mui-col-sm-7">
+                    <div class="mui-page-content">
+                        <div class="icons mui-inline">
+                            <i data-index="1" class="mui-icon mui-icon-star"></i>
+                            <i data-index="2" class="mui-icon mui-icon-star"></i>
+                            <i data-index="3" class="mui-icon mui-icon-star"></i>
+                            <i data-index="4" class="mui-icon mui-icon-star"></i>
+                            <i data-index="5" class="mui-icon mui-icon-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-col-xs-2 mui-col-sm-2">
+                    <span class="domData score_item4" name="score_item4">0</span>分
+                </div>
+            </div>
+
+            <div class="mui-row scoreStart" style="border-bottom: 0;">
+                <textarea rows="3" placeholder="感谢您的评价，顺便写点意见吧" name="comment" class="data f14" style="margin-bottom: 0"></textarea>
+                <p class="mui-checkbox mui-left anonymousCont">匿名评价<input type="checkbox" checked value=""></p>
+            </div>
+
 
             <ul class="mui-table-view operation">
                 <li class="mui-table-view-cell mui-col-xs-12 opli confirmReferee" style="border-radius: 0">提交</li>
@@ -596,7 +618,6 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
-    <script src="/static/frontend/js/mui.view.js "></script>
     <script src="/static/frontend/js/feedback.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script src="/static/frontend/js/mui.zoom.js"></script>
@@ -624,11 +645,6 @@
             })
         })(mui);
 
-        // 赋值评价星级分数
-        mui('.icons').on('tap', 'i', function () {
-            var index = parseInt(this.getAttribute("data-index")); //获取当前元素的索引值
-            $("input[name=score]").val(index);
-        });
 
         var match_record_id = "{$matchRecordInfo.id}";
         var match_id = "{$matchRecordInfo.match_id}";
@@ -637,46 +653,69 @@
         var count = 1;
         toHomeMembersList(); //主队有数据的球员列表
         toAwayMembersList(); //客队有数据的球员列表
+        toCommentList();
         // isthumbsup() //点赞状态
-
+        
         $(function () {
 
+            // 球队logo样式设置
             var imgWidth = $(".teamLogo").width();
             $(".teamLogo").css("height", imgWidth)
 
             // 点击评价获取对应裁判信息
             $(".pjBtn").on("tap", function () {
                 var thisReferee = $(this).parents(".mui-row").find(".thisReferee").text();
+                var dataNUm = $(this).attr("data-num");
                 $("#score").find(".refereeName").text(thisReferee);
+                $("#score").attr("data-number", dataNUm);
             });
+
+            // 赋值评价星级分数
+            mui('.icons').on('tap', 'i', function () {
+                var index = parseInt(this.getAttribute("data-index")); //获取当前元素的索引值
+                $(this).parent().parent().parent().siblings().children().text(index);
+            });
+
             // 提交裁判星级评分和评价
             $(".confirmReferee").on("tap", function () {
-                mui.ajax("{:url('api/league/')}", {
-                    data: {
-                        match_id: match_id,
-                    },
-                    dataType: 'json', //服务器返回json格式数据
-                    type: 'post', //HTTP请求类型
-                    timeout: 10000, //超时时间设置为10秒；
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui('#score').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#score').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
+                var confirmNum = $("#score").attr("data-number");
+                var score_item1 = Number($("#score .score_item1").text());
+                var score_item2 = Number($("#score .score_item2").text());
+                var score_item3 = Number($("#score .score_item3").text());
+                var score_item4 = Number($("#score .score_item4").text());
+                var score_avg = (score_item1 + score_item2 + score_item3 + score_item4) / 4
+                $(".pjBtn").each(function () {
+                    var thisDataNum = $(this).attr("data-num");
+                    if (thisDataNum == confirmNum) {
+                        mui.ajax("{:url('api/league/')}", {
+                            data: {
+                                match_id: match_id,
+                            },
+                            dataType: 'json', //服务器返回json格式数据
+                            type: 'post', //HTTP请求类型
+                            timeout: 10000, //超时时间设置为10秒；
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 200) {
+                                    $(this).parents(".mui-row").find(
+                                        ".refereeScore").text(score_avg);
+                                    mui('#score').popover('toggle');
+                                } else {
+                                    mui.toast(data.msg);
+                                    mui('#score').popover('toggle');
+                                }
+                            },
+                            error: function (xhr, type, errorThrown) {
+                                //异常处理；
+                                console.log(type);
+                            }
+                        });
                     }
-                });
+                })
             })
-
 
             //评论功能
             $(".commentBtn").on('tap', function () {
@@ -786,7 +825,6 @@
             });
         }
 
-
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
@@ -809,13 +847,12 @@
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/league/leaguecommentlist','','',true)}/?page=" + page;
-            var commented_id = match_record_id;
             mui.ajax({
                 url: url,
                 data: {
                     match_id: match_id,
                     comment_type: 2,
-                    commented_id: commented_id
+                    commented_id: match_record_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
