@@ -245,7 +245,7 @@
         }
 
         .scoreStart {
-            width:66%;
+            width: 66%;
             padding: 15px 0;
             margin: 0 auto;
             text-align: center;
@@ -257,7 +257,7 @@
         }
 
         .mui-icon-star-filled {
-            font-size: 20px !important;
+            font-size: 35px !important;
             color: #FFB400;
         }
 
@@ -269,7 +269,8 @@
         .refereeInfo img {
             margin-right: 0;
         }
-        .scoreStart .mui-icon{
+
+        .scoreStart .mui-icon {
             font-size: 35px;
         }
     </style>
@@ -361,49 +362,42 @@
                             裁判评价
                         </span>
                     </div>
-
+                    <!-- <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee3_id])}" class="mui-navigate-right"> -->
                     <ul class="mui-table-view mb refereeContent">
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee1_id ==''}
+                            <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
+                            <span>暂无</span>
+                            {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-4"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
-                                <div class="mui-col-xs-4 mui-text-center">张伟峰</div>
+                                <div class="mui-col-xs-4 mui-text-center thisReferee">{$matchRecordInfo.referee1}</div>
                                 <div class="mui-col-xs-4 mui-text-right"><a href="#score"><button class="btn pjBtn">去评价</button></a></div>
                             </div>
-                            <!-- <label>
-                                <span class="icon iconfont icon-activity-Referee colororange"></span>主裁
-                            </label>
-                            <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span> -->
-                            {else/}
-                            <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee1_id])}" class="mui-navigate-right">
-                                <label>
-                                    <span class="icon iconfont icon-activity-Referee colororange"></span>主裁</label>
-                                <span>{$matchRecordInfo.referee1}</span>
-                            </a>
                             {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee2_id ==''}
-                            <label>
-                                <span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁</label>
-                            <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span>{else/}
-                            <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee2_id])}" class="mui-navigate-right">
-                                <label>
-                                    <span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁</label>
-                                <span>{$matchRecordInfo.referee2}</span>
-                            </a>
+                            <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
+                            <span>暂无</span>
+                            {else/}
+                            <div class="mui-row" style="line-height: 29px;">
+                                <div class="mui-col-xs-4"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
+                                <div class="mui-col-xs-4 mui-text-center thisReferee">{$matchRecordInfo.referee2}</div>
+                                <div class="mui-col-xs-4 mui-text-right"><a href="#score"><button class="btn pjBtn">去评价</button></a></div>
+                            </div>
                             {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee3_id ==''}
-                            <label>
-                                <span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁</label>
-                            <span class="mui-navigate-right" style="margin-right: 15px;">暂无</span> {else/}
-                            <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee3_id])}" class="mui-navigate-right">
-                                <label>
-                                    <span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁判</label>
-                                <span>{$matchRecordInfo.referee3}</span>
-                            </a>
+                            <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
+                            <span>暂无</span>
+                            {else/}
+                            <div class="mui-row" style="line-height: 29px;">
+                                <div class="mui-col-xs-4"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
+                                <div class="mui-col-xs-4 mui-text-center thisReferee">{$matchRecordInfo.referee3}</div>
+                                <div class="mui-col-xs-4 mui-text-right"><a href="#score"><button class="btn pjBtn">去评价</button></a></div>
+                            </div>
                             {/if}
                         </li>
                     </ul>
@@ -576,10 +570,11 @@
 
             <div class="refereeInfo">
                 <p><img src="{$matchRecordInfo.home_team_logo}" class="img50" alt=""></p>
-                <p>张伟峰</p>
+                <p class="refereeName">张伟峰</p>
             </div>
-
-            <div class="mui-row scoreStart"  style="border-top: 1px solid #efefef;">
+            <button id="submit" style="display: none"></button>
+            <div id='image-list' id="question" style="display:none"></div>
+            <div class="mui-row scoreStart" style="border-top: 1px solid #efefef;">
                 <div class="icons mui-inline">
                     <i data-index="1" class="mui-icon mui-icon-star"></i>
                     <i data-index="2" class="mui-icon mui-icon-star"></i>
@@ -587,34 +582,37 @@
                     <i data-index="4" class="mui-icon mui-icon-star"></i>
                     <i data-index="5" class="mui-icon mui-icon-star"></i>
                 </div>
+                <input type="hidden" name="score" value="">
             </div>
             <div class="mui-row scoreStart">
-                <textarea rows="3" placeholder="感谢您的评价，其他意见和评价。" style="font-size: 14px" name="comment" class="data"></textarea>
+                <textarea rows="3" placeholder="感谢您的评价，其他意见和评价。" name="comment" class="data f14"></textarea>
             </div>
 
             <ul class="mui-table-view operation">
-                <li class="mui-table-view-cell mui-media mui-col-xs-12 opli" style="border-radius: 0" onclick="submitAction()">提交</li>
+                <li class="mui-table-view-cell mui-col-xs-12 opli confirmReferee" style="border-radius: 0">提交</li>
             </ul>
         </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/mui.view.js "></script>
+    <script src="/static/frontend/js/feedback.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script src="/static/frontend/js/mui.zoom.js"></script>
     <script src="/static/frontend/js/mui.previewimage.js"></script>
-    <script src="/static/frontend/js/feedback.js"></script>
-    <script src="/static/frontend/js/mui.view.js "></script>
     <script>
         mui.previewImage();
         //初始化
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
         // a标签跳转
         mui(".refereeContent").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
         //弹出框滚动必须写在mui专用的初始化
         (function ($) {
             $('.mui-scroll-wrapper').scroll({
@@ -626,10 +624,17 @@
             })
         })(mui);
 
+        // 赋值评价星级分数
+        mui('.icons').on('tap', 'i', function () {
+            var index = parseInt(this.getAttribute("data-index")); //获取当前元素的索引值
+            $("input[name=score]").val(index);
+        });
+
         var match_record_id = "{$matchRecordInfo.id}";
         var match_id = "{$matchRecordInfo.match_id}";
         var home_team_id = "{$matchRecordInfo.home_team_id}";
         var away_team_id = "{$matchRecordInfo.away_team_id}";
+        var count = 1;
         toHomeMembersList(); //主队有数据的球员列表
         toAwayMembersList(); //客队有数据的球员列表
         // isthumbsup() //点赞状态
@@ -639,20 +644,55 @@
             var imgWidth = $(".teamLogo").width();
             $(".teamLogo").css("height", imgWidth)
 
+            // 点击评价获取对应裁判信息
+            $(".pjBtn").on("tap", function () {
+                var thisReferee = $(this).parents(".mui-row").find(".thisReferee").text();
+                $("#score").find(".refereeName").text(thisReferee);
+            });
+            // 提交裁判星级评分和评价
+            $(".confirmReferee").on("tap", function () {
+                mui.ajax("{:url('api/league/')}", {
+                    data: {
+                        match_id: match_id,
+                    },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui('#score').popover('toggle');
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#score').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
+            })
+
+
             //评论功能
-            $(".commentBtn11111").on('tap', function () {
-                var commented_id = "";
+            $(".commentBtn").on('tap', function () {
+                var commented_id = match_record_id;
                 var comment = $(".comment").val();
 
                 if (comment == '') {
-                    mui.toast("评价内容不能为空哦");
+                    mui.toast("评价内容不能为空");
                     return false;
                 }
 
-                mui.ajax("{:url('api/team/addteamcomment')}", {
+                mui.ajax("{:url('api/league/addleaguecomment')}", {
                     data: {
+                        comment_type: 2,
+                        match_id: match_id,
                         commented_id: commented_id,
-                        comment_type: 3,
                         comment: comment
                     },
                     dataType: 'json', //服务器返回json格式数据
@@ -746,6 +786,7 @@
             });
         }
 
+
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
@@ -764,15 +805,17 @@
                 toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
+
         //获取评论列表
         function toCommentList(page, gType) {
-            var url = "{:url('api/team/teamcommentlist','','',true)}/?page=" + page;
-            var commented_id = "";
+            var url = "{:url('api/league/leaguecommentlist','','',true)}/?page=" + page;
+            var commented_id = match_record_id;
             mui.ajax({
                 url: url,
                 data: {
-                    commented_id: commented_id,
-                    comment_type: 3,
+                    match_id: match_id,
+                    comment_type: 2,
+                    commented_id: commented_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -789,7 +832,7 @@
                             newli = newli +
                                 '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
                                 data.data[i].create_time +
-                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
+                                '</div><img class="mui-pull-left img32" src="' + data.data[i].member_avatar +
                                 '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
                     }
@@ -803,7 +846,7 @@
                         }
                     } else {
                         //下拉加载 gType==2
-                        $("ul.comment-list").empty().append(newli);
+                        $("ul.comment-list").append(newli);
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -811,6 +854,7 @@
                 }
             });
         };
+
         // 主队球员数据名单
         function toHomeMembersList() {
             var url = "{:url('api/matchdata/getleaguerecordstaticsbyteam','','',true)}";
@@ -921,7 +965,7 @@
                                                         <strong>命中率</strong>
                                                     </div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">
-                                                        <strong class="colorred">${data.data[i].hitrate}</strong>
+                                                        <strong class="colorred">${data.data[i].total_rate}%</strong>
                                                     </div>
                                                 </div>
                                             </li>
@@ -941,7 +985,7 @@
                                                     <div class="mui-col-sm-3 mui-col-xs-3">${data.data[i].fga}</div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">${data.data[i].fg}</div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">
-                                                        <strong class="colorred">${data.data[i].fg_hitrate}</strong>
+                                                        <strong class="colorred">${data.data[i].fg_rate}%</strong>
                                                     </div>
                                                 </div>
                                             </li>
@@ -953,7 +997,7 @@
                                                     <div class="mui-col-sm-3 mui-col-xs-3">${data.data[i].threepfga}</div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">${data.data[i].threepfg}</div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">
-                                                        <strong class="colorred">${data.data[i].threepfg_hitrate}</strong>
+                                                        <strong class="colorred">${data.data[i].threepfg_rate}%</strong>
                                                     </div>
                                                 </div>
                                             </li>
@@ -965,7 +1009,7 @@
                                                     <div class="mui-col-sm-3 mui-col-xs-3">${data.data[i].fta}</div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">${data.data[i].ft}</div>
                                                     <div class="mui-col-sm-3 mui-col-xs-3">
-                                                        <strong class="colorred">${data.data[i].ft_hitrate}</strong>
+                                                        <strong class="colorred">${data.data[i].ft_rate}%</strong>
                                                     </div>
                                                 </div>
                                             </li>
@@ -1202,133 +1246,6 @@
             });
 
         });
-
-        //初始化
-        mui.init({
-            swipeBack: true //启用右滑关闭功能
-        });
-
-        var match_id = "{$league_id}"
-        var match_record_id = "{$matchRecordInfo.id}"
-        var count = 1;
-        $(function () {
-
-            //评论功能
-            $(".commentBtn").on('tap', function () {
-                var commented_id = match_record_id;
-                var comment = $(".comment").val();
-
-                if (comment == '') {
-                    mui.toast("评价内容不能为空");
-                    return false;
-                }
-
-                mui.ajax("{:url('api/league/addleaguecomment')}", {
-                    data: {
-                        comment_type: 2,
-                        match_id: match_id,
-                        commented_id: commented_id,
-                        comment: comment
-                    },
-                    dataType: 'json', //服务器返回json格式数据
-                    type: 'post', //HTTP请求类型
-                    timeout: 10000, //超时时间设置为10秒；
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code == 200) {
-                            mui.toast('评价成功，感谢你的评价！');
-                            $(".comment-list").empty();
-                            toCommentList();
-                            mui('#fbcomment').popover('toggle');
-                        } else {
-                            mui.toast(data.msg);
-                            mui('#fbcomment').popover('toggle');
-                        }
-                    },
-                    error: function (xhr, type, errorThrown) {
-                        //异常处理；
-                        console.log(type);
-                    }
-                });
-            });
-
-
-
-            pulldownRefresh(); //页面打开时获取一次最新评论信息
-        });
-
-
-
-        //下拉刷新具体业务实现
-        function pulldownRefresh() {
-            setTimeout(function () {
-                count = 1; //刷新并显示第一页
-                var page = count;
-                var gType = 1; //代表下拉刷新
-                toCommentList(page, gType); //具体取数据的方法
-            }, 100);
-        }
-        //上拉加载具体业务实现
-        function pullupRefresh() {
-            setTimeout(function () {
-                count++; //翻下一页
-                var page = count;
-                var gType = 2; //代表上拉加载
-                toCommentList(page, gType); //具体取数据的方法
-            }, 100);
-        }
-
-        //获取评论列表
-        function toCommentList(page, gType) {
-            var url = "{:url('api/league/leaguecommentlist','','',true)}/?page=" + page;
-            var commented_id = match_record_id;
-            mui.ajax({
-                url: url,
-                data: {
-                    match_id: match_id,
-                    comment_type: 2,
-                    commented_id: commented_id
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    console.log(data)
-                    var newli = '';
-                    if (data.code == 200) {
-                        $(".comment_count").text(data.data.length);
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli +
-                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
-                                data.data[i].create_time +
-                                '</div><img class="mui-pull-left img32" src="' + data.data[i].member_avatar +
-                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
-                        }
-                    }
-                    if (gType == 1) {
-                        //上拉刷新
-                        $("ul.comment-list").empty().append(newli);
-                        if (newli == '') {
-                            $("ul.comment-list").html(
-                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
-                            );
-                        }
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.comment-list").append(newli);
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        };
     </script>
 
 </body>
