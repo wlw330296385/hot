@@ -566,6 +566,16 @@ class Matchdata extends Base
         }
         // 遍历获取球员的出席比赛信息
         foreach ($statistics as $key => $value) {
+            // 计算命中率
+            $fga = empty($statistics[$key]['fga']) ? 0 : $statistics[$key]['fga'];
+            $threepfga = empty($statistics[$key]['threepfga']) ? 0 : $statistics[$key]['threepfga'];
+            $fta = empty($statistics[$key]['fta']) ? 0 : $statistics[$key]['fta'];
+            $total_shoot = $fga + $threepfga + $fta;
+
+            $statistics[$key]['fg_rate'] = empty($fga) ? 0 : intval($statistics[$key]['fg']*100 / $fga);
+            $statistics[$key]['threepfg_rate'] =  empty($threepfga) ? 0 : intval($statistics[$key]['threepfg']*100 / $threepfga);
+            $statistics[$key]['ft_rate'] =  empty($fta) ? 0 : intval($statistics[$key]['ft']*100 / $fta);
+            $statistics[$key]['total_rate'] = empty($total_shoot) ? 0 : intval(($statistics[$key]['fg'] + $statistics[$key]['threepfg']) *100 / $total_shoot);
             // 默认输出未出席（-1）
             $statistics[$key]['is_attend'] = -1;
             $matchRecordMember = $matchS->getMatchRecordMember([
