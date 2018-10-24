@@ -82,6 +82,7 @@ class System extends Backend {
                 'lrss' => input('lrss'),
                 'lrcs' => input('lrcs'),
                 'rebate' => input('rebate/f')/100,
+                'rebate2' => input('rebate2/f')/100,
                 'sysrebate' => input('sysrebate/f')/100,
                 'starrebate' => input('starrebate/f')/100
             ];

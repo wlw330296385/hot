@@ -14,104 +14,69 @@ class Student extends Camp{
     public function StudentInfo(){
     	$student_id = input('param.student_id');
 		$camp_id = $this->camp_member['camp_id'];
-		$type = input('param.type')?input('param.type'):1;
-	
-		// 学生信息
-		$studentInfo = $this->StudentService->getStudentInfo(['id'=>$student_id]);
-		if($studentInfo['member_id'] <> ($this->memberInfo['id'])){
-			// 获取当前用户身份
-	        $power = db('camp_member')->where(['camp_id'=>$camp_id,'member_id'=>$this->memberInfo['id'],'status'=>1])->value('type');
-	        // 如果是教练身份,并且排除学生自己
-	        if(!$power){
-	        	$this->error('您没有权限查看该学生的信息');
-	        }
-	        if($power < 3 && $power<>1){ 
-	            
-	            $coach_id = db('coach')->where(['member_id'=>$this->memberInfo['id']])->value('id');
-	            if(!$coach_id){
-	            	$this->error('只有教练可以查看学生信息');
-	            }
-	            $map = function ($query) use ($coach_id){
-	                $query->where(['grade.coach_id'=>$coach_id])->whereOr('grade.assistant_id','like',"%\"$coach_id\"%");
-	            };
-	            $gradeIDS = db('grade')->where($map)->column('id');
-	            $is_power = db('grade_member')
-	            			->where(['student_id'=>$student_id])
-	            			->where('grade_id','in',$gradeIDS)
-	            			->value('grade_id');
-	            if(!$is_power){
-	            	$this->error('它不是您的学生,不可查看该学生信息');
-	            }
-	        }
-		}
+        $type = input('param.type')?input('param.type'):1;
+        // 学生信息
+        $studentInfo = $this->StudentService->getStudentInfo(['id'=>$student_id]);
+
         
-		$campInfo = $this->campInfo;
-		
-		//学生的班级	
-		$studentGradeList = Db::view('grade_member')
-							->view('grade','*','grade.id=grade_member.grade_id')
-							->where([
-								'grade_member.student_id'=>$student_id,
-								'grade_member.camp_id'=>$camp_id,
-								'grade_member.status'=>1
-							])
-							->order('grade_member.id desc')
-							->select();
-		// 学员-课程课量
+        $campInfo = db('camp')->where(['id'=>$camp_id])->find();
+        
+
+        // 学员-课程课量
         $schedulenum = db('lesson_member')->whereNull('delete_time')
             ->where([
                 'camp_id' => $camp_id,
                 'student_id' => $student_id,
                 'type' => $type,
-                //'status' => 1
-            ])->field("sum(rest_schedule) as rest_schedule, sum(total_schedule) as total_scheulde")->select();
-        //dump($schedulenum);
+            ])->field("sum(rest_schedule) as s_rest_schedule, sum(total_schedule) as s_total_scheulde")->find();
+        //未结算课量
+        $unsettle = 0;
+        $unsettle = db('schedule_member')->where(['user_id'=>$student_id,'type'=>1,'status'=>-1,'camp_id'=>$camp_id,'is_school'=>-1])->count();
+
         if (!$schedulenum) {
             $restSchedule = 0;
-            $totalScheule = 0;
+            $totalSchedule = 0;
         } else {
-            $restSchedule = $schedulenum[0]['rest_schedule'];
-            $totalScheule = $schedulenum[0]['total_scheulde'];
+            $restSchedule = $schedulenum['s_rest_schedule'];
+            $totalSchedule = $schedulenum['s_total_scheulde'];
         }
+        $restSchedule = $restSchedule - $unsettle;
+        // 非校园课课时总数
+        $finishedSchedule = db('schedule_member')
+                            ->where([
+                                    'user_id'=>$student_id,
+                                    'camp_id'=>$camp_id,
+                                    'status'=>1,
+                                    'type' =>1,
+                                    'is_school'=>-1
+                                ])
+                            ->count();
+        $finishedSchedule?$finishedSchedule:0;  
+                        
+        // 学生订单
+        $billService = new \app\service\BillService;
+        $studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'expire'=>0]);
+        $totalBill = count($studentBillList);
+        // 未付款订单
+        $notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>0,'expire'=>['gt',time()]]);
+        //退款订单 
+        $repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>-2,'expire'=>0]);
+        $payBill = $totalBill;
 
-		// 学生课量
-		$studentScheduleList = Db::view('schedule_member','*')
-								->view('schedule','students,leave','schedule.id=schedule_member.schedule_id')
-								->where([
-								    'schedule.status' => 1,
-									'schedule_member.user_id'=>$student_id,
-									'schedule_member.status'=>1,
-								])
-                                ->whereNull('schedule.delete_time')
-                                ->whereNull('schedule_member.delete_time')
-								->order('schedule_member.id desc')
-								->select();	
 
-		// 学生订单
-		$billService = new \app\service\BillService;
-		$studentBillList = $billService->getBillList(['student_id'=>$student_id,'camp_id'=>$camp_id,'expire'=>0]);
-		$totalBill = count($studentBillList);
-		// 未付款订单
-		$notPayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>0,'status'=>0,'expire'=>0]);
-		//退款订单 
-		$repayBill = $billService->billCount(['student_id'=>$student_id,'camp_id'=>$camp_id,'is_pay'=>1,'status'=>-2,'expire'=>0]);
-		$payBill = $totalBill - $notPayBill;
+        $this->assign('restSchedule',$restSchedule);
+        $this->assign('totalSchedule',$totalSchedule);
+        $this->assign('campInfo',$campInfo);
+        $this->assign('studentInfo',$studentInfo);
 
-
-		// 学员自己可操作区显示
-        $studentcando = ($this->memberInfo['id'] == $studentInfo['member_id']) ? 1 : 0;
-		$this->assign('restSchedule',$restSchedule);
-        $this->assign('totalScheule',$totalScheule);
-		$this->assign('studentInfo',$studentInfo);
-		$this->assign('studentGradeList',$studentGradeList);
-		$this->assign('notPayBill',$notPayBill);
-		$this->assign('payBill',$payBill);
-		$this->assign('repayBill',$repayBill);
-		$this->assign('studentScheduleList',$studentScheduleList);
-		$this->assign('studentBillList',$studentBillList);
-		$this->assign('totalBill',$totalBill);
-		$this->assign('studentcando', $studentcando);
-		$this->assign('camp_id', $camp_id);
+        $this->assign('notPayBill',$notPayBill);
+        $this->assign('payBill',$payBill);
+        $this->assign('repayBill',$repayBill);
+        $this->assign('unsettle',$unsettle);
+        $this->assign('studentBillList',$studentBillList);
+        $this->assign('totalBill',$totalBill);
+        $this->assign('camp_id', $camp_id);
+        $this->assign('finishedSchedule', $finishedSchedule);//schoolSchedule
         return view('Student/studentInfo');
     }
 
@@ -122,20 +87,20 @@ class Student extends Camp{
     	$status = input('param.status');
     	$keyword = input('param.keyword');
     	$camp_id = $this->camp_member['camp_id'];
-    	$map['lesson_member.camp_id'] = $camp_id;
-    	$map['bill.is_pay'] = 1;
-    	$map['bill.goods_type'] = 1;
+    	$map['camp_id'] = $camp_id;
     	if ($type) {
-    		$map['lesson_member.type'] = $type;
+    		$map['type'] = $type;
     	}
     	if($status){
-    		$map['lesson_member.status'] = $status;
+    		$map['status'] = $status;
     	}
     	if($keyword){
-    		$map['lesson_member.lesson|lesson_member.student'] = ['like',"%$keyword%"];
+    		$map['lesson|student'] = ['like',"%$keyword%"];
     	}
-    	$studentList = db('lesson_member')->field('lesson_member.*,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
-
+    	$studentList = db('lesson_member')->where($map)->paginate(20)->each(function($item,$e){
+            dump($item['lesson']);die;
+        });
+        
     	$this->assign('studentList',$studentList);
         return view('Student/studentList');
     }

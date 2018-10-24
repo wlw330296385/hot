@@ -31,10 +31,10 @@ function __lang($name, $vars = [], $lang = '') {
     return $Lang::get($name, $vars, $lang);
 }
 
-function getTree($arr = [],$pid = 0){
+function getTree($arr = [],$pid = 0,$pName = "pid"){
     $list = [];
      foreach ($arr as $key => &$value) {
-        if($value['pid'] == $pid){
+        if($value[$pName] == $pid){
             $value['daughter'] = getTree($arr,$value['id']);
             $list[] = $value;
         }

@@ -5,13 +5,17 @@
     <div class="panel-heading">
         <div class="panel-lead">
 
-            <form action="" class="form-inline" method="post">
+            <form action="" class="form-inline" method="get">
                 <fieldset>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default" id="field">会员名</button>
                     </div>
                     <div class="form-group">
                         <input class="form-control" type="text" name="keyword" >
+                    </div>
+                    <div class="form-group">
+                        <label>月份</label>
+                        <input class="form-control" type="text" name="Ym" value="{$Ym}">
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12 text-center">
@@ -29,8 +33,8 @@
         </div>
         <!-- //tab标签 -->
         <ul class="nav nav-tabs">
-            <li data-tab = "1" class="tabwoo active"><a href="#memberInfo" data-toggle="tab">推荐奖金</a></li>
-            <li data-tab = "2" class="tabwoo"><a href="#memberFinanceList" data-toggle="tab" >会员财务</a></li>
+            <li ><a href="{:url('rebateList')}" >平台推荐奖金</a></li>
+            <li ><a href="{:url('campRebate')}" >大热训练营</a></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -40,36 +44,29 @@
                     <thead>
                     <tr>
                         <th>序号</th>
-                        <th>会员名</th>
-                        <th>分成奖金</th>
-                        <th>分成积分</th>
-                        <th>ta推荐的人</th>
-                        <th>奖励层级</th>
-                        <th>ta推荐的人的收入</th>
-                        <th>时间</th>
+                        <th>收入人</th>
+                        <th>他的收入总额</th>
+                        <th>他的1级推荐人</th><th>他的1级推荐人收入</th>
+                        <th>他的2级推荐人</th><th>他的2级推荐人收入</th>
+                        <th>月份</th>
                     </tr>
                     </thead>
                     <tbody>
                     {volist name="rebateList" id="vol"}
                     <tr>
-                        <td>{$key}</td>
-                        <td>{$vol.member}</td>
-                        <td>{$vol.salary}</td>
-                        <td>{$vol.score}</td>
+                        <td>{$i}</td>
                         <td>{$vol.s_member}</td>
-                        <td>{$vol.tier}</td>
                         <td>{$vol.total_salary}</td>
-                        <td>{$vol.create_time}</td>
-                       
+                        <td>{$vol.member} </td> 
+                        <td>{$vol.salary}</td>
+                        {if isset($vol.ss)} <td>{$vol.ss.member} </td> <td>{$vol.ss.salary} {else /}<td></td><td></td>{/if}
+                        <td>{$vol.datemonth}</td>
                     </tr>
                     {/volist}
                     </tbody>
                 </table>
             </div>
-            <br />
-            <div class="box-footer clearfix">
-                {$rebateList->render()}
-            </div>
+         
         </div>
     </div>
 </div>

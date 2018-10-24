@@ -19,11 +19,11 @@
 	mui("body").on("tap","a",function(){
 	    window.top.location.href=this.href;
 	});
-    var unReadMessage = sessionStorage.getItem('unReadMessage_'+{$memberInfo.id});
+    var unReadMessage = sessionStorage.getItem('unReadMessage_frontend_'+{$memberInfo.id});
     if({$memberInfo.id}>0){
 
         if(!unReadMessage || unReadMessage===undefined || unReadMessage===null){
-            unReadMessage = getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_'+{$memberInfo.id});           
+            unReadMessage = getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_frontend_'+{$memberInfo.id});           
         }
         if(unReadMessage>0){
             tips(unReadMessage);
@@ -32,7 +32,7 @@
 
 
     $('#Message').on('tap',function(){
-        getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_'+{$memberInfo.id});
+        getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_frontend_'+{$memberInfo.id});
     });
 
 
@@ -81,7 +81,7 @@
 
     setInterval(function(){
         if({$memberInfo.id}>0){
-            getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_'+{$memberInfo.id});
+            getUnreadMessage("{:url('api/message/getMessageMmeberCountApi')}",{status:1, steward_type:1},'unReadMessage_frontend_'+{$memberInfo.id});
         }
     }, 5000); 
 

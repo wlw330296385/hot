@@ -27,7 +27,7 @@ class Login extends Controller
 
 			$keeplogin = input('post.keeplogin',3600);
 			$map = function($query) use ($password,$username){
-				$query -> where('member|telephone','=',$username)->where('password',passwd($password));
+				$query -> where('member|telephone|hot_id','=',$username)->where('password',passwd($password));
 			};
 			$AuthService = new AuthService;
 			$result = $AuthService ->login($map,$keeplogin);
