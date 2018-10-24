@@ -628,6 +628,7 @@ class Matchdata extends Base
             // 获取球队logo
             $teamInfo = $teamS->getTeam(['id' => $value['team_id']]);
             $data[$key]['cover'] = $teamInfo['cover'];
+            $data[$key]['logo'] = $teamInfo['logo'];
         }
         // 数据降序排列
         $data = arraySort($data, $field, SORT_DESC);
