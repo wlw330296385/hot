@@ -12,7 +12,7 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .mui-popover-arrow {
+        /* .mui-popover-arrow {
             left: auto;
             right: 6px;
         }
@@ -20,20 +20,20 @@
         .mui-input-row a {
             display: table;
             width: 100%;
-        }
+        } */
 
         .mui-input-group .mui-input-row label {
             line-height: 1.5;
         }
 
-        .bottomButton {
+        /* .bottomButton {
             position: absolute;
             left: 0;
             right: 0;
             margin: 0 auto;
             width: 100%;
             bottom: 50px;
-        }
+        } */
 
         .addInput {
             padding: 0 !important;
@@ -94,6 +94,38 @@
         .dataCollapse .confirmBtn,
         .dataCollapse .clearBtn {
             padding: 5px;
+        }
+
+        .mui-collapse {
+            font-size: 14px;
+            color: #737373;
+        }
+
+        /* 操作按钮 */
+        .tapCont {
+            padding: 10px;
+        }
+
+        .tapCont .tapBtn {
+            border-radius: 50%;
+            background: #ddd;
+            height: 40px;
+            width: 40px;
+            line-height: 40px;
+            display: -webkit-inline-box;
+            text-align: center;
+            color: #fff;
+            padding: 0 6px;
+        }
+
+        .tapCont .tapGreen {
+            color: #fff;
+            background-color: #59b200;
+        }
+
+        .tapCont .tapRed {
+            color: #fff;
+            background-color: #dd524d;
         }
     </style>
 </head>
@@ -193,7 +225,6 @@
                         </div>
                         <ul class="mui-table-view list border-b dataList membersList homeList"></ul>
 
-
                         <div class="page-header bggray2">
                             <span class="course wd45">
                                 <strong>{$matchRecordInfo.away_team}信息</strong>
@@ -248,20 +279,32 @@
     var members = [];
     $(function () {
 
-        // 确认是否出席
-        $(document).on("tap", ".attend button", function () {
-            var isAttend = $(this).hasClass("bggreen");
-            if (isAttend == true) {
-                $(this).removeClass("bggreen");
-                $(this).siblings("input[name=is_attend]").val(-1)
+        // 是否首发
+        $(document).on("tap", ".tapLineUp", function () {
+            var thisStatus = $(this).hasClass("tapGreen");
+            if (thisStatus == false) {
+                $(this).addClass("tapGreen");
+                $(this).siblings("input[name=lineup]").val(1);
             } else {
-                $(this).addClass("bggreen");
-                $(this).siblings("input[name=is_attend]").val(1)
+                $(this).removeClass("tapGreen");
+                $(this).siblings("input[name=lineup]").val(0);
             }
-        });
+        })
+
+        // 是否出席
+        $(document).on("tap", ".tapAttend", function () {
+            var thisStatus = $(this).hasClass("tapGreen");
+            if (thisStatus == false) {
+                $(this).addClass("tapGreen");
+                $(this).siblings("input[name=is_attend]").val(1);
+            } else {
+                $(this).removeClass("tapGreen");
+                $(this).siblings("input[name=is_attend]").val(-1);
+            }
+        })
 
         // 确认标志完成
-        $(document).on("tap", ".confirmBtn button", function () {
+        $(document).on("tap", ".tapConfirm", function () {
             var confirmText = $(this).text();
             if (confirmText == "确认") {
                 $(this).parents(".dataCollapse").siblings().find("text").css("background-color",
@@ -274,9 +317,10 @@
         });
 
         // 清空技术统计数据
-        $(document).on("tap", ".clearBtn button", function () {
+        $(document).on("tap", ".tapCancle", function () {
             $(this).parents(".mui-row").siblings().find("input").val('');
         });
+
 
         // 输入数字判断
         $(document).on("blur", ".checkNum", function () {
@@ -289,7 +333,7 @@
 
         $(document).on("blur", "input[name=fg]", function () {
             var fga = $(this).parents().siblings().children("input[name=fga]").val(); //二分出手数
-            if (parseInt($(this).val()) > parseInt(fga)) {
+            if (Number($(this).val()) > Number(fga)) {
                 mui.toast("二分命中次数不能大于出手次数");
                 $(this).val('').focus();
                 return false;
@@ -297,7 +341,7 @@
         });
         $(document).on("blur", "input[name=threepfg]", function () {
             var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val(); //三分出手数
-            if (parseInt($(this).val()) > parseInt(threepfga)) {
+            if (Number($(this).val()) > Number(threepfga)) {
                 mui.toast("三分命中次数不能大于出手次数");
                 $(this).val('').focus();
                 return false;
@@ -305,21 +349,13 @@
         });
         $(document).on("blur", "input[name=ft]", function () {
             var fta = $(this).parents().siblings().children("input[name=fta]").val(); //罚球出手数
-            if (parseInt($(this).val()) > parseInt(fta)) {
+            if (Number($(this).val()) > Number(fta)) {
                 mui.toast("罚球命中次数不能大于罚球数");
                 $(this).val('').focus();
                 return false;
             }
         });
-        // 是否首发
-        $(document).on("tap", ".isLineup", function () {
-            var lineUp = $(this).siblings("input[name=lineup]");
-            if (lineUp.val() == "0") {
-                lineUp.val("1");
-            } else {
-                lineUp.val("0");
-            }
-        });
+
         homeTeam();
         awayTeam();
     });
@@ -350,24 +386,24 @@
                     for (var i = 0; i < data.data.length; i++) {
                         newli +=
                             `
-                        <li class="mui-table-view-cell mui-collapse listli">
+                        <li class="mui-table-view-cell mui-collapse">
                                 <a class="mui-navigate-right">
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>`
+                                    <div class="mui-row">`
                         if (data.data[i].number == null) {
                             newli +=
-                                ` <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="" placeholder="球衣号码(可填)" >
+                                ` <div class="mui-col-xs-2 mui-text-center colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号码(可填)" >
                                         </div>`
                         } else {
                             newli +=
-                                ` <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
+                                ` <div class="mui-col-xs-2 colororange">
+                                            <input type="text" name="number" class="addInput  mui-text-center" value="${data.data[i].number}" >
                                         </div>`
                         }
-                            newli +=
-                            `<div class="mui-col-xs-4 mui-text-center dataIcon">
+                        newli +=
+                            `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
+                            <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
                                             </text>
@@ -440,23 +476,16 @@
                                             <input type="text" name="foul" class="checkNum" value="" placeholder="0">
                                         </div>
                                     </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 sfText">首发</div>
-                                        <div class="mui-col-xs-2 sfButton">
-                                            <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
-                                                <div class="mui-switch-handle"></div>
-                                            </div>
-                                            <input type="hidden" name="lineup" value="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 sfButton attend">
-                                            <button type="button" class="mui-btn">出席</button>
+                                    <div class="mui-row tapCont">
+                                        <div class="mui-col-xs-6 mui-text-left">
+                                            <span class="tapBtn tapLineUp">首发</span>
+                                            <input type="hidden" name="lineup" value="0"> 
+                                            <span class="tapBtn tapAttend">出席</span>
                                             <input type="hidden" name="is_attend" value="-1">
                                         </div>
-                                        <div class="mui-col-xs-3 mui-text-right clearBtn">
-                                            <button type="button" class="mui-btn">清空</button>
-                                        </div>
-                                        <div class="mui-col-xs-3 mui-text-right confirmBtn">
-                                            <button type="button" class="mui-btn bggreen">确认</button>
+                                        <div class="mui-col-xs-6 mui-text-right">
+                                            <span class="tapBtn tapCancle tapRed">清空</span>
+                                            <span class="tapBtn tapConfirm tapGreen">确认</span>
                                         </div>
                                     </div>
                                     <input type="hidden" name="homeScoreCont" value="">
@@ -464,7 +493,6 @@
                             </li>`
                     }
                     $(".homeList").empty().append(newli);
-                    mui('.mui-switch').switch();
                 } else {
                     $(".homeList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
                 }
@@ -501,24 +529,24 @@
                     for (var i = 0; i < data.data.length; i++) {
                         newli +=
                             `
-                        <li class="mui-table-view-cell mui-collapse listli">
+                        <li class="mui-table-view-cell mui-collapse">
                                 <a class="mui-navigate-right">
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
-                                        data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>`
+                                    <div class="mui-row">`
                         if (data.data[i].number == null) {
                             newli +=
-                                ` <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="" placeholder="球衣号码(可填)" >
+                                ` <div class="mui-col-xs-2 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号码(可填)" >
                                         </div>`
                         } else {
                             newli +=
-                                ` <div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
+                                ` <div class="mui-col-xs-2 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="${data.data[i].number}" >
                                         </div>`
                         }
                         newli +=
-                            `<div class="mui-col-xs-4 mui-text-center dataIcon">
+                            `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                                 data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
+                            <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
                                                 <i class="mui-icon mui-icon-checkmarkempty"></i>
                                             </text>
@@ -591,23 +619,16 @@
                                             <input type="text" name="foul" class="checkNum" value="" placeholder="0">
                                         </div>
                                     </div>
-                                    <div class="mui-row">
-                                        <div class="mui-col-xs-2 sfText">首发</div>
-                                        <div class="mui-col-xs-2 sfButton">
-                                            <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
-                                                <div class="mui-switch-handle"></div>
-                                            </div>
-                                            <input type="hidden" name="lineup" value="0">
-                                        </div>
-                                        <div class="mui-col-xs-2 sfButton attend">
-                                            <button type="button" class="mui-btn">出席</button>
+                                    <div class="mui-row tapCont">
+                                        <div class="mui-col-xs-6 mui-text-left">
+                                            <span class="tapBtn tapLineUp">首发</span>
+                                            <input type="hidden" name="lineup" value="0"> 
+                                            <span class="tapBtn tapAttend">出席</span>
                                             <input type="hidden" name="is_attend" value="-1">
                                         </div>
-                                        <div class="mui-col-xs-3 mui-text-right clearBtn">
-                                            <button type="button" class="mui-btn">清空</button>
-                                        </div>
-                                        <div class="mui-col-xs-3 mui-text-right confirmBtn">
-                                            <button type="button" class="mui-btn bggreen">确认</button>
+                                        <div class="mui-col-xs-6 mui-text-right">
+                                            <span class="tapBtn tapCancle tapRed">清空</span>
+                                            <span class="tapBtn tapConfirm tapGreen">确认</span>
                                         </div>
                                     </div>
                                     <input type="hidden" name="awayScoreCont" value="">
@@ -615,7 +636,6 @@
                             </li>`
                     }
                     $(".awayList").empty().append(newli);
-                    mui('.mui-switch').switch();
                 } else {
                     $(".awayList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
                 }
@@ -627,6 +647,7 @@
     }
     // 提交数据
     $(".submitAction").on("tap", function () {
+
         var members = [];
         var homeScoreAll = 0;
         var awayScoreAll = 0;
@@ -666,6 +687,17 @@
         }
 
         $(".membersList").find(".dataCollapse").each(function () {
+
+            // 遍历查找判断球员有任何一个数据，则默认选中出席
+            $(this).find(".checkNum").each(function () {
+                var thisInput = $(this).val()
+                if (thisInput != '' || thisInput != 0) {
+                    $(this).parents(".dataCollapse").find(".tapAttend").addClass("tapGreen");
+                    $(this).parents(".dataCollapse").find("input[name=is_attend]").val("1");
+                }
+            })
+
+            //提交数据数组
             var team = $(this).attr("data-team");
             var team_id = $(this).attr("data-team_id");
             var team_member_id = $(this).siblings().find(".member").attr("data-team_member_id");
