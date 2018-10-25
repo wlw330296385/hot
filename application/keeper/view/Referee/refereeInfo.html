@@ -32,7 +32,7 @@
 
 <body class=whitebg>
 
-    <header id="header" class="mui-bar mui-bar-nav subheader">
+    <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
         <h1 class="mui-title">
             <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 4px 12px;">关注</button>
@@ -41,7 +41,7 @@
     <div class="mui-content">
 
         <div class="list camp-list detalis-list referee mb44">
-            <ul class="mui-table-view mb" style="margin-top: -4px">
+            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
                     <a href="javascript:;">
                         <img class="mui-media-object mui-pull-left refereeicon" src="{$refereeInfo.portraits}">
@@ -74,23 +74,24 @@
                 </li>
             </ul>
 
+            <!-- 基本信息 -->
             <ul class="mui-table-view mb">
-                <li class="mui-table-view-cell listli detalisli">个人认证
+                <li class="mui-table-view-cell listli">个人认证
                     <span>
                         <img class="rzicon" src="/static/frontend/images/icon05.jpg">证书认证&nbsp;&nbsp;&nbsp;
                         <img class="rzicon" src="/static/frontend/images/icon05.jpg">身份认证
                     </span>
                 </li>
-                <li class="mui-table-view-cell listli detalisli listinitial">裁判等级
+                <li class="mui-table-view-cell listli">裁判等级
                     <span class="level">{$refereeInfo.level}</span>
                 </li>
-                <li class="mui-table-view-cell listli detalisli listinitial">执裁场次
+                <li class="mui-table-view-cell listli">执裁场次
                     <span>执裁过 {$refereeInfo.total_played} 场</span>
                 </li>
-                <li class="mui-table-view-cell listli detalisli listinitial">接单范围
+                <li class="mui-table-view-cell listli">接单范围
                     <span>{$refereeInfo.province} {$refereeInfo.city} {$refereeInfo.area}</span>
                 </li>
-                <li class="mui-table-view-cell listli detalisli listinitial">出场费用
+                <li class="mui-table-view-cell listli">出场费用
                     <span>{$refereeInfo.appearance_fee}元/场</span>
                 </li>
             </ul>
@@ -161,10 +162,10 @@
                 <li class="mui-table-view-cell mui-col-xs-2 mui-col-sm-2 opli">
                     <a href="#shareGuide">分享</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgblue">
                     <a href="#comment" id="typeBtn1">我要评价</a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli">
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 opli bgred">
                     <a href="#invitation" class="typeBtn2">邀请执裁</a>
                 </li>
             </ul>
@@ -218,7 +219,7 @@
                     <span class="type">请选择球队和比赛</span>
                     <a href="#invitation" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
-                <div class="mui-card" style="margin:0 !important;border-radious:0 !important">
+                <div class="mui-card" style="margin:0 !important;">
                     <ul class="mui-table-view mui-text-left" style="margin:0 !important">
                         <li class="mui-table-view-cell mui-collapse teamli">
                             <a class="mui-navigate-right" href="#">
@@ -303,11 +304,6 @@
                 $(".impressSide .bgorange").removeClass("bgorange");
             });
 
-            // 裁判宣言全文展示
-            $(document).on("tap", '.refereeDesciption', function () {
-                $(this).children(".about").css("max-height", "initial");
-            });
-
             // 裁判简介
             if ("{$refereeInfo.introduction}" == '') {
                 $(".refereeIntro").hide();
@@ -316,22 +312,61 @@
             }
 
             //发表评论
-            $("#commentSubmit").on('click', function () {
-                var comment = $('textarea.data').val();
-                if (comment == "" || comment == null) {
-                    mui.toast("您没填写评论内容哦");
+            // $("#commentSubmit").on('click', function () {
+            //     var comment = $('textarea.data').val();
+            //     if (comment == "" || comment == null) {
+            //         mui.toast("您没填写评论内容哦");
+            //         return false;
+            //     }
+            //     var objData = {};
+            //     objData.comment = comment;
+            //     objData.referee = "{$refereeInfo.referee}";
+            //     objData.referee_id = "{$refereeInfo.id}";
+            //     var result = wooApi.asyncF("{:url('api/referee/createRefereeCommentApi')}", objData);
+            //     if (result) {
+            //         mui.toast(result.msg);
+            //         mui('#comment').popover('toggle');
+            //         window.location.reload();
+            //     }
+            // });
+
+            $("#commentSubmit").on('tap', function () {
+                var comment = $(".comment").val();
+                var referee = "{$refereeInfo.referee}";
+                var referee_id = "{$refereeInfo.id}";
+                if (comment == '') {
+                    mui.toast("评价内容不能为空");
                     return false;
                 }
-                var objData = {};
-                objData.comment = comment;
-                objData.referee = "{$refereeInfo.referee}";
-                objData.referee_id = "{$refereeInfo.id}";
-                var result = wooApi.asyncF("{:url('api/referee/createRefereeCommentApi')}", objData);
-                if (result) {
-                    mui.toast(result.msg);
-                    mui('#comment').popover('toggle');
-                    window.location.reload();
-                }
+
+                mui.ajax("{:url('api/referee/createRefereeCommentApi')}", {
+                    data: {
+                        referee_id: referee_id,
+                        referee: referee,
+                        comment: comment
+                    },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast('评价成功，感谢你的评价！');
+                            mui('#comment').popover('toggle');
+                            window.location.reload();
+                        } else {
+                            mui.toast(data.msg);
+                            mui('#comment').popover('toggle');
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
+                    }
+                });
             });
 
             // 关注裁判
@@ -342,10 +377,12 @@
                         type: 1,
                         member_id: member_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         //服务器返回响应，根据响应结果，分析是否登录成功；
                         console.log(data);
@@ -389,10 +426,12 @@
                         tags: tags,
                         tag_ids: tag_ids,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -425,10 +464,12 @@
                     type: 1,
                     member_id: member_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
@@ -454,16 +495,19 @@
                 data: {
                     comment_type: 5
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name + '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag_name +
+                                '" data-id="' + data.data[i].id + '">' + data.data[i].tag_name + '</span>'
                         }
                         $(".tagAll").empty();
                         $(".tagAll").append(div);
@@ -487,16 +531,20 @@
                     comment_type: 5,
                     commented_id: "{$refereeInfo.id}",
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var div = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag + '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' + data.data[i].count + '</samll>)</span>'
+                            div = div + '<span class="choiseTag" data-tag_name="' + data.data[i].tag +
+                                '" data-tag_id="' + data.data[i].id + '">' + data.data[i].tag + '(<samll>' +
+                                data.data[i].count + '</samll>)</span>'
                         }
                         $(".tagCommentList").empty();
                         $(".tagCommentList").append(div);
@@ -520,16 +568,20 @@
             mui.ajax({
                 url: url,
                 data: {},
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' + data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
+                            newli = newli +
+                                '<div class="mui-input-row"><label class="choiseDiv" style="width:100% !important" data-team_id="' +
+                                data.data[i].team.id + '">' + data.data[i].team.name + '</label></div>'
                         }
                         $(newli).insertAfter(".choiseTeam");
                     }
@@ -553,7 +605,8 @@
             if (teamId == '') {
                 mui.toast("请先选择球队");
             } else {
-                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/referee_id/{$refereeInfo['id']}";
+                var urls = "{:url('team/createMatch')}" + "/team_id/" + teamId +
+                    "/referee_id/{$refereeInfo['id']}";
                 window.location.href = urls
             }
         })
@@ -567,17 +620,23 @@
                     status: 1,
                     team_id: teamId,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var url = "{:url('team/createMatch')}" + "/team_id/" + teamId + "/referee_id/{$refereeInfo['id']}";
-                            newli = newli + '<div class="mui-input-row"><label style="width:100% !important" data-match_id="' + data.data[i].id + '"><a href="' + url + '">' + data.data[i].match + '</a></label></div>'
+                            var url = "{:url('team/createMatch')}" + "/team_id/" + teamId +
+                                "/referee_id/{$refereeInfo['id']}";
+                            newli = newli +
+                                '<div class="mui-input-row"><label style="width:100% !important" data-match_id="' +
+                                data.data[i].id + '"><a href="' + url + '">' + data.data[i].match +
+                                '</a></label></div>'
                         }
                         $(".choiseMatch").nextAll().remove();
                         $(newli).insertAfter(".choiseMatch");
@@ -585,11 +644,13 @@
                         var btnArray = ['取消', '确认'];
                         mui.confirm('该球队还没有比赛记录，去创建比赛吧', '', btnArray, function (e) {
                             if (e.index == 1) {
-                                window.location.href = "{:url('team/createMatch')}" + "/team_id/" + teamId;
+                                window.location.href = "{:url('team/createMatch')}" + "/team_id/" +
+                                    teamId;
                             }
                         });
                         $(".choiseMatch").nextAll().remove();
-                        $("<div class='colorgray nomatch' style='padding: 11px 15px;'>该球队还没有比赛记录</div>").insertAfter(".choiseMatch");
+                        $("<div class='colorgray nomatch' style='padding: 11px 15px;'>该球队还没有比赛记录</div>").insertAfter(
+                            ".choiseMatch");
                     }
                 },
                 error: function (xhr, type, errerThrown) {
@@ -597,7 +658,6 @@
                 }
             });
         }
-
     </script>
     <script>
         wx.config({

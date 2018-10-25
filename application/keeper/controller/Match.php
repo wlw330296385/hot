@@ -628,6 +628,11 @@ class Match extends Base {
         $leagueS = new LeagueService();
         $member_id = input('member_id', 0, 'intval');
 
+        $myInfo = $leagueS->getMatchMember(['member_id' => $this->memberInfo['id'], 'match_id' => $this->league_id, 'status' => 1]);
+        if (empty($myInfo) || $myInfo['type'] < 9) {
+            $this->error("你不是该联赛的管理人员");
+        }
+
         $matchMemberInfo = $leagueS->getMatchMember(['member_id' => $member_id, 'match_id' => $this->league_id, 'status' => 1]);
         if (empty($matchMemberInfo)) {
             $this->error("没有找到该工作人员的信息");
@@ -635,6 +640,7 @@ class Match extends Base {
         $types = $leagueS->getMatchMemberTypes();
         return view('Match/work/workMemberInfo', [
             'types' => $types,
+            'myInfo' => $myInfo,
             'matchMemberInfo' => $matchMemberInfo
         ]);
     }
@@ -1476,7 +1482,8 @@ class Match extends Base {
 
         $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
 
-        $teamInfo["team_member_list"] = [];
+        $teamInfo["teamManagers"] = [];
+        $teamInfo["teamMates"] = [];
         if(!empty($teamMemberList)) {
             foreach ($teamMemberList as $row) {
                 $teamMemberRole = $teamS->getTeamMemberRole(['name' =>$row['name']]);
@@ -1485,7 +1492,11 @@ class Match extends Base {
                     'telephone' => $row['telephone'],
                     'role' => $teamMemberRole['type']
                 ];
-                array_push($teamInfo["team_member_list"], $temp);
+                if ($teamMemberRole) {
+                    array_push($teamInfo["teamManagers"], $temp);
+                } else {
+                    array_push($teamInfo["teamMates"], $temp);
+                }
             }
         }
 

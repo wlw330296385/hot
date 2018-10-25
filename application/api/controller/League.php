@@ -4356,13 +4356,13 @@ class League extends Base
                         // 球队在比赛阶段的积分累加
                         $score = $winCount = $loseCount = 0;
                         for ($i = 0; $i < count($val); $i++) {
-                            if ($val[$i]['score'] > 0) {
-                                $score += 1;
-                            }
+                            // if ($val[$i]['score'] > 0) {
+                            //     $score += 1;
+                            // }
                             $winCount = $leagueS->getMatchRecordCount(['match_id' => $val[$i]['match_id'], 'match_stage_id' => $val[$i]['match_stage_id'], 'win_team_id' => $kExplode[1]]);
                             $loseCount = $leagueS->getMatchRecordCount(['match_id' => $val[$i]['match_id'], 'match_stage_id' => $val[$i]['match_stage_id'], 'lose_team_id' => $kExplode[1]]);
                         }
-                        $_arr['score'] = $score;
+                        $_arr['score'] = $winCount;
                         $_arr['win_count'] = $winCount;
                         $_arr['lose_count'] = $loseCount;
                         array_push($_array['teams'], $_arr);
@@ -4650,7 +4650,7 @@ class League extends Base
         $matchRecord = $matchS->getMatchRecord(['id' => $data['id']]);
         // 当前时间超过数据允许修改时间（1天） 不能修改
         $nowtime = time();
-        if ($matchRecord['is_record']) {
+        if (!empty($matchRecord['is_record']) && ($nowtime - $matchRecord['record_time'] > 3600 * 48) ) {
             return json(['code' => 100, 'msg' => '比赛结果已无法修改']);
         }
         if (!empty($matchRecord['record_time']) && ($nowtime > $matchRecord['record_time'] + 3600 * 24)) {
@@ -4987,40 +4987,59 @@ class League extends Base
         }
 
         // 双方球队积分数据
-        $matchRankData = [
-            // 主队数据
-            [
-                'match_id' => $data['match_id'],
-                'match' => $data['match'],
-                'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
-                'match_group' => ($data['match_group']) ? $data['match_group'] : '',
-                'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0,
-                'match_stage' => ($data['match_stage']) ? $data['match_stage'] : '',
-                'match_schedule_id' => $data['match_schedule_id'],
-                'match_record_id' => $matchRecordId,
-                'team' => $data['home_team'],
-                'team_id' => $data['home_team_id'],
-                'team_logo' => $data['home_team_logo'],
-                'score' => ($data['win_team_id'] == $data['home_team_id']) ? 1 : 0,
-                'status' => 1
-            ],
-            // 客队数据
-            [
-                'match_id' => $data['match_id'],
-                'match' => $data['match'],
-                'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
-                'match_group' => ($data['match_group']) ? $data['match_group'] : '',
-                'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0,
-                'match_stage' => ($data['match_stage']) ? $data['match_stage'] : '',
-                'match_schedule_id' => $data['match_schedule_id'],
-                'match_record_id' => $matchRecordId,
-                'team' => $data['away_team'],
-                'team_id' => $data['away_team_id'],
-                'team_logo' => $data['away_team_logo'],
-                'score' => ($data['win_team_id'] == $data['away_team_id']) ? 1 : 0,
-                'status' => 1
-            ]
+        $rankMap = [
+            'match_id' => $data['match_id'],
+            'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
+            'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0
         ];
+        
+         // 主队数据
+        $matchHomeTeamRankData = [
+            'match_id' => $data['match_id'],
+            'match' => $data['match'],
+            'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
+            'match_group' => ($data['match_group']) ? $data['match_group'] : '',
+            'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0,
+            'match_stage' => ($data['match_stage']) ? $data['match_stage'] : '',
+            'team' => $data['home_team'],
+            'team_id' => $data['home_team_id'],
+            'team_logo' => $data['home_team_logo'],
+            'status' => 1
+        ];
+        $matchHomeTeamRankData['score'] = $leagueS->getMatchRecordCount([
+            'match_id' => $data['match_id'], 
+            'match_stage_id' => $data['match_stage_id'],
+            'win_team_id' => $matchHomeTeamRankData['team_id']
+        ]);
+        $rankMap['team_id'] =  $data['home_team_id'];
+        $matchHomeTeamRank = $leagueS->getMatchRank($rankMap);
+        if (!empty($matchHomeTeamRankData['id'])) {
+            $matchHomeTeamRankData['id'] = empty($matchHomeTeamRank['id']) ? 0 : $matchHomeTeamRank['id'];
+        }
+        // 客队数据
+        $matchAwayTeamRankData = [
+            'match_id' => $data['match_id'],
+            'match' => $data['match'],
+            'match_group_id' => ($data['match_group_id']) ? $data['match_group_id'] : 0,
+            'match_group' => ($data['match_group']) ? $data['match_group'] : '',
+            'match_stage_id' => ($data['match_stage_id']) ? $data['match_stage_id'] : 0,
+            'match_stage' => ($data['match_stage']) ? $data['match_stage'] : '',
+            'team' => $data['away_team'],
+            'team_id' => $data['away_team_id'],
+            'team_logo' => $data['away_team_logo'],
+            'score' => ($data['win_team_id'] == $data['away_team_id']) ? 1 : 0,
+            'status' => 1
+        ];
+        $matchAwayTeamRankData['score'] = $leagueS->getMatchRecordCount([
+            'match_id' => $data['match_id'], 
+            'match_stage_id' => $data['match_stage_id'], 
+            'win_team_id' => $matchAwayTeamRankData['team_id']
+        ]);
+        $rankMap['team_id'] =  $data['away_team_id'];
+        $matchAwayTeamRank = $leagueS->getMatchRank($rankMap);
+        if (!empty($matchAwayTeamRankData['id'])) {
+            $matchAwayTeamRankData['id'] = empty($matchAwayTeamRank['id']) ? 0 : $matchAwayTeamRank['id'];
+        }
 
         // 启动事务
         Db::startTrans();
@@ -5052,7 +5071,8 @@ class League extends Base
                 db('referee')->where('id', 'in', $refereeIds)->setInc('total_played', 1);
             }
             // 保存双方球队积分数据
-            $leagueS->saveAllMatchRank($matchRankData);
+            $leagueS->saveMatchRank($matchHomeTeamRankData);
+            $leagueS->saveMatchRank($matchAwayTeamRankData);
             if (!empty($dataAdvteam)) {
                 $leagueS->saveMatchStageAdvteam($dataAdvteam);
             }

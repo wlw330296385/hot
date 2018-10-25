@@ -44,7 +44,7 @@
         <input type="hidden" name="member_id" class="data" value="-1" />
         <input type="hidden" name="type" class="data" value="3" />
         <input type="hidden" name="match_id" class="data" value="{$league_id}" />
-        <input type="hidden" name="team_id" class="data" value="" />
+        <input type="hidden" name="team_id" class="data" value="{$teamInfo.id}" />
         <input type="hidden" name="cover" class="data" value="/static/frontend/images/membercenter-bg.jpg" />
 
         <form action="" class="mui-input-group">
@@ -66,7 +66,7 @@
                 <span class="f14">以下为队长（或领队）信息必填（认领球队需验证）<i class="tip">*</i></span>
             </div>
             <div class="operation-box captainCont" style="padding:15px;">
-                {volist name="$teamInfo.team_member_list" id="vo"}
+                {volist name="$teamInfo.teamManagers" id="vo"}
                 <div class="mui-input-row mui-checkbox checkboxCont">
                     <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                         <div class="mui-col-xs-1 order">1</div>
@@ -93,7 +93,7 @@
             </div>
             <div class="operation-box" style="padding:15px;">
                 <div class="box">
-                    {volist name="$teamInfo.team_member_list" id="vo"}
+                    {volist name="$teamInfo.teamMates" id="vo"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                             <div class="mui-col-xs-1 order">{$key+1}</div>
@@ -219,7 +219,6 @@
                 totalNum = thisBox.find(".checkboxCont").length;
                 $(this).parents(".operation-btn").find(".mui-badge").text(totalNum);
             });
-
 
             // 判断手机号码不能重复
             // $(document).on("blur", "input[name=telephone]", function () {

@@ -3340,6 +3340,7 @@ class Team extends Base
             // 创建队员
             if (count($team_member_list) > 0) {
                 foreach ($team_member_list as $row) {
+
                     $teamMemberData = [
                         "team_id" => $matchTeamData["team_id"],
                         "team" => $data["name"],
@@ -3350,8 +3351,18 @@ class Team extends Base
                         "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
                         "status" => 1
                     ];
+                    $resTeamMember = $teamS->getTeamMember([
+                         "team_id" => $matchTeamData["team_id"],
+                         "member_id" => -1,
+                         "name" => $row['name'],
+                         "telephone" => $row['telephone']
+                    ]);
+                    if ($resTeamMember) {
+                        $teamMemberData['id'] = $resTeamMember['id'];
+                    }
                     $res1 = $teamS->saveTeamMember($teamMemberData);
 
+                    // 有权限的人仅写入team_member_role，其他人写在team_member 和 match_team_member
                     if (!empty($row['role'])) {
                         $teamMemberRoleData = [
                             "team_id" => $matchTeamData["team_id"],
@@ -3361,22 +3372,22 @@ class Team extends Base
                             "status" => 1
                         ];
                         $res2 = $teamS->addTeamMemberRole($teamMemberRoleData);
+                    } else {
+                        $matchTeamMemberData = [
+                            "match_team_id" => $result['data'],
+                            "match_id" => $matchInfo['id'],
+                            "match" => $matchInfo['name'],
+                            "team_id" => $matchTeamData["team_id"],
+                            "team" => $data['name'],
+                            "team_logo" => $teamData['logo'],
+                            "team_member_id" => $res1['insid'],
+                            "name" => $row['name'],
+                            "member_id" => -1,
+                            "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                            "status" => 1
+                        ];
+                        $res3 = $leagueS->saveMatchTeamMember($matchTeamMemberData);
                     }
-
-                    $matchTeamMemberData = [
-                        "match_team_id" => $result['data'],
-                        "match_id" => $matchInfo['id'],
-                        "match" => $matchInfo['name'],
-                        "team_id" => $matchTeamData["team_id"],
-                        "team" => $data['name'],
-                        "team_logo" => $teamData['logo'],
-                        "team_member_id" => $res1['insid'],
-                        "name" => $row['name'],
-                        "member_id" => -1,
-                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
-                        "status" => 1
-                    ];
-                    $res3 = $leagueS->saveMatchTeamMember($matchTeamMemberData);
                 }
             }
         }

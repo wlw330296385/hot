@@ -45,6 +45,7 @@
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/getDate.js"></script>
     <script>
         //初始化
         mui.init({
@@ -271,6 +272,7 @@
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
+
                             newli += `<div class="page-header border-b bggray2">`
                             if (data.data[i].date == 0) {
                                 newli += `<span class="course">比赛时间待定</span>`
@@ -284,6 +286,13 @@
                             //赛程信息   
                             for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                 var dataRecord = data.data[i].stage.records[j]
+                                var record_time = getGsTime(dataRecord.record_time * 1000); //时间戳转日期格式
+                                // 计算当前时间和record_time相差的天数
+                                var time1 = Date.parse(new Date(record_time));
+                                var time2 = Date.parse(new Date(getNowTime()));
+                                var dayNum = Math.abs(parseInt((time2 - time1) / 1000 / 3600 / 24));
+                                console.log(dayNum)
+
                                 var urlsEdit = "{:url('match/editRecordScoreofleague')}" +
                                     '/league_id/' + league_id + '/id/' + dataRecord.id;
                                 if (dataRecord.has_statics == 0) {
@@ -319,17 +328,17 @@
                                 }
                                 newli +=
                                     `<div class="price-frame mui-text-left" style="padding-top:0;border-left: 1px solid #ddd;padding-left: 6px;">`
-                                // if (dataRecord.is_record == 1) {
-                                    // newli +=
-                                    //     `<p style="line-height:62px;">
-                                    //             <a href="${urlsRecord}"><button class="opclick bggreen" style="margin-top: 18px;">技术统计</button></a>
-                                    //         </p></div>`
-                                // } else {
+                                if (dayNum > 3) {
+                                    newli +=
+                                        `<p style="line-height:62px;">
+                                                <a href="${urlsRecord}"><button class="opclick bggreen" style="margin-top: 18px;">技术统计</button></a>
+                                            </p></div>`
+                                } else {
                                     newli +=
                                         `<p style="margin-bottom:8px;">
                                                 <a href="${urlsEdit}"><button class="opclick bgred">赛果编辑</button></a></p><p><a href="${urlsRecord}"><button class="opclick bggreen">技术统计</button></a>
                                             </p></div>`
-                                // }
+                                }
                                 newli +=
                                     `<div class="fr mui-text-right" style="padding-right: 5px; width:9%">
                                             <p class="lineHeight32 colorred">${dataRecord.home_score}</p>
