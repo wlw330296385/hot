@@ -1035,9 +1035,19 @@ class LeagueService
     }
 
     // 获取联赛积分数据
-    public function getMatchRanks($map) {
+    public function getMatchRanks($map, $order = 'match_group asc, score desc') {
         $model = new MatchRank();
-        $res = $model->where($map)->select();
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        $result = $res->toArray();
+        return $result;
+    }
+
+    public function getMatchRank($map) {
+        $model = new MatchRank();
+        $res = $model->where($map)->find();
         if (!$res) {
             return $res;
         }
@@ -1046,9 +1056,28 @@ class LeagueService
     }
 
     // 批量保存联赛球队积分
-    public function saveAllMatchRank($data) {
+    // public function saveAllMatchRank($data) {
+    //     $model = new MatchRank();
+    //     $res = $model->allowField(true)->saveAll($data);
+    //     if ($res === false) {
+    //         trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+    //     }
+    //     return $res;
+    // }
+
+    public function saveMatchRank($data) {
+
         $model = new MatchRank();
-        $res = $model->allowField(true)->saveAll($data);
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
         if ($res === false) {
             trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
         }
