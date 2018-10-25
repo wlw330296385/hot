@@ -6109,4 +6109,87 @@ class League extends Base
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }
+
+    public function addRefereeComment() {
+        $data = input('post.');
+
+        if ($this->memberInfo['id'] == 0) {
+            return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+        }
+
+        if (empty($data["league_id"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').' league_id']);
+        } else {
+            $data['match_id'] = $data["league_id"];
+            unset($data['league_id']);
+        }
+
+        if (empty($data['match_record_id'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').' match_record_id']);
+        } else if (empty($data['referee_id'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').' referee_id']);
+        }
+
+        if (isset($data['fairness']) && isset($data['punctuality']) && isset($data['profession']) && isset($data['attitude'])) {
+            if ($data['fairness'] > 5 || $data['fairness'] < 0 ||
+                $data['punctuality'] > 5 || $data['punctuality'] < 0 ||
+                $data['profession'] > 5 || $data['profession'] < 0 ||
+                $data['attitude'] > 5 || $data['attitude'] < 0 ) {
+                return json(['code' => 100, 'msg' => '所评分数超出0-5的有效范围']);
+            }
+        } else {
+            return json(['code' => 100, 'msg' => '裁判员也非常辛苦，帮他们打个分吧']);
+        }
+
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord([
+            'id' => $data['match_record_id'],
+            'match_id' => $data['match_id']
+        ]);
+        if (empty($matchRecordInfo)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404'). '比赛记录']);
+        }
+
+        if ($data['referee_id'] == $matchRecordInfo['referee1_id']) {
+            $data['referee'] = $matchRecordInfo['referee1'];
+        } else if ($data['referee_id'] == $matchRecordInfo['referee2_id']) {
+            $data['referee'] = $matchRecordInfo['referee2'];
+        } else if ($data['referee_id'] == $matchRecordInfo['referee3_id']) {
+            $data['referee'] = $matchRecordInfo['referee3'];
+        } else {
+            return json(['code' => 100, 'msg' => '该裁判未参加该场比赛，无法为该裁判评分']);
+        }
+
+        $leagueS = new LeagueService();
+        $matchTeamMember = $leagueS->getMatchTeamMember([
+            'match_id' => $data['match_id'], 
+            'team_id' => ['in', [$matchRecordInfo['home_team_id'], $matchRecordInfo['away_team_id']]],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (empty($matchTeamMember)) {
+            return json(['code' => 100, 'msg' => '您未参加该场比赛，无法为该裁判评分']);
+        }
+
+        $refereeS = new RefereeService();
+        $refereeComment = $refereeS->getRefereeComment([
+            'match_id' => $data['match_id'],
+            'match_record_id' => $data['match_record_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (!empty($refereeComment)) {
+            return json(['code' => 100, 'msg' => '你已为该场的裁判评分，暂时无法修改评分']);
+        }
+        $data['team_id'] = $matchTeamMember['team_id'];
+        $data['team_member_id'] = $matchTeamMember['team_member_id'];
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['avatar'] = $this->memberInfo['avatar'];
+        $data['anonymous'] = isset($data['anonymous']) && $data['anonymous'] === 0 ? 0 : 1;
+
+        $res = $refereeS->saveRefereeComment($data);
+        if ($res) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+
+    }
 }

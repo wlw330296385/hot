@@ -1192,6 +1192,7 @@ class Match extends Base {
         $leagueId = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $matchS = new MatchService();
+        $refereeS = new RefereeService();
         $matchRecordInfo = $matchS->getMatchRecord([
             'id' => $id,
             'match_id' => $leagueId
@@ -1199,7 +1200,43 @@ class Match extends Base {
         if(!empty($matchRecordInfo['album'])) {
             $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
         }
+
+        $allow_referee_comment = 0;
+        $refereeComment1 = $refereeComment2 = $refereeComment3 = [];
+        if(!empty($matchRecordInfo) && $this->memberInfo['id'] > 0) {
+            $res = $leagueS->getMatchTeamMembers([
+                'match_id' => $leagueId, 
+                'team_id' => ['in', [$matchRecordInfo['home_team_id'], $matchRecordInfo['away_team_id']]],
+                'member_id' => $this->memberInfo['id']
+            ]);
+            if (!empty($res)) {
+                $allow_referee_comment = 1;
+
+                $map = [
+                    'match_id' => $leagueId, 
+                    'match_record_id' => $id, 
+                    'member_id' => $this->memberInfo['id']
+                ];
+                if (!empty($matchRecordInfo['referee1_id'])) {
+                    $map['referee_id'] = $matchRecordInfo['referee1_id'];
+                    $refereeComment1 = $refereeS->getRefereeComment($map);
+                }
+                if (!empty($matchRecordInfo['referee2_id'])) {
+                    $map['referee_id'] = $matchRecordInfo['referee2_id'];
+                    $refereeComment2 = $refereeS->getRefereeComment($map);
+                }
+                if (!empty($matchRecordInfo['referee3_id'])) {
+                    $map['referee_id'] = $matchRecordInfo['referee3_id'];
+                    $refereeComment3 = $refereeS->getRefereeComment($map);
+                }
+            }
+        }
+
         $this->assign('matchRecordInfo', $matchRecordInfo);
+        $this->assign('allow_referee_comment', $allow_referee_comment);
+        $this->assign('refereeComment1', $refereeComment1);
+        $this->assign('refereeComment2', $refereeComment2);
+        $this->assign('refereeComment3', $refereeComment3);
         return view('Match/record/recordInfo');
     }
 
