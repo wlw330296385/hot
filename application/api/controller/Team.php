@@ -14,6 +14,7 @@ use app\service\TeamMemberService;
 use app\service\TeamEventService;
 use app\service\LeagueService;
 use app\service\MatchOrgMemberService;
+use app\service\CommonService;
 use think\Exception;
 use think\Db;
 
@@ -876,6 +877,7 @@ class Team extends Base
             $teamS = new TeamService();
             $memberS = new MemberService();
             $studentS = new StudentService();
+            $commonS = new CommonService();
             // 获取球队信息
             $teamInfo = $teamS->getTeam(['id' => $post['team_id']]);
             if (!$teamInfo) {
@@ -919,7 +921,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $studentInfo['yearsexp'],
                     'birthday' => $studentInfo['student_birthday'],
-                    'age' => $studentInfo['age'],
+                    'age' => $commonS->getAge($studentInfo['student_birthday']),
                     'height' => $studentInfo['student_height'],
                     'weight' => $studentInfo['student_weight'],
                     'shoe_size' => $studentInfo['student_shoe_code'],
@@ -968,7 +970,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $memberInfo['yearsexp'],
                     'birthday' => $memberInfo['birthday'],
-                    'age' => $memberInfo['age'],
+                    'age' => $commonS->getAge($memberInfo['birthday']),
                     'height' => $memberInfo['height'],
                     'weight' => $memberInfo['weight'],
                     'shoe_size' => $memberInfo['shoe_code'],
