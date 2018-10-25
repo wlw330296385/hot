@@ -69,17 +69,19 @@ class Rebate extends Backend {
     //校园课的推荐费列表
     public function campRebate(){
         $camp_id = input('param.camp_id',9);
-        $Ym = input('param.Ym',date('Y-m',time()));
+        $Ym = input('param.Ym',date('Y-m',strtotime('last month')));
 
         $datemonth = date('Ym',strtotime($Ym));
-
+        if($datemonth==date('Ym',time())){
+            $this->error('本月账单未出帐,请于次月1号查询');
+        }
         $map1['datemonth'] = $datemonth;
         $map1['camp_id'] = $camp_id;
         $list = db('rebate_camp')->where($map1)->order('id desc')->select();
         //没有数据则生成数据
         if(!$list){
-            $map['status'] = 1;
-            $map['has_rebate'] = 0;
+            // $map['status'] = 1;
+            // $map['has_rebate'] = 0;
             $map['salary|push_salary'] = ['>',0];
             $date_str = $datemonth."01";
             $map['camp_id'] = $camp_id;

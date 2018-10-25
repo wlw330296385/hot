@@ -841,7 +841,7 @@ class StatisticsCamp extends Backend{
         //查询条件：camp_id，monthstart，monthend
         $list = db('salary_in')
             ->field('sum(salary) as s_salary,sum(push_salary) as s_push_salary,count(id) as s_id,member,realname,member_id,camp_id,camp')
-            ->where(['camp_id'=>$camp_id,'type'=>1])
+            ->where(['camp_id'=>$camp_id])
             ->where(['create_time'=>['between',[$month_start,$month_end]]])
             ->where('delete_time',null)
             ->group('member_id')

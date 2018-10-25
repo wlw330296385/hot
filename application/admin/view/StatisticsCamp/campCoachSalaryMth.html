@@ -12,6 +12,7 @@
       <div class="box-body">
         <div class="dataTables_wrapper form-inline dt-bootstrap">
           <div class="row hotTbHeader">
+            <form>
             <div class="col-sm-12">
               <div class="form-group">
                 <label>训练营：</label>
@@ -27,7 +28,7 @@
                 <!-- /.input group -->
                 <label>统计时间：</label>
                 <div class="input-group">
-                  <input type="text" name="dateYM" class="form-control pull-right" id="dateYM">
+                  <input type="text" name="Ym" class="form-control pull-right">
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
@@ -35,8 +36,9 @@
               </div>
               <div class="form-group">
                 <!-- /.input group -->
-                <button type="button" class="btn btn-default" id="goSearch">确认查询</button>
+                <input type="submit" class="btn btn-default" value="确认查询">
               </div>
+            </form>
               <h3 class="totalRight">
                 <span><small>本月工资总额：</small><strong class="text-yellow monthIn"></strong></span>
               </h3>
@@ -221,28 +223,7 @@
         })
 
 
-        //查询统计
-        $("#goSearch").on("click", function () {
-            var camp = $("input[name=camp]").val();
-            var camp_id = $("input[name=camp_id]").val();
-            var getYM = $("input[name=dateYM]").val();
-            if(camp_id==""){
-                alert("请选择训练营！");
-                return false;
-            }
-            //设置本地存储
-            localStorage.setItem('currDateYM',getYM);
-            localStorage.setItem('currCampName_forCoach',camp);
-            localStorage.setItem('currCampID_forCoach',camp_id);
-            //拆分日期
-            var arrYM = getYM.split('-');
-            var getLastDate = new Date(arrYM[0],arrYM[1],0);
-            var beginDate = arrYM[0]+arrYM[1]+'01';
-            var endDate =  arrYM[0]+arrYM[1]+getLastDate.getDate();
-
-            window.location.href="{:url('/admin/Statistics_Camp/campCoachSalaryMth/')}"+"camp_id/"+camp_id+"/monthstart/"+beginDate+"/monthend/"+endDate;
-        })
-
+        
         //点击链接到详情页面
         $("#withdrawList .btn").on("click", function () {
             var getLink = $(this).attr("linkTo");

@@ -14,6 +14,7 @@ class Rebate extends Base {
 
     public function _initialize() {
         parent::_initialize();
+        
         $this->setting = db('setting')->find();
     }
 
@@ -24,18 +25,18 @@ class Rebate extends Base {
             $map['salary_in.has_rebate'] = 0;
             $map['salary|push_salary'] = ['>',0];
             $map['camp.rebate_type'] = 1;
-            // $datemonth = date('Ym', time());
-            // $date_str = date('Ymd', time());
+            $datemonth = date('Ym', time());
+            $date_str = date('Ymd', time());
 
-            $datemonth = 201810;
-            $date_str = 20181001;
+            // $datemonth = 201810;
+            // $date_str = 20181001;
 
             $salaryinList = DB::name('salary_in')
                         ->field(['salary_in.member_id','salary_in.id','salary_in.member','sum(salary_in.salary)+sum(salary_in.push_salary)'=>'total_salary','camp.rebate_type'])
                         ->join('camp','camp.id = salary_in.camp_id')
                         ->where($map)
-                        // ->whereTime('salary_in.create_time', 'last month')
-                        ->whereTime('salary_in.create_time', 'between', ['2018-10-1', '2018-11-1'])
+                        ->whereTime('salary_in.create_time', 'last month')
+                        // ->whereTime('salary_in.create_time', 'between', ['2018-10-1', '2018-11-1'])
                         // ->where('salary_in.create_time','lt',time())
                         ->group('salary_in.member_id')
                         ->where('salary_in.delete_time', null)
@@ -84,17 +85,17 @@ class Rebate extends Base {
             }
 
             $execute = $RebateModel->allowField(true)->saveAll($memberPiers);
-            if ($execute) {
-                $memberDb = db('member');
-                foreach ($memberPiers as $member) {
-                    $memberDb->where('id', $member['member_id'])->setInc('balance', $member['salary']);
-                }
-                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
-                return true;
-            } else {
-                file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
-                return false;
-            }
+            // if ($execute) {
+            //     $memberDb = db('member');
+            //     foreach ($memberPiers as $member) {
+            //         $memberDb->where('id', $member['member_id'])->setInc('balance', $member['salary']);
+            //     }
+            //     file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'success'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND  );
+            //     return true;
+            // } else {
+            //     file_put_contents(ROOT_PATH.'data/rebate/'.date('Y-m-d',time()).'.txt',json_encode(['time'=>date('Y-m-d H:i:s',time()), 'error'=>$memberPiers], JSON_UNESCAPED_UNICODE).PHP_EOL, FILE_APPEND );
+            //     return false;
+            // }
         }
     }
 

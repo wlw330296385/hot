@@ -16,19 +16,12 @@ class MemberFinance extends Backend{
 		$map = [];
 		$keyword = input('param.keyword');
 		$member_id = input('param.member_id');
-		if($keyword == 'woo'){
-			cookie('mflk',null);
-		}elseif (!$keyword) {
-			$keyword = cookie('mflk');
-			$map['member'] = ['like',"%{$keyword}%"];
-		}else{
-			cookie('mflk',$keyword);
-			$map['member'] = ['like',"%{$keyword}%"];
-		}
 		if($member_id){
 			$map['member_id'] = $member_id;
 		}
-
+		if($keyword){
+			$map['member'] = ['like',"%{$keyword}%"];
+		}
 		// 模板变量赋值
         $MemberFinance = new \app\model\MemberFinance();
 		$memberFinanceList = $MemberFinance->where($map)->paginate(30);
