@@ -1324,6 +1324,7 @@ class Team extends Base
             if (!$teamInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队']);
             }
+            $commonS = new CommonService();
             // 区分平台会员/非平台会员业务
             if ($teamMemberInfo['member_id'] > 0 ) {
                 // 平台会员： 发送球队邀请
@@ -1346,7 +1347,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $memberInfo['yearsexp'],
                     'birthday' => $memberInfo['birthday'],
-                    'age' => $memberInfo['age'],
+                    'age' => $commonS->getAge($memberInfo['birthday']),
                     'height' => $memberInfo['height'],
                     'weight' => $memberInfo['weight'],
                     'shoe_size' => $memberInfo['shoe_code'],
