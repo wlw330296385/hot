@@ -188,18 +188,6 @@
 
             </div>
 
-            {if condition="!empty($matchRecordInfo.custom_role)"}
-            <p class="pline"></p>
-            <div class="mui-input-row">
-                <label class="wd45" name="custom_role">{$matchRecordInfo.custom_role}</label>
-                {volist name="matchRecordInfo.custom_member_list" id="vol"}
-                <span class="">{$vol.workMember}</span>
-                {/volist}
-            </div>
-            <div class="mui-input-row">
-                <label>联系方式</label>
-                <span name="telephone"></span>
-            </div>{/if}
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli f14" style="line-height: 40px; color: #737373;">
                     <span class="h-auto">比赛花絮</span>
@@ -568,8 +556,8 @@
                 totalNum = $("#inactiveList .checkboxCont").length;
             });
 
-             //删除操作
-             $(document).on('tap', '.delbtn', function () {
+            //删除操作
+            $(document).on('tap', '.delbtn', function () {
                 $(this).parent().remove();
             });
 
@@ -811,72 +799,73 @@
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
-            var btnArray = ['保存', '发布'];
-            mui.confirm(
-                `1、选择保存只保存比分记录，24小时内可修改！2、选择发布则确认录入信息，不能修改比分！
-                            <div style="margin-top:7px;"><input type="checkbox" name="sendmessage" value="0" class="data" style="vertical-align: text-bottom;margin-right: 5px;">保存并发送消息</div>`,
-                '提示', btnArray,
+            mui.alert(
+                `发布后<strong class="colororange f18">三天</strong>内可修改！
+                <div style="margin-top:7px;"><input type="checkbox" name="sendmessage" value="0" class="data" style="vertical-align: text-bottom;margin-right: 5px;">发送消息给队员</div>`,
                 function (e) {
-                    if (e.index == 1) {
-                        $("input[name=is_record]").val(1);
-                        var data = wooApi.getInputData('input', 'data');
-                        datas = wooApi.getInputData('select', 'data', data);
-                        // 获取其他标签值
-                        arrData = wooApi.getDomData('domData', datas);
-                        var objData = wooApi.arrTOobj(arrData);
-                        var remarks = $('textarea.remarks').val();
-                        objData.remarks = remarks;
-                        objData.album = JSON.stringify(album);
-                        var url = "{:url('api/league/publishmatchrecord')}";
-                        var ajaxResult = wooApi.asyncF(url, objData);
-                        if (ajaxResult.code == 200) {
-                            mui.toast("提交成功")
-                            window.setTimeout(
-                                "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
-                                1500);
-                        } else {
-                            mui.alert(ajaxResult.msg, '录入失败');
-                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                                if (data.code === 200) {
-                                    $('input[name=__token__]').val(data.data);
-                                }
-                            }, 'json');
-                        }
+                    // if (e.index == 1) {
+                    if ($("input[name=sendmessage]").is(':checked')) {
+                        $("input[name=sendmessage]").val(1)
                     } else {
-                        if ($("input[name=sendmessage]").is(':checked')) {
-                            $("input[name=sendmessage]").val(1)
-                        } else {
-                            $("input[name=sendmessage]").val(0)
-                        }
-                        $("input[name=is_record]").val(0);
-                        var data = wooApi.getInputData('input', 'data');
-                        datas = wooApi.getInputData('select', 'data', data);
-                        // 获取其他标签值
-                        arrData = wooApi.getDomData('domData', datas);
-                        var objData = wooApi.arrTOobj(arrData);
-                        var remarks = $('textarea.remarks').val();
-                        objData.remarks = remarks;
-                        objData.album = JSON.stringify(album);
-                        var url = "{:url('api/league/updatematchrecord')}";
-                        var ajaxResult = wooApi.asyncF(url, objData);
-                        console.log(ajaxResult)
-                        if (ajaxResult.code == 200) {
-                            mui.toast("提交成功")
-                            window.setTimeout(
-                                "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
-                                1500);
-                        } else {
-                            mui.alert(ajaxResult.msg, '录入失败');
-                            mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                                if (data.code === 200) {
-                                    $('input[name=__token__]').val(data.data);
-                                }
-                            }, 'json');
-                        }
+                        $("input[name=sendmessage]").val(0)
                     }
+                    $("input[name=is_record]").val(1);
+                    var data = wooApi.getInputData('input', 'data');
+                    datas = wooApi.getInputData('select', 'data', data);
+                    // 获取其他标签值
+                    arrData = wooApi.getDomData('domData', datas);
+                    var objData = wooApi.arrTOobj(arrData);
+                    var remarks = $('textarea.remarks').val();
+                    objData.remarks = remarks;
+                    objData.album = JSON.stringify(album);
+                    var url = "{:url('api/league/publishmatchrecord')}";
+                    var ajaxResult = wooApi.asyncF(url, objData);
+                    if (ajaxResult.code == 200) {
+                        mui.toast("提交成功")
+                        window.setTimeout(
+                            "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
+                            1500);
+                    } else {
+                        mui.alert(ajaxResult.msg, '录入失败');
+                        mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                            if (data.code === 200) {
+                                $('input[name=__token__]').val(data.data);
+                            }
+                        }, 'json');
+                    }
+                    // } else {
+                    //     if ($("input[name=sendmessage]").is(':checked')) {
+                    //         $("input[name=sendmessage]").val(1)
+                    //     } else {
+                    //         $("input[name=sendmessage]").val(0)
+                    //     }
+                    //     $("input[name=is_record]").val(0);
+                    //     var data = wooApi.getInputData('input', 'data');
+                    //     datas = wooApi.getInputData('select', 'data', data);
+                    //     // 获取其他标签值
+                    //     arrData = wooApi.getDomData('domData', datas);
+                    //     var objData = wooApi.arrTOobj(arrData);
+                    //     var remarks = $('textarea.remarks').val();
+                    //     objData.remarks = remarks;
+                    //     objData.album = JSON.stringify(album);
+                    //     var url = "{:url('api/league/updatematchrecord')}";
+                    //     var ajaxResult = wooApi.asyncF(url, objData);
+                    //     console.log(ajaxResult)
+                    //     if (ajaxResult.code == 200) {
+                    //         mui.toast("提交成功")
+                    //         window.setTimeout(
+                    //             "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
+                    //             1500);
+                    //     } else {
+                    //         mui.alert(ajaxResult.msg, '录入失败');
+                    //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
+                    //             if (data.code === 200) {
+                    //                 $('input[name=__token__]').val(data.data);
+                    //             }
+                    //         }, 'json');
+                    //     }
+                    // }
                 })
-
-
         };
     </script>
 </body>
