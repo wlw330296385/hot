@@ -6194,12 +6194,122 @@ class League extends Base
 
     }
 
-    public function workerFeeDetails() {
+    public function saveWorkerFeeDetails() {
 
-        // $leagueS = new LeagueService();
-        // $map = [
-        //     "" => 
-        // ];
-        // $matchRecordList = $leagueS->getMatchRecords($map);
+        $data = input('post.');
+        if (!empty($data['league_id'])) {
+            $data['match_id'] = $data['league_id'];
+            unset($data['league_id']);
+        }
+
+        if (empty($data['match_id']) || empty($data['member_id']) || empty($data['match_member_id']) || 
+            empty($data['realname']) || empty($data['type']) || empty($data['fee_list'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $refereeS = new RefereeService();
+        // 检查请求者身份
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 参数验证
+        $matchMember = $leagueS->getMatchMember([
+            'id' => $data['match_member_id'], 
+            'match_id' => $data['match_id'], 
+            'member_id' => $data['member_id'],
+            'type' => $data['type']
+        ]);
+        if (!$matchMember) {
+            return json(['code' => 100, 'msg' => '未找到该联赛工作人员']);
+        }
+        $matchMember['referee'] = [];
+        if ($matchMember['type'] == 7) {
+            $referee = $refereeS->getReferee(['member_id' => $data['member_id']]);
+            if ($referee) {
+                $matchMember['referee'] = $referee;
+            } else {
+                return json(['code' => 100, 'msg' => '未确认该工作人员的裁判身份']);
+            }
+        }
+
+        $finalData = []; 
+        $fee_list = $data['fee_list'];
+        if ($fee_list) {
+            foreach ($fee_list as $row) {
+
+                $matchRecord = $matchS->getMatchRecord(['id' => $row['match_record_id']]);
+                if (!$matchRecord) {
+                    return json(['code' => 100, 'msg' => '找不到比赛记录'. $row['match_record_id']]);
+                }
+
+                switch ($matchMember['type']) {
+                    case '8':
+                        // 记分员
+                        $scorerArray = json_decode($matchRecord['scorers'], true);
+                        $scorerIdArray = [];
+                        foreach ($scorerArray as $scorer) {
+                            array_push($scorerIdArray, $scorer['member_id']);
+                        }
+                        if (!in_array($matchMember['member_id'], $scorerIdArray)) {
+                            return json(['code' => 100, 'msg' => '该记录员未参与记录该场比赛'. $row['match_record_id']]);
+                        }
+                        break;
+                    case '7':
+                        // 裁判员
+                        if ($matchRecord['referee1_id'] != $matchMember['referee']['id'] &&
+                            $matchRecord['referee2_id'] != $matchMember['referee']['id'] &&
+                            $matchRecord['referee3_id'] != $matchMember['referee']['id'] ) {
+                            return json(['code' => 100, 'msg' => '该裁判未执裁该场比赛'. $row['match_record_id']]);
+                        }
+                        break;
+                }
+
+                $tempData = [
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $row['match_record_id'],
+                    'member_id' => $data['member_id'],
+                    'match_member_id' => $data['match_member_id'],
+                    'type' => $data['type']
+                ];
+                // $matchMemberFee = $leagueS->getMatchMemberFee($tempData);
+                // if (!empty($matchMemberFee)) {
+                //     $tempData['id'] = $matchMemberFee['id'];
+                // }
+                $tempData['realname'] = $data['realname'];
+                $tempData['fee'] = $row['fee'];
+                $tempData['status'] = 1;
+                array_push($finalData, $tempData);
+            }
+
+            Db::startTrans();
+            try {
+                $leagueS->delMatchMemberFee([
+                    'match_id' => $data['match_id'],
+                    'member_id' => $data['member_id'],
+                    'match_member_id' => $data['match_member_id'],
+                    'type' => $data['type']
+                ]);
+                foreach($finalData as $item) {
+                    $leagueS->saveMatchMemberFee($item);
+                }
+                Db::commit();
+                return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+            } catch (\Exception $e) {
+                Db::rollback();
+                trace('error:' . $e->getMessage(), 'error');
+                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            }
+
+
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+
     }
 }

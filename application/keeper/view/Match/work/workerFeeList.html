@@ -42,7 +42,7 @@
                             <p class="mui-ellipsis">{$types[$matchMember.type]}</p>
                         </div>
                         <div class="fr f14" style="margin-top: 28px">
-                            出场总数：<text class="colororange">{:count($matchFeeList)}</text>
+                            出场总数：<text class="colororange">{:count($matchMemberFeeList)}</text>
                         </div>
                     </a>
                 </li>
@@ -58,12 +58,12 @@
                 </li>
             </ul>
             <ul class="mui-table-view workerFeeList">
-                {volist name="matchFeeList" id='vo'}
+                {volist name="matchMemberFeeList" id='vo'}
                 <li class="mui-table-view-cell" data-match_record_id="{$vo.match_record_id}">
                     <div class="mui-row f14">
                         <div class="mui-col-xs-9"><text class="colorgray">{$vo.match_record.match_time}</text><br>{$vo.match_record.home_team}
                             vs {$vo.match_record.away_team}</div>
-                        <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
+                        <div class="mui-col-xs-3"><input type="text" {if condition='!empty($vo.fee)'} value='{$vo.fee}' {/if} class="mui-text-center priceInput dcPriceInput"
                                 placeholder="单场费用"></div>
                     </div>
                 </li>
@@ -94,7 +94,7 @@
         // 批量设置费用
         $(document).on("blur", ".plPriceInput", function () {
             var plVal = $(this).val();
-            $(".workContList .dcPriceInput").val(plVal);
+            $(".workerFeeList .dcPriceInput").val(plVal);
             var sum = 0;
             $(".dcPriceInput").each(function () {
                 var checkDcVal = $(this).val();
@@ -140,7 +140,7 @@
             }
             console.log(fee_list)
 
-            mui.ajax("{:url('api/league/')}", {
+            mui.ajax("{:url('api/league/saveWorkerFeeDetails')}", {
                 data: {
                     match_id: match_id,
                     member_id: member_id,
@@ -162,7 +162,7 @@
                         mui.toast(data.msg);
                         setTimeout(function () {
                             window.location.href =
-                                "{:url('match/worklistofleague,['league_id=>$league_id']')}";
+                                "{:url('match/worklistofleague',['league_id'=>$league_id])}";
                         }, 1500);
                     } else {
                         mui.toast(data.msg);
