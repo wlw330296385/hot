@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    
+
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href=""></a>
         <h1 class="mui-title">{$matchMember.realname} 工资详情</h1>
@@ -57,12 +57,12 @@
                     </div>
                 </li>
             </ul>
-
-            <ul class="mui-table-view workContList">
+            <ul class="mui-table-view workerFeeList">
                 {volist name="matchFeeList" id='vo'}
-                <li class="mui-table-view-cell">
+                <li class="mui-table-view-cell" data-match_record_id="{$vo.match_record_id}">
                     <div class="mui-row f14">
-                        <div class="mui-col-xs-9"><text class="colorgray">{$vo.match_record.match_time}</text><br>{$vo.match_record.home_team} vs {$vo.match_record.away_team}</div>
+                        <div class="mui-col-xs-9"><text class="colorgray">{$vo.match_record.match_time}</text><br>{$vo.match_record.home_team}
+                            vs {$vo.match_record.away_team}</div>
                         <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
                                 placeholder="单场费用"></div>
                     </div>
@@ -115,10 +115,39 @@
 
         // 确认无误提交数据
         $(".comfirmBtn").on("tap", '', function () {
-            var league_id = "{$league_id}";
-            mui.ajax("{:url('api//')}", {
+            var fee_list = [];
+            var match_id = "{$league_id}"
+            var member_id = "{$matchMember.member_id}";
+            var match_member_id = "{$matchMember.id}";
+            var realname = "{$matchMember.realname}";
+            var type = "{$matchMember.type}";
+
+            var isOk = true;
+            $(".workerFeeList li").each(function () {
+                var match_record_id = $(this).attr("data-match_record_id");
+                var fee = $(this).find(".dcPriceInput").val();
+                if (fee == '') {
+                    mui.toast("请填写单场费用");
+                    return isOk = false;
+                }
+                fee_list.push({
+                    match_record_id,
+                    fee
+                })
+            })
+            if (!isOk) {
+                return isOk
+            }
+            console.log(fee_list)
+
+            mui.ajax("{:url('api/league/')}", {
                 data: {
-                    league_id: league_id
+                    match_id: match_id,
+                    member_id: member_id,
+                    match_member_id: match_member_id,
+                    realname: realname,
+                    type: type,
+                    fee_list: fee_list
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -131,6 +160,10 @@
                     console.log(data);
                     if (data.code == 200) {
                         mui.toast(data.msg);
+                        setTimeout(function () {
+                            window.location.href =
+                                "{:url('match/worklistofleague,['league_id=>$league_id']')}";
+                        }, 1500);
                     } else {
                         mui.toast(data.msg);
                     }
