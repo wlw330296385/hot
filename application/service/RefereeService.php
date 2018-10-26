@@ -200,7 +200,6 @@ class RefereeService{
 
         $model = new RefereeComment;
         $res = $model->where($map)->find();
-        return $res->toArray();
         if (!$res) {
             return $res;
         }
