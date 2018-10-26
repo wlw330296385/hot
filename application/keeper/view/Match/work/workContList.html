@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>统计报表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .dcPriceInput{
+          margin-top: 5px;
+        }
+        .priceInput{
+            margin-bottom: 0 !important;
+            padding: 5px !important;
+            font-size: 12px;
+            height: 30px !important;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href=""></a>
+        <h1 class="mui-title">{$matchMemberInfo.realname}工资详情</h1>
+    </header>
+    <div class="mui-content mt55">
+
+        <div class="list">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="img50 mui-pull-left" src="/uploads/images/cert/2017/10/59f84e64d460c.jpg">
+                        <div class="mui-media-body">
+                            {$matchMemberInfo.realname} <i class="icon iconfont icon-sex1"></i>
+                            <p class="mui-ellipsis">教龄:3 等级:1</p>
+                        </div>
+                        <div class="fr f14" style="margin-top: 28px">
+                            出场总数：<text class="colororange">20</text>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell">
+                    <div class="mui-row f14">
+                        <div class="mui-col-xs-9" style="line-height: 30px;">日期 / 对阵球队</div>
+                        <div class="mui-col-xs-3 mui-text-center"><input type="text" value="" class="mui-text-center priceInput plPriceInput"
+                                placeholder="批量设置费用"></div>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="mui-table-view workContList">
+                <li class="mui-table-view-cell">
+                    <div class="mui-row f14">
+                        <div class="mui-col-xs-9"><text class="colorgray">2018-10-12 19:00</text><br>荣光WTF VS F-18</div>
+                        <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
+                                placeholder="单场费用"></div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row f14">
+                        <div class="mui-col-xs-9"><text class="colorgray">2018-10-12 19:00</text><br>荣光WTF VS F-18</div>
+                        <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
+                                placeholder="单场费用"></div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row f14">
+                        <div class="mui-col-xs-9"><text class="colorgray">2018-10-12 19:00</text><br>荣光WTF VS F-18</div>
+                        <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
+                                placeholder="单场费用"></div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli colororange">
+                <strong>合计：￥<text class="totalPrice f18">0</text>元</strong>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggreen comfirmBtn">
+                确认无误并提交
+            </li>
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // 批量设置费用
+        $(document).on("blur", ".plPriceInput", function () {
+            var plVal = $(this).val();
+            $(".workContList .dcPriceInput").val(plVal);
+            var sum = 0;
+            $(".dcPriceInput").each(function () {
+                var checkDcVal = $(this).val();
+                sum += Number(checkDcVal);
+                $(".totalPrice").text(sum);
+            })
+        });
+
+        // 单场费用失去焦点计算总值
+        $(document).on("blur", ".dcPriceInput", function () {
+            var sum2 = 0;
+            $(".dcPriceInput").each(function () {
+                var dcVal = $(this).val();
+                sum2 += Number(dcVal);
+                $(".totalPrice").text(sum2);
+            })
+        });
+
+        // 确认无误提交数据
+        $(".comfirmBtn").on("tap", '', function () {
+            var league_id = "{$league_id}";
+            mui.ajax("{:url('api//')}", {
+                data: {
+                    league_id: league_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
