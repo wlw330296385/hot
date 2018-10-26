@@ -692,8 +692,10 @@
             })
 
 
-            
-
+            var refereeComment1 = "{:empty($refereeComment1) == true ? 0 : 1}"
+            var refereeComment2 = "{:empty($refereeComment2) == true ? 0 : 1}"
+            var refereeComment3 = "{:empty($refereeComment3) == true ? 0 : 1}"
+           
             // 点击评价获取对应裁判信息
             $(".pjBtn").on("tap", function () {
                 var thisReferee = $(this).parents(".mui-row").find(".thisReferee").text();
@@ -711,6 +713,7 @@
                 if(scoreNum==1){
                     {if condition="!empty($refereeComment1)"} 
                     if (refereeComment1 == 1) {
+                        console.log(123456498)
                         var fairness1 = Number("{$refereeComment1.fairness}");
                         var punctuality1 = Number("{$refereeComment1.punctuality}");
                         var profession1 = Number("{$refereeComment1.profession}");
@@ -727,6 +730,10 @@
                             $(".refereeComment").val("{$refereeComment1.comment}");
                             $(".refereeComment").attr("disabled",true);
                             $("input[name=anonymous]").attr("disabled",true);
+                            fairnessStar(fairness1)
+                            punctualityStar(punctuality1)
+                            professionStar(profession1)
+                            attitudeStar(attitude1)
                         }
                     }
                 {/if}
@@ -751,6 +758,10 @@
                                 $(".refereeComment").val("{$refereeComment2.comment}");
                                 $(".refereeComment").attr("disabled",true);
                                 $("input[name=anonymous]").attr("disabled",true);
+                                fairnessStar(fairness2)
+                                punctualityStar(punctuality2)
+                                professionStar(profession2)
+                                attitudeStar(attitude2)
                             }
                         }
                     {/if}
@@ -775,6 +786,10 @@
                                 $(".refereeComment").val("{$refereeComment3.comment}");
                                 $(".refereeComment").attr("disabled",true);
                                 $("input[name=anonymous]").attr("disabled",true);
+                                fairnessStar(fairness3)
+                                punctualityStar(punctuality3)
+                                professionStar(profession3)
+                                attitudeStar(attitude3)
                             }
                         }
                     {/if}
@@ -784,10 +799,7 @@
             
 
             // 
-            var refereeComment1 = "{:empty($refereeComment1) == true ? 0 : 1}"
-            var refereeComment2 = "{:empty($refereeComment2) == true ? 0 : 1}"
-            var refereeComment3 = "{:empty($refereeComment3) == true ? 0 : 1}"
-           
+         
             {if condition="!empty($refereeComment1)"} 
             if (refereeComment1 == 1) {
                 var fairness1 = Number("{$refereeComment1.fairness}");
@@ -823,10 +835,6 @@
                 $(".refereeScore3").text(score_avg3);
             }
             {/if}
-
-            
-            
-
 
             // 赋值评价星级分数
             mui('.icons').on('tap', 'i', function () {
@@ -879,7 +887,8 @@
                                 console.log(data);
                                 if (data.code == 200) {
                                     $this.text(score_avg)
-                                    mui.toast("评价裁判成功，感谢你的评价！")
+                                    mui.toast("评价裁判成功，感谢你的评价！");
+                                    window.location.reload();
                                     mui('#score').popover('toggle');
                                 } else {
                                     mui.toast(data.msg);

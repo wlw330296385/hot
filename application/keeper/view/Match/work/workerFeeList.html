@@ -12,10 +12,11 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
-        .dcPriceInput{
-          margin-top: 5px;
+        .dcPriceInput {
+            margin-top: 5px;
         }
-        .priceInput{
+
+        .priceInput {
             margin-bottom: 0 !important;
             padding: 5px !important;
             font-size: 12px;
@@ -42,29 +43,44 @@
                             <p class="mui-ellipsis">{$types[$matchMember.type]}</p>
                         </div>
                         <div class="fr f14" style="margin-top: 28px">
-                            出场总数：<text class="colororange">{:count($matchMemberFeeList)}</text>
+                            出场总数：
+                            <text class="colororange">{:count($matchMemberFeeList)}</text>
                         </div>
                     </a>
                 </li>
             </ul>
 
+            {if condition="empty($matchMemberFeeList)"}
+            <ul class="mui-table-view mb">
+                <li class="nodata">
+                    <i class="icon iconfont icon-logo-Big"></i>
+                    <p>没有相关数据</p>
+                </li>
+            </ul>
+            {else/}
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell">
                     <div class="mui-row f14">
                         <div class="mui-col-xs-9" style="line-height: 30px;">日期 / 对阵球队</div>
-                        <div class="mui-col-xs-3 mui-text-center"><input type="text" value="" class="mui-text-center priceInput plPriceInput"
-                                placeholder="批量设置费用"></div>
+                        <div class="mui-col-xs-3 mui-text-center">
+                            <input type="text" value="" class="mui-text-center priceInput plPriceInput" placeholder="批量设置费用">
+                        </div>
                     </div>
                 </li>
             </ul>
+            {/if}
+
             <ul class="mui-table-view workerFeeList">
                 {volist name="matchMemberFeeList" id='vo'}
                 <li class="mui-table-view-cell" data-match_record_id="{$vo.match_record_id}">
                     <div class="mui-row f14">
-                        <div class="mui-col-xs-9"><text class="colorgray">{$vo.match_record.match_time}</text><br>{$vo.match_record.home_team}
-                            vs {$vo.match_record.away_team}</div>
-                        <div class="mui-col-xs-3"><input type="text" {if condition='!empty($vo.fee)'} value='{$vo.fee}' {/if} class="mui-text-center priceInput dcPriceInput"
-                                placeholder="单场费用"></div>
+                        <div class="mui-col-xs-9">
+                            <text class="colorgray">{$vo.match_record.match_time}</text>
+                            <br>{$vo.match_record.home_team} vs {$vo.match_record.away_team}</div>
+                        <div class="mui-col-xs-3">
+                            <input type="text" {if condition='!empty($vo.fee)' } value='{$vo.fee}' {/if} class="mui-text-center priceInput dcPriceInput"
+                                placeholder="单场费用">
+                        </div>
                     </div>
                 </li>
                 {/volist}
@@ -74,7 +90,8 @@
 
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli colororange">
-                <strong>合计：￥<text class="totalPrice f18">0</text>元</strong>
+                <strong>合计：￥
+                    <text class="totalPrice f18">0</text>元</strong>
             </li>
             <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggreen comfirmBtn">
                 确认无误并提交
@@ -139,7 +156,11 @@
                 return isOk
             }
             console.log(fee_list)
-
+            if (fee_list == '') {
+                mui.toast("暂无可提交的数据");
+                return isOk = false;
+            }
+            
             mui.ajax("{:url('api/league/saveWorkerFeeDetails')}", {
                 data: {
                     match_id: match_id,
