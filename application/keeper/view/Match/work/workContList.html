@@ -28,7 +28,7 @@
     
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href=""></a>
-        <h1 class="mui-title">{$matchMemberInfo.realname}工资详情</h1>
+        <h1 class="mui-title">{$matchMember.realname} 工资详情</h1>
     </header>
     <div class="mui-content mt55">
 
@@ -38,11 +38,11 @@
                     <a href="javascript:;">
                         <img class="img50 mui-pull-left" src="/uploads/images/cert/2017/10/59f84e64d460c.jpg">
                         <div class="mui-media-body">
-                            {$matchMemberInfo.realname} <i class="icon iconfont icon-sex1"></i>
-                            <p class="mui-ellipsis">教龄:3 等级:1</p>
+                            {$matchMember.realname} <i class="icon iconfont icon-sex1"></i>
+                            <p class="mui-ellipsis">{$types[$matchMember.type]}</p>
                         </div>
                         <div class="fr f14" style="margin-top: 28px">
-                            出场总数：<text class="colororange">20</text>
+                            出场总数：<text class="colororange">{:count($matchFeeList)}</text>
                         </div>
                     </a>
                 </li>
@@ -59,27 +59,15 @@
             </ul>
 
             <ul class="mui-table-view workContList">
+                {volist name="matchFeeList" id='vo'}
                 <li class="mui-table-view-cell">
                     <div class="mui-row f14">
-                        <div class="mui-col-xs-9"><text class="colorgray">2018-10-12 19:00</text><br>荣光WTF VS F-18</div>
+                        <div class="mui-col-xs-9"><text class="colorgray">{$vo.match_record.match_time}</text><br>{$vo.match_record.home_team} vs {$vo.match_record.away_team}</div>
                         <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
                                 placeholder="单场费用"></div>
                     </div>
                 </li>
-                <li class="mui-table-view-cell">
-                    <div class="mui-row f14">
-                        <div class="mui-col-xs-9"><text class="colorgray">2018-10-12 19:00</text><br>荣光WTF VS F-18</div>
-                        <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
-                                placeholder="单场费用"></div>
-                    </div>
-                </li>
-                <li class="mui-table-view-cell">
-                    <div class="mui-row f14">
-                        <div class="mui-col-xs-9"><text class="colorgray">2018-10-12 19:00</text><br>荣光WTF VS F-18</div>
-                        <div class="mui-col-xs-3"><input type="text" value="" class="mui-text-center priceInput dcPriceInput"
-                                placeholder="单场费用"></div>
-                    </div>
-                </li>
+                {/volist}
             </ul>
 
         </div>
