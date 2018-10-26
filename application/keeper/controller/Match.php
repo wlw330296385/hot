@@ -621,7 +621,7 @@ class Match extends Base {
             'myInfo' => $myInfo
         ]);
     }
-    public function workContList() {
+    public function workerFeeList() {
 
         $data = input('param.');
         if (!empty($data['league_id'])) {
@@ -721,7 +721,7 @@ class Match extends Base {
             $matchFeeList[$key]['match_record'] = empty($temp) ? '' : $temp;
         }
         // dump($matchFeeList);exit;
-        return view('Match/work/workContList', [
+        return view('Match/work/workerFeeList', [
             'types' => $types,
             'myInfo' => $myInfo,
             'matchMember' => $matchMember,
@@ -729,7 +729,7 @@ class Match extends Base {
         ]);
     }
 
-    public function workAllContList() {
+    public function workerAllContList() {
         // 工作人员类型
         $leagueS = new LeagueService();
         $member_id = input('member_id', 0, 'intval');
@@ -740,7 +740,7 @@ class Match extends Base {
         }
        
         $types = $leagueS->getMatchMemberTypes();
-         return view('Match/work/workAllContList', [
+         return view('Match/work/workerAllContList', [
             'types' => $types,
             'myInfo' => $myInfo
         ]);
