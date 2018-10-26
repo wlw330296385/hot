@@ -5058,6 +5058,7 @@ class League extends Base
                 ];
                 
                 db('match_referee')->where($mapDel)->delete();
+                db('referee_comment')->where($mapDel)->delete();
                 db('referee')->where('id', 'in', $delRefereeIds)->setDec('total_played', 1);
             }
 
@@ -6191,5 +6192,14 @@ class League extends Base
             return json(['code' => 200, 'msg' => __lang('MSG_200')]);
         }
 
+    }
+
+    public function workerFeeDetails() {
+
+        // $leagueS = new LeagueService();
+        // $map = [
+        //     "" => 
+        // ];
+        // $matchRecordList = $leagueS->getMatchRecords($map);
     }
 }
