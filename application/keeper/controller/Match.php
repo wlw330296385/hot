@@ -1204,8 +1204,9 @@ class Match extends Base {
         $allow_referee_comment = 0;
         $refereeComment1 = $refereeComment2 = $refereeComment3 = [];
         if(!empty($matchRecordInfo) && $this->memberInfo['id'] > 0) {
-            $res = $leagueS->getMatchTeamMembers([
-                'match_id' => $leagueId, 
+            $res = $matchS->getMatchRecordMember([
+                'match_id' => $leagueId,
+                'match_record_id' => $id,
                 'team_id' => ['in', [$matchRecordInfo['home_team_id'], $matchRecordInfo['away_team_id']]],
                 'member_id' => $this->memberInfo['id']
             ]);
