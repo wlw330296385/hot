@@ -6175,6 +6175,7 @@ class League extends Base
         $refereeComment = $refereeS->getRefereeComment([
             'match_id' => $data['match_id'],
             'match_record_id' => $data['match_record_id'],
+            'referee_id' => $data['referee_id'],
             'member_id' => $this->memberInfo['id']
         ]);
         if (!empty($refereeComment)) {
