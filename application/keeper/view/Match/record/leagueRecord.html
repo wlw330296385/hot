@@ -343,9 +343,13 @@
                                         <ul class="mui-table-view">`
                                 for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                     var recordsArr = data.data[i].stage.records[j]
+                                    var urlRecord = "{:url('match/recordinfo')}" + '/league_id/' +
+                                    recordsArr.match_id + '/id/' + recordsArr.id;
                                     newli +=
-                                        `<li class="mui-table-view-cell" style="padding: 0">
+                                        ` <a href="${urlRecord}">
+                                        <li class="mui-table-view-cell" style="padding: 0">
                                                 <div class="mui-row leagueRecordRow">
+                                                   
                                                     <div class="mui-col-sm-7 mui-col-xs-7 leagueColRecordLeft">
                                                         <p class="border-b pRecordContent">`;
                                     if (data.data[i].stage.records.length == 1) {
@@ -392,7 +396,7 @@
                                                     <span class="spanText colorred">${recordsArr.away_team}</span>
                                                 </p>`;
                                     }
-                                    newli += `<p>（晋级）</p></div></div></li><p class="pline"></p>`;
+                                    newli += `<p>（晋级）</p></div></div></li></a><p class="pline"></p>`;
                                 }
                                 newli += `</ul>`
                             }
