@@ -5856,6 +5856,20 @@ class League extends Base
         $leagueS = new LeagueService();
 
         $result = $leagueS->getMatchHonorList($data, $page);
+        foreach ($result as $key => $row) {
+            $awardeeArray = [];
+            $list = $leagueS->getMatchHonorMemberList(['match_honor_id' => $row['id']]);
+            foreach ($list as $item) {
+                if ($row['type'] == 1) {
+                    array_push($awardeeArray, $item['name']);
+                } else if ($row['type'] == 2) {
+                    array_push($awardeeArray, $item['team']);
+                }
+            }
+            $awardeeArray = array_unique($awardeeArray);
+            $result[$key]['awardee_str'] = implode(', ', $awardeeArray);
+            
+        } 
         if ($result) {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } else {
