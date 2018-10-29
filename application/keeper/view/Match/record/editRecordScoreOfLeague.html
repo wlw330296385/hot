@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>比赛录入</title>
+    <title>赛果编辑</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -54,7 +54,7 @@
 <body>
     <header class="mui-bar mui-bar-nav subheader">
         <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
-        <h1 class="mui-title">比赛录入</h1>
+        <h1 class="mui-title">赛果编辑</h1>
     </header>
     <div class="mui-content">
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
@@ -142,7 +142,9 @@
                     <input type="hidden" name="referee3_id" value="{$matchRecordInfo.referee3_id}" class="data">
                 </a>
             </div>
+            <p class="pline"></p>
 
+            <!-- 记录员 -->
             <div class="operation-box mb">
                 <div class="mui-input-row">
                     <label>记录员</label>
@@ -150,7 +152,7 @@
                 <div class="box" id="inactiveList">
                     {volist name="matchRecordInfo.scorers_list" id="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label style="width:20%;">{$vol.realname}</label>
+                        <label style="width:20%;"></label>
                         <font class="f14">{$vol.realname}</font>
                         <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
                             type="checkbox">
@@ -160,24 +162,14 @@
                 <div class="box" id="hideStList" style="display: none">{volist name="matchRecordInfo.scorers_list"
                     id="vol"}
                     <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label style="width:20%;">{$vol.realname}</label>
-                        <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
-                            type="checkbox">
-                    </div>
-                    {/volist}</div>
-                <div class="box" id="hideStListIni" style="display: none">{volist name="matchRecordInfo.scorers_list"
-                    id="vol"}
-                    <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label style="width:20%;">{$vol.realname}</label>
+                        <label style="width:20%;"></label>
                         <font class="f14">{$vol.realname}</font>
                         <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
                             type="checkbox">
                     </div>
                     {/volist}</div>
 
-
-                <div class="operation-btn">
+                <div class="operation-btn scoreNum">
                     <span class="mui-badge">0</span>
                     <a class="all">全选</a>
                     <a class="cancel">取消</a>
@@ -188,6 +180,45 @@
 
             </div>
 
+            <p class="pline"></p>
+
+            <!-- 工作人员 -->
+            <div class="operation-box">
+                <div class="mui-input-row">
+                    <label>工作人员</label>
+                </div>
+                <div class="box" id="inactiveWList">
+                    {volist name="matchRecordInfo.workers_list" id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;"></label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
+                    </div>
+                    {/volist}
+                </div>
+                <div class="box" id="hideWList" style="display: none">{volist name="matchRecordInfo.workers_list"
+                    id="vol"}
+                    <div class="mui-input-row mui-checkbox checkboxCont">
+                        <label style="width:20%;"></label>
+                        <font class="f14">{$vol.realname}</font>
+                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
+                            type="checkbox">
+                    </div>
+                    {/volist}</div>
+
+                <div class="operation-btn workerNum">
+                    <span class="mui-badge">0</span>
+                    <a class="all">全选</a>
+                    <a class="cancel">取消</a>
+                    <a class="delWorker">[删除]</a>
+                    <a href="#workers" id="setleagueWorkersBox" class="mui-icon mui-icon-personadd add"></a>
+                </div>
+                <input type="hidden" class="data" name="workers" value="">
+
+            </div>
+
+            <p class="pline"></p>
             <ul class="mui-table-view">
                 <li class="mui-table-view-cell listli f14" style="line-height: 40px; color: #737373;">
                     <span class="h-auto">比赛花絮</span>
@@ -288,6 +319,25 @@
         </div>
     </div>
 
+    <!--工作人员-->
+    <div id="workers" class="mui-popover">
+        <div class="mui-popover-arrow"></div>
+        <div class="page-header">
+            <span class="course wd25">
+                <strong>工作人员</strong>
+            </span>
+            <span class="fr">
+                <button class="mui-btn" id="temporaryWorker">添加临时工作人员</button>
+                <button class="mui-btn-blue" id="workerConfirm">确认</button>
+            </span>
+        </div>
+        <div class="mui-scroll-wrapper">
+            <div class="mui-scroll">
+                <form class="mui-input-group workersList"></form>
+            </div>
+        </div>
+    </div>
+
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
@@ -327,7 +377,6 @@
                 var _getParam = function (obj, param) {
                     return obj[param] || '';
                 };
-                //开始时间
                 var resultStart = $('#resultStart')[0];
                 var btnStart = $('.btnStart');
                 btnStart.each(function (i, btn) {
@@ -354,7 +403,9 @@
             toCourtList(wCourt, courtKeyword, 1);
             toRefereelist(); //裁判列表
             toScorelist(); //记录员列表
-            toScorersInital(); // 记录员赋值
+            toWorkerslist(); //工作人员列表
+            changeIndexS(); // 记录员赋值
+            changeIndexW(); // 工作人员赋值
 
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
@@ -467,34 +518,59 @@
                     }
                 })
             });
-            //////////////////////////////////////////////////////////////////////
+
+
 
             //全选
             $(".all").on('tap', function () {
-                $(".checkboxCont").find('input').prop('checked', true)
+                $(this).parents(".operation-box").find(".checkboxCont").find('input').prop('checked',
+                    true)
             })
             //取消全选
             $(".cancel").on('tap', function () {
-                $(".checkboxCont").find('input').prop('checked', false)
+                $(this).parents(".operation-box").find(".checkboxCont").find('input').prop('checked',
+                    false)
             })
             //删除
             $(document).on('tap', '.del', function () {
-                $("input[name='member']:checked").parents(".checkboxCont").remove();
-                changeIndex();
+                $(this).parents(".operation-box").find("input[name='member']:checked").parents(
+                    ".checkboxCont").remove();
+                var i = 1;
+                $(this).parents(".operation-box").find(".checkboxCont").each(function () { //循环checkboxCont
+                    $(this).find("label").text(i++); //更新序号
+                });
                 $("#hideStList").empty();
-                $("#inactiveList input[type=checkbox]").each(function () {
+                $(this).parents(".operation-box").find("#inactiveList .stdList").each(function () {
                     var str =
                         `<div class="mui-input-row mui-checkbox checkboxCont">
-                                    <label style="width:20%;">${$(this).attr("data-realname")}</label>
+                                    <label style="width:20%;"></label>
                                     <font class="f14">${$(this).attr("data-realname")}</font>
                                     <input name="member" class="stdList" value="${$(this).val()}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
                                 </div>`;
                     $("#hideStList").append(str);
                 })
-                totalNum = $("#inactiveList .checkboxCont").length;
-                $(".mui-badge").text(totalNum);
+                var totalNum = $(this).parents(".operation-box").find(".checkboxCont").length;
+                $(this).siblings(".mui-badge").text(totalNum);
             });
 
+            //删除
+            $(document).on('tap', '.delWorker', function () {
+                $("#hideWList").empty();
+                $(this).parents(".operation-box").find("#inactiveWList .stdList").each(function () {
+                    var str =
+                        `<div class="mui-input-row mui-checkbox checkboxCont">
+                                    <label style="width:20%;"></label>
+                                    <font class="f14">${$(this).attr("data-realname")}</font>
+                                    <input name="member" class="stdList" value="${$(this).val()}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
+                                </div>`;
+                    $("#hideWList").append(str);
+                })
+                var totalNum = $(this).parents(".operation-box").find(".checkboxCont").length;
+                $(this).siblings(".mui-badge").text(totalNum);
+            });
+
+
+            ///////////////////////////////记录员///////////////////////////////////////
             //记录员复选框赋值
             $("#setleagueScoreBox").on('tap', '', function () {
                 //每次打开先清空所有选择
@@ -523,7 +599,7 @@
                     $("#hideStList").append(str);
                 });
 
-                changeIndex(); //调用-更新序号
+                changeIndexS(); //调用-更新序号
                 mui("#score").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
                 $(".mui-badge").text(totalNum);
@@ -551,16 +627,83 @@
                                     <input name="member" class="stdList" value="-1" data-realname="${$(this).siblings().val()}" type="checkbox">
                                 </div>`;
                 $("#inactiveList").append(str);
-                changeIndex(); //调用-更新序号
+                changeIndexS(); //调用-更新序号
                 mui("#score").popover("toggle");
                 totalNum = $("#inactiveList .checkboxCont").length;
             });
+            ////////////////////////////////////////////记录员//////////////////////////////////////
+
+
+
+            //////////////////////////////////////////工作人员////////////////////////////////////////
+            //工作人员复选框赋值
+            $("#setleagueWorkersBox").on('tap', '', function () {
+                //每次打开先清空所有选择
+                $("input[name='checkbox-worker']").prop("checked", false);
+                //然后遍历出对应所选
+                $("#hideWList .stdList").each(function (i) {
+                    var member_id = $(this).val();
+                    $(".workersList").find("input[name='checkbox-worker']").filter(function (
+                        index) {
+                        return $(this).attr("data-member_id") == member_id
+                    }).prop("checked", true);
+                });
+            });
+            // 选择添加工作人员
+            $("#workerConfirm").on('tap', function () {
+                $("#inactiveWList").empty();
+                $("#hideWList").empty();
+                $(".workersList input[type=checkbox]:checked").each(function () {
+                    var str =
+                        `<div class="mui-input-row mui-checkbox checkboxCont">
+                                    <label style="width:20%;"></label>
+                                    <font class="f14">${$(this).attr("data-realname")}</font>
+                                    <input name="member" class="stdList" value="${$(this).attr("data-member_id")}" data-realname="${$(this).attr("data-realname")}" type="checkbox">
+                                </div>`;
+                    $("#inactiveWList").append(str);
+                    $("#hideWList").append(str);
+                });
+
+                changeIndexW(); //调用-更新序号
+                mui("#workers").popover("toggle");
+                totalNum = $("#inactiveWList .checkboxCont").length;
+                $(".workerNum .mui-badge").text(totalNum);
+            });
+
+            // 添加临时工作人员
+            $("#temporaryWorker").on('tap', '', function () {
+                var str =
+                    `<div class="mui-table-view-cell listli">
+                    <input type="text" name="" value="" class="wd60" style="height: 28px;padding: 5px; margin-bottom: 0;border: 1px solid #ddd;">
+                  <button type="button" class="btn mui-btn-blue fr newWorkerBtn">确认</button>
+                </div>`
+                $(this).parents("#workers").find(".workersList").prepend(str)
+            });
+            // 确认临时工作人员
+            $(document).on("tap", ".newWorkerBtn", function () {
+                if ($(this).siblings().val() == '') {
+                    mui.toast("请填写临时工作人员");
+                    return false;
+                }
+                var str =
+                    `<div class="mui-input-row mui-checkbox checkboxCont">
+                                    <label style="width:20%;">1</label>
+                                    <font class="f14">${$(this).siblings().val()}</font>
+                                    <input name="member" class="stdList" value="-1" data-realname="${$(this).siblings().val()}" type="checkbox">
+                                </div>`;
+                $("#inactiveWList").append(str);
+                changeIndexW(); //调用-更新序号
+                mui("#workers").popover("toggle");
+                totalNum = $("#inactiveWList .checkboxCont").length;
+                $(".workerNum .mui-badge").text(totalNum);
+            });
+            //////////////////////////////////////////工作人员////////////////////////////////////////
+
 
             //删除操作
             $(document).on('tap', '.delbtn', function () {
                 $(this).parent().remove();
             });
-
 
             // 比赛阶段
             mui.ajax("{:url('api/league/getmatchstagelist','','',true)}", {
@@ -614,19 +757,22 @@
             console.log(album)
         }
 
-        //更新学员序号
-        function changeIndex() {
+        //更新序号
+        function changeIndexS() {
             var i = 1;
-            $(".checkboxCont").each(function () { //循环checkboxCont
+            $("#inactiveList .checkboxCont").each(function () { //循环checkboxCont
                 $(this).find("label").text(i++); //更新序号
             });
+            $(".scoreNum .mui-badge").text($("#inactiveList .checkboxCont").length);
         }
 
-        // 记录员赋值
-        function toScorersInital() {
-            totalNum = $("#inactiveList .checkboxCont").length;
-            $(".mui-badge").text(totalNum);
-            changeIndex();
+        //更新序号
+        function changeIndexW() {
+            var i = 1;
+            $("#inactiveWList .checkboxCont").each(function () { //循环checkboxCont
+                $(this).find("label").text(i++); //更新序号
+            });
+            $(".workerNum .mui-badge").text($("#inactiveWList .checkboxCont").length);
         }
 
         //场地列表接口获取数据并追加到页面 
@@ -758,6 +904,47 @@
 
         };
 
+        function toWorkerslist() {
+            var url = "{:url('api/league/getmatchmemberlist','','',true)}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id,
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 200) {
+                        var newli = '';
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            if (data.data[i].type < 9) {
+                                newli += '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[
+                                    i].realname + '</label>';
+                                newli +=
+                                    '<input name="checkbox-worker" class="worker" type="checkbox" data-realname=' +
+                                    data.data[i].realname + ' data-member_id=' + data.data[i].member_id +
+                                    '>'
+                                newli += '</div>'
+                            }
+                        }
+                        $(".workersList").empty().append(newli);
+                    } else {
+                        $(".workersList").append(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有查找到数据哦</p></li>'
+                        );
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        };
+
         // 获取数据并进行提交
         function submitAction() {
             albumImg()
@@ -799,11 +986,25 @@
             console.log(scorers)
             $("input[name=scorers]").val(scorers);
 
+
+            // 工作人员
+            var workersList = []
+            $("#inactiveWList .stdList").each(function () {
+                var realname = $(this).attr("data-realname");
+                var member_id = $(this).val();
+                workersList.push({
+                    realname,
+                    member_id
+                })
+            })
+            var workers = JSON.stringify(workersList);
+            console.log(workers)
+            $("input[name=workers]").val(workers);
+
             mui.alert(
                 `发布后<strong class="colororange f18">三天</strong>内可修改！
                 <div style="margin-top:7px;"><input type="checkbox" name="sendmessage" value="0" class="data" style="vertical-align: text-bottom;margin-right: 5px;">发送消息给队员</div>`,
                 function (e) {
-                    // if (e.index == 1) {
                     if ($("input[name=sendmessage]").is(':checked')) {
                         $("input[name=sendmessage]").val(1)
                     } else {
@@ -833,38 +1034,6 @@
                             }
                         }, 'json');
                     }
-                    // } else {
-                    //     if ($("input[name=sendmessage]").is(':checked')) {
-                    //         $("input[name=sendmessage]").val(1)
-                    //     } else {
-                    //         $("input[name=sendmessage]").val(0)
-                    //     }
-                    //     $("input[name=is_record]").val(0);
-                    //     var data = wooApi.getInputData('input', 'data');
-                    //     datas = wooApi.getInputData('select', 'data', data);
-                    //     // 获取其他标签值
-                    //     arrData = wooApi.getDomData('domData', datas);
-                    //     var objData = wooApi.arrTOobj(arrData);
-                    //     var remarks = $('textarea.remarks').val();
-                    //     objData.remarks = remarks;
-                    //     objData.album = JSON.stringify(album);
-                    //     var url = "{:url('api/league/updatematchrecord')}";
-                    //     var ajaxResult = wooApi.asyncF(url, objData);
-                    //     console.log(ajaxResult)
-                    //     if (ajaxResult.code == 200) {
-                    //         mui.toast("提交成功")
-                    //         window.setTimeout(
-                    //             "window.location='{:url('match/matchlistofleague',['league_id'=>$league_id])}'",
-                    //             1500);
-                    //     } else {
-                    //         mui.alert(ajaxResult.msg, '录入失败');
-                    //         mui.get("{:url('api/frontend/reloadtoken')}", function (data) {
-                    //             if (data.code === 200) {
-                    //                 $('input[name=__token__]').val(data.data);
-                    //             }
-                    //         }, 'json');
-                    //     }
-                    // }
                 })
         };
     </script>
