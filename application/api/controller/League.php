@@ -534,7 +534,7 @@ class League extends Base
                         'member_id' => $teamMemberRole['member_id'],
                         'name' => $teamMemberRole['name']
                     ]);
-                    $result[$key]['leader'] = $teamMember;
+                    $result[$key]['leader_info'] = $teamMember;
                 }
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             }
@@ -924,7 +924,7 @@ class League extends Base
                     'member_id' => $teamMemberRole['member_id'], 
                     'name' => $teamMemberRole['name']
                 ]);
-                $result['data'][$key]['leader'] = $teamMember;
+                $result['data'][$key]['leader_info'] = $teamMember;
             }
             $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             return json($response);
@@ -1211,7 +1211,7 @@ class League extends Base
                             'member_id' => $teamMemberRole['member_id'], 
                             'name' => $teamMemberRole['name']
                         ]);
-                        $groupTeams[$k1]['leader'] = $teamMember;
+                        $groupTeams[$k1]['leader_info'] = $teamMember;
                     }
                 }
                 $result['data'][$k]['group_teams'] = $groupTeams;

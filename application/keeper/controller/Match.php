@@ -696,6 +696,14 @@ class Match extends Base {
                                 array_push($matchMemberFeeList, $tempData);
                             }
                             break;
+                        case '0':
+                            // 工作人员
+                            $workerArray = json_decode($matchRecord['workers'], true);
+                            foreach ($workerArray as $worker) {
+                                if ($worker['member_id'] == $data['member_id']) {
+                                    array_push($matchMemberFeeList, $tempData);
+                                }
+                            }
                         default:
                             break;
                     }
