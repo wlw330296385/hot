@@ -1509,7 +1509,7 @@ class Match extends Base {
         $this->assign('honorInfo', $honorInfo);
         $this->assign('honorStr', $honorStr);
         $this->assign('is_manager', $is_manager);
-        return view('Match/honor/infoOfLeague');
+        return view('Match/honor/InfoOfLeague');
     }
     // 联赛编辑荣誉
     public function honotEditOfLeague() {
