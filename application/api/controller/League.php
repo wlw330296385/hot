@@ -6232,7 +6232,7 @@ class League extends Base
         }
 
         if (empty($data['match_id']) || empty($data['member_id']) || empty($data['match_member_id']) || 
-            empty($data['realname']) || empty($data['type']) || empty($data['fee_list'])) {
+            empty($data['realname']) || !isset($data['type']) || !isset($data['fee_list'])) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
         $leagueS = new LeagueService();

@@ -682,9 +682,11 @@ class Match extends Base {
                         case '8':
                             // 记分员
                             $scorerArray = json_decode($matchRecord['scorers'], true);
-                            foreach ($scorerArray as $scorer) {
-                                if ($scorer['member_id'] == $data['member_id']) {
-                                    array_push($matchMemberFeeList, $tempData);
+                            if ($scorerArray) {
+                                foreach ($scorerArray as $scorer) {
+                                    if ($scorer['member_id'] == $data['member_id']) {
+                                        array_push($matchMemberFeeList, $tempData);
+                                    }
                                 }
                             }
                             break;
@@ -699,9 +701,11 @@ class Match extends Base {
                         case '0':
                             // 工作人员
                             $workerArray = json_decode($matchRecord['workers'], true);
-                            foreach ($workerArray as $worker) {
-                                if ($worker['member_id'] == $data['member_id']) {
-                                    array_push($matchMemberFeeList, $tempData);
+                            if ($workerArray) {
+                                foreach ($workerArray as $worker) {
+                                    if ($worker['member_id'] == $data['member_id']) {
+                                        array_push($matchMemberFeeList, $tempData);
+                                    }
                                 }
                             }
                         default:
@@ -754,7 +758,7 @@ class Match extends Base {
             $this->error("你不是该联赛的管理人员");
         }
         
-        $refereeList = $scorerList = $worker = [];
+        $refereeList = $scorerList = $workerList = [];
         $list = $leagueS->getMatchMemberFeeListWithTotal(['match_id' => $data['match_id']]);
         if ($list) {
             foreach ($list as $row) {
@@ -765,6 +769,9 @@ class Match extends Base {
                     case '7':
                         array_push($refereeList, $row);
                         break;
+                    case '0':
+                        array_push($workerList, $row);
+                        break;
                 }
             }
         }
@@ -773,7 +780,8 @@ class Match extends Base {
             'types' => $types,
             'myInfo' => $myInfo,
             'refereeList' => $refereeList,
-            'scorerList' => $scorerList
+            'scorerList' => $scorerList,
+            'workerList' => $workerList
         ]);
     }
 
