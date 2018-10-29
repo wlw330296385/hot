@@ -14,7 +14,6 @@ use app\service\TeamMemberService;
 use app\service\TeamEventService;
 use app\service\LeagueService;
 use app\service\MatchOrgMemberService;
-use app\service\CommonService;
 use think\Exception;
 use think\Db;
 
@@ -877,7 +876,6 @@ class Team extends Base
             $teamS = new TeamService();
             $memberS = new MemberService();
             $studentS = new StudentService();
-            $commonS = new CommonService();
             // 获取球队信息
             $teamInfo = $teamS->getTeam(['id' => $post['team_id']]);
             if (!$teamInfo) {
@@ -921,7 +919,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $studentInfo['yearsexp'],
                     'birthday' => $studentInfo['student_birthday'],
-                    'age' => $commonS->getAge($studentInfo['student_birthday']),
+                    'age' => getAgeByBirthday($studentInfo['student_birthday']),
                     'height' => $studentInfo['student_height'],
                     'weight' => $studentInfo['student_weight'],
                     'shoe_size' => $studentInfo['student_shoe_code'],
@@ -970,7 +968,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $memberInfo['yearsexp'],
                     'birthday' => $memberInfo['birthday'],
-                    'age' => $commonS->getAge($memberInfo['birthday']),
+                    'age' => getAgeByBirthday($memberInfo['birthday']),
                     'height' => $memberInfo['height'],
                     'weight' => $memberInfo['weight'],
                     'shoe_size' => $memberInfo['shoe_code'],
@@ -1324,7 +1322,7 @@ class Team extends Base
             if (!$teamInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队']);
             }
-            $commonS = new CommonService();
+            
             // 区分平台会员/非平台会员业务
             if ($teamMemberInfo['member_id'] > 0 ) {
                 // 平台会员： 发送球队邀请
@@ -1347,7 +1345,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $memberInfo['yearsexp'],
                     'birthday' => $memberInfo['birthday'],
-                    'age' => $commonS->getAge($memberInfo['birthday']),
+                    'age' => getAgeByBirthday($memberInfo['birthday']),
                     'height' => $memberInfo['height'],
                     'weight' => $memberInfo['weight'],
                     'shoe_size' => $memberInfo['shoe_code'],
