@@ -23,19 +23,19 @@
 
         <div class="list">
 
-            <!-- <ul class="mui-table-view mb">
+            <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell">
-                    <div class="mui-row  mui-text-center f14">
-                        <div class="mui-col-xs-4">姓名</div>
+                    <div class="mui-row mui-text-center f14">
+                        <div class="mui-col-xs-4 mui-text-left">姓名</div>
                         <div class="mui-col-xs-4">出场数</div>
                         <div class="mui-col-xs-4">总费用</div>
                     </div>
                 </li>
-            </ul> -->
+            </ul>
 
-            <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px">
+            <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 88px">
                 <div class="mui-scroll">
-                    
+
                     <div class="page-header">
                         <span class="course">裁判员</span>
                     </div>
@@ -46,13 +46,15 @@
                             <div class="mui-row  mui-text-center f14">
                                 <div class="mui-col-xs-4 mui-text-left">{$vo1.realname}</div>
                                 <div class="mui-col-xs-4">{$vo1.count}场</div>
-                                <div class="mui-col-xs-4">总共{$vo1.total}元</div>
+                                <div class="mui-col-xs-4"><span class="colororange">{$vo1.total}</span>元</div>
                             </div>
                         </li>
                         {/volist}
                     </ul>
+                    {else/}
+                    <p class="nohave whitebg">暂无裁判员数据</p>
                     {/if}
-                    
+
                     <div class="page-header">
                         <span class="course">记录员</span>
                     </div>
@@ -63,11 +65,13 @@
                             <div class="mui-row  mui-text-center f14">
                                 <div class="mui-col-xs-4 mui-text-left">{$vo2.realname}</div>
                                 <div class="mui-col-xs-4">{$vo2.count}场</div>
-                                <div class="mui-col-xs-4">总共{$vo2.total}元</div>
+                                <div class="mui-col-xs-4"><span class="colororange">{$vo2.total}</span>元</div>
                             </div>
                         </li>
                         {/volist}
                     </ul>
+                    {else/}
+                    <p class="nohave whitebg">暂无记录员数据</p>
                     {/if}
 
                     <div class="page-header">
@@ -80,11 +84,13 @@
                             <div class="mui-row  mui-text-center f14">
                                 <div class="mui-col-xs-4 mui-text-left">{$vo3.realname}</div>
                                 <div class="mui-col-xs-4">{$vo3.count}场</div>
-                                <div class="mui-col-xs-4">总共{$vo3.total}元</div>
+                                <div class="mui-col-xs-4"><span class="colororange">{$vo3.total}</span>元</div>
                             </div>
                         </li>
                         {/volist}
                     </ul>
+                    {else/}
+                    <p class="nohave whitebg">暂无工作人员数据</p>
                     {/if}
                 </div>
             </div>
@@ -100,108 +106,6 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-
-        // $(function () {
-        //     //初始化全局变量
-        //     var count = 1;
-        //     var teamId = wooApi.GetQueryString('team_id');
-        //     mui.init({
-        //         swipeBack: true, //启用右滑关闭功能
-        //         pullRefresh: {
-        //             //下拉刷新上拉加载教练列表
-        //             container: "#refreshContainer",
-        //             down: {
-        //                 //下拉刷新
-        //                 height: 50, //可选.默认50.触发下拉刷新拖动距离
-        //                 auto: true, //可选,默认false.自动下拉刷新一次
-        //                 contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-        //                 contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-        //                 contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-        //                 callback: pulldownRefresh
-        //             },
-        //             up: {
-        //                 //上拉加载
-        //                 height: 150, //可选.默认50.触发上拉加载拖动距离
-        //                 //auto:true,//可选,默认false.自动上拉加载一次
-        //                 contentrefresh: '正在加载...',
-        //                 contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
-        //                 callback: pullupRefresh
-        //             }
-        //         }
-        //     });
-        //     //下拉刷新具体业务实现
-        //     function pulldownRefresh() {
-        //         setTimeout(function () {
-        //             count = 1; //刷新并显示第一页
-        //             var page = count;
-        //             var gType = 1; //代表下拉刷新
-        //             toList(page, gType); //具体取数据的方法
-        //         }, 100);
-        //     }
-        //     //上拉加载具体业务实现
-        //     function pullupRefresh() {
-        //         setTimeout(function () {
-        //             count++; //翻下一页
-        //             var page = count;
-        //             var gType = 2; //代表上拉加载
-        //             toList(page, gType); //具体取数据的方法
-        //         }, 100);
-        //     }
-
-        //     //接口获取数据并追加到页面
-        //     var toList = function (page, gType) {
-        //         //搜索关键字不能完全为空，否则查询为空
-        //         var url = "{:url('api/team/','','',true)}";
-        //         var member_id = "{$memberInfo.id}"
-        //         mui.ajax({
-        //             url: url,
-        //             data: {
-        //                 page: page,
-        //                 status: 1,
-        //                 member_id: member_id,
-        //                 iscamp: 1
-        //             },
-        //             dataType: 'json', //服务器返回json格式数据
-        //             type: 'post', //HTTP请求类型
-        //             timeout: 10000, //超时时间设置为10秒；
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             success: function (data) {
-        //                 console.log(data)
-        //                 var newli = '';
-        //                 if (data.code == 200) {
-
-        //                 }
-        //                 if (gType == 1) {
-        //                     //上拉刷新
-        //                     $(".workAllContList").empty().append(newli);
-        //                     mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-        //                     mui('#refreshContainer').pullRefresh().refresh(true);
-        //                     if (newli == '') {
-        //                         $("ul.team").html(
-        //                             '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
-        //                         );
-        //                     }
-        //                 } else {
-        //                     //下拉加载 gType==2
-        //                     $(".workAllContList").append(newli);
-        //                 }
-        //                 if (newli != '') {
-        //                     mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-        //                 } else {
-        //                     mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-        //                 }
-        //             },
-        //             error: function (xhr, type, errerThrown) {
-        //                 mui.toast('网络异常,请稍候再试');
-        //                 mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-        //             }
-        //         });
-        //     };
-
-
-        // })
     </script>
 </body>
 
