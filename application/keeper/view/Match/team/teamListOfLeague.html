@@ -166,7 +166,7 @@
                 var team_id = elem.getAttribute('data-team_id');
                 var teamName = elem.getAttribute("data-name");
                 var btnArray = ["取消", "确认"]
-                mui.confirm('确认删除"'+teamName+'"球队?', '提示', btnArray, function (e) {
+                mui.confirm('确认删除"' + teamName + '"球队?', '提示', btnArray, function (e) {
                     if (e.index == 1) {
                         var apiurl = "{:url('api/league/delMatchTeam')}";
                         mui.ajax(apiurl, {
@@ -239,8 +239,12 @@
                             }
                             newli +=
                                 `<img class="img40 mui-pull-left" src="${data.data.data[i].team.logo}" style="margin-right:12px;">
-                                    <div class="mui-media-body lineHeight20"><p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
-                                    <p>${data.data.data[i].members_num}人参赛</p></div>`
+                                    <div class="mui-media-body wd lineHeight20"><p class="f14" style="font-weight:bold">${data.data.data[i].team.name}</p>
+                                    <p>${data.data.data[i].members_num}人参赛 `
+                            if (data.data.data[i].leader_info != null) {
+                                newli += `/ 领队手机：${data.data.data[i].leader_info.telephone}`
+                            }
+                            newli += `</p></div>`
                             newli += `</a></div></li>`;
                         }
 
@@ -325,7 +329,6 @@
                 }
             });
         };
-
 
 
         // 接口获取数据并追加到页面

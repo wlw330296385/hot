@@ -53,7 +53,6 @@
 
     </div>
 
-
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script>
@@ -62,32 +61,30 @@
             swipeBack: true //启用右滑关闭功能
         });
 
-        $(function () {
-            //初始化全局变量
-            var count = 1;
-            var league_id = "{$league_id}";
-            mui.ajax("{:url('api/league/matchrecordlistbystage','','',true)}", {
-                data: {
-                    league_id: league_id
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    console.log(data)
-                    if (data.code == 200) {
-                        $(".editGroupBtn").hide();
-                        $(".createMatchBtn").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
-                        $(".createMatchBtn").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
+        //初始化全局变量
+        var count = 1;
+        var league_id = "{$league_id}";
+        mui.ajax("{:url('api/league/matchrecordlistbystage','','',true)}", {
+            data: {
+                league_id: league_id
+            },
+            dataType: 'json', //服务器返回json格式数据
+            type: 'post', //HTTP请求类型
+            timeout: 10000, //超时时间设置为10秒；
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                console.log(data)
+                if (data.code == 200) {
+                    $(".editGroupBtn").hide();
+                    $(".createMatchBtn").removeClass("mui-col-xs-5").addClass("mui-col-xs-10");
+                    $(".createMatchBtn").removeClass("mui-col-sm-5").addClass("mui-col-sm-10");
                 }
-            });
+            },
+            error: function (xhr, type, errerThrown) {
+                mui.toast('网络异常,请稍候再试');
+            }
         });
 
 
@@ -136,9 +133,7 @@
 
         //接口获取数据并追加到页面
         var toList = function (page, gType) {
-            //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}" + '/?page=' + page;
-            var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
@@ -163,19 +158,22 @@
                                 `<div class="mui-collapse-content" style="padding-bottom:0">
                                     <ul class="mui-table-view list secendUl" style="margin-top:-8px;margin-left:-40px; margin-bottom:0 !important">`;
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
+                                var groupTeam = data.data.data[i].group_teams[j];
                                 newli +=
                                     `<li class="mui-table-view-cell listli groupTeam">
-                                            <img class="img40 mui-pull-left fl" src="${data.data.data[i].group_teams[j].team_logo}" style="margin-right:10px">
+                                            <img class="img40 mui-pull-left fl" src="${groupTeam.team_logo}" style="margin-right:10px">
                                                 <div class="mui-media-body lineHeight20 wd73">
-                                                    <p class="f14" style="font-weight:bold">${data.data.data[i].group_teams[j].team.team}`
-                                if (data.data.data[i].group_teams[j].is_seededteam == 1) {
+                                                    <p class="f14"><strong>${groupTeam.team.team}</strong>`
+                                if (groupTeam.is_seededteam == 1) {
                                     newli += `<font class="tipCorner bggreen">种子球队</font>`
                                 }
                                 newli +=
-                                    `</p>
-                                                    <p>参赛${data.data.data[i].group_teams[j].team.members_num}人</p>
-                                                </div>
-                                            </li>`;
+                                    `</p><p>参赛${groupTeam.team.members_num}人`
+                                if (groupTeam.leader_info != null) {
+                                    newli +=
+                                        `/ 领队手机： ${groupTeam.leader_info.telephone}`
+                                }
+                                newli += `</p></div></li>`;
                             }
                             newli += `</ul></div></li></ul>`
                         }
@@ -183,8 +181,6 @@
                     if (gType == 1) {
                         //上拉刷新
                         $(".groupsList").empty().append(newli);
-
-
                         mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                         mui('#refreshContainer').pullRefresh().refresh(true);
                         if (newli == '') {
