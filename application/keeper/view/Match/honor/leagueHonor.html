@@ -166,9 +166,17 @@
 
             <!--联赛奖项-->
             <div class="page-header border-b">
-                <span class="course">联赛奖项</span>
+                <span class="course">联赛奖项（团体）</span>
             </div>
-            <ul class="mui-table-view list honorList">
+            <ul class="mui-table-view list honorTeamList">
+                <li class="nodata"><i class="icon iconfont icon-logo-Big"></i>
+                    <p>暂无数据</p>
+                </li>
+            </ul>
+            <div class="page-header border-b">
+                <span class="course">联赛奖项（个人）</span>
+            </div>
+            <ul class="mui-table-view list honorPersonList">
                 <li class="nodata"><i class="icon iconfont icon-logo-Big"></i>
                     <p>暂无数据</p>
                 </li>
@@ -298,30 +306,54 @@
                 },
                 success: function (data) {
                     console.log(data)
-                    var newli = '';
+                    var newli0 = '';
+                    var newli1 = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            var urls = "{:url('match/honorinfo')}" + '/honor_id/' + data.data[
-                                i].id + '/league_id/' + data.data[i].match_id;
-                            newli +=
-                                `<li class="mui-table-view-cell listli">
+                            var urls = "{:url('match/honorinfo')}" + '/honor_id/' + data.data[i].id +
+                                '/league_id/' + data.data[i].match_id;
+                            if (data.data[i].type == 2) {
+                                newli0 +=
+                                    `<li class="mui-table-view-cell listli">
                                             <a href="${urls}">
                                                 <div class="fl orderNum">${(i + 1)}</div>
                                                 <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
-                                                    <p class="mui-ellipsis lineHeight20" >授奖单位：{$leagueInfo.name}</p>`
-                            if (data.data[i].honor_time == '') {
-                                newli +=
-                                    `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                                    <p class="mui-ellipsis lineHeight20" >获奖团队：${data.data[i].awardee_str}</p>`
+                                if (data.data[i].honor_time == '') {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                } else {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                }
+                                newli0 += `</div></a></li>`;
                             } else {
-                                newli +=
-                                    `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                newli1 +=
+                                    `<li class="mui-table-view-cell listli">
+                                            <a href="${urls}">
+                                                <div class="fl orderNum" style="font-size:30px">·</div>
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
+                                                    <p class="mui-ellipsis lineHeight20" >获取者：${data.data[i].awardee_str}</p>`
+                                if (data.data[i].honor_time == '') {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                } else {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                }
+                                newli1 += `</div></a></li>`;
                             }
-                            newli += `</div></a></li>`;
                         }
                     }
-                    $(".honorList").empty().append(newli);
-                    if (newli == '') {
-                        $(".honorList").html(
+                    $(".honorTeamList").empty().append(newli0);
+                    $(".honorPersonList").empty().append(newli1);
+                    if (newli0 == '') {
+                        $(".honorTeamList").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                        );
+                    }
+                    if (newli1 == '') {
+                        $(".honorPersonList").html(
                             '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
                         );
                     }
