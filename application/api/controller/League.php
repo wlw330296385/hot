@@ -6313,7 +6313,7 @@ class League extends Base
                 // }
                 $tempData['realname'] = $data['realname'];
                 $tempData['fee'] = $row['fee'];
-                $tempData['status'] = 1;
+                $tempData['status'] = 0;
                 array_push($finalData, $tempData);
             }
 
