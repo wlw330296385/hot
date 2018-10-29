@@ -522,10 +522,20 @@ class League extends Base
 
             // 获取参加联赛的球队列表
             $leagueS = new LeagueService();
+            $teamS = new TeamService();
             $result = $leagueS->getMatchTeamWithTeamPaginator($data);
             if (!$result) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             } else {
+                foreach ($result as $key => $value) {
+                    $teamMemberRole = $teamS->getTeamMemberRole(['team_id' => $value['team_id']]);
+                    $teamMember = $teamS->getTeamMember([
+                        'team_id' => $value['team_id'],
+                        'member_id' => $teamMemberRole['member_id'],
+                        'name' => $teamMemberRole['name']
+                    ]);
+                    $result[$key]['leader'] = $teamMember;
+                }
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             }
             return json($response);
@@ -894,6 +904,7 @@ class League extends Base
             }
             $leagueService = new LeagueService();
             $matchService = new MatchService();
+            $teamService = new TeamService();
             $result = $matchService->getMatchApplyWithTeamPaginator($data);
 
             // 返回结果
@@ -906,6 +917,14 @@ class League extends Base
                 // $matchTeamInfo = $leagueService->getMatchTeamInfoSimple(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
                 $matchTeamMembers = $leagueService->getMatchTeamMembers(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
                 $result['data'][$key]['checkin_member_num'] = count($matchTeamMembers);
+
+                $teamMemberRole = $teamService->getTeamMemberRole(['team_id' => $value['team_id']]);
+                $teamMember = $teamService->getTeamMember([
+                    'team_id' => $value['team_id'], 
+                    'member_id' => $teamMemberRole['member_id'], 
+                    'name' => $teamMemberRole['name']
+                ]);
+                $result['data'][$key]['leader'] = $teamMember;
             }
             $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             return json($response);
@@ -1173,6 +1192,7 @@ class League extends Base
             }
             // 获取数据
             $leagueService = new LeagueService();
+            $teamService = new TeamService();
             $result = $leagueService->getMatchGroupPaginator($data, 'name asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1184,6 +1204,14 @@ class League extends Base
                     foreach ($groupTeams as $k1 => $val1) {
                         $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
                         $groupTeams[$k1]['team'] = $matchteam;
+
+                        $teamMemberRole = $teamService->getTeamMemberRole(['team_id' => $val1['team_id']]);
+                        $teamMember = $teamService->getTeamMember([
+                            'team_id' => $val1['team_id'], 
+                            'member_id' => $teamMemberRole['member_id'], 
+                            'name' => $teamMemberRole['name']
+                        ]);
+                        $groupTeams[$k1]['leader'] = $teamMember;
                     }
                 }
                 $result['data'][$k]['group_teams'] = $groupTeams;
