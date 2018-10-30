@@ -56,10 +56,10 @@
                 <li class="mui-table-view-cell listli">
                     <div class="mui-row" style="line-height: 27px;">
                         <div class="mui-col-xs-1 mui-text-center">1</div>
-                        <div class="mui-col-xs-9 teamMemberName" data-team_member_id="{$leaderInfo.id}">{$leaderInfo.name}</div>
-                        {if $leaderInfo.telephone == $myTelephone}
+                        <div class="mui-col-xs-9 teamMemberName">{$leaderInfo.name}</div>
+                        {if $leaderInfo.telephone == $myTelephone && $leaderInfo.member_id ==-1}
                         <div class="mui-col-xs-2 mui-text-right">
-                            <button type="button" class="mui-btn-danger claim">认领</button>
+                            <button type="button" class="mui-btn-danger claim" data-team_member_id="{$leaderInfo.id}">认领</button>
                         </div>
                         {/if}
                     </div>
@@ -71,23 +71,25 @@
                 <span class="f14">参赛队员</span>
             </div>
             <ul class="mui-table-view">
+                {if condition="empty($teamMembers)"}
+                <p class="nohave">暂无球员数据</p>
+                {else/}
                 {volist name="teamMembers" id="vo"}
                 <li class="mui-table-view-cell listli">
                     <div class="mui-row" style="line-height: 27px;">
                         <div class="mui-col-xs-1 mui-text-center">{$key+1}</div>
-                        <div class="mui-col-xs-9 teamMemberName" data-team_member_id="{$vo.id}">{$vo.name}</div>
-                        {if $vo.telephone == $myTelephone}
+                        <div class="mui-col-xs-9 teamMemberName">{$vo.name}</div>
+                        {if $vo.telephone == $myTelephone && $vo.member_id ==-1}
                         <div class="mui-col-xs-2 mui-text-right">
-                            <button type="button" class="mui-btn-danger claim">认领</button>
+                            <button type="button" class="mui-btn-danger claim" data-team_member_id="{$vo.id}">认领</button>
                         </div>
                         {/if}
                     </div>
                 </li>
                 {/volist}
+                {/if}
             </ul>
-
         </div>
-
 
     </div>
 
@@ -100,12 +102,11 @@
         });
 
         $(document).on("tap", ".claim", function () {
-            league_id = "{$league_id}";
-            team_id = "{$teamInfo.id}";
-            mui.ajax("{:url('api//')}", {
+            var team_member_id = $(this).attr("data-team_member_id");
+            console.log(team_member_id)
+            mui.ajax("{:url('api/claim/teamMember')}", {
                 data: {
-                    league_id: league_id,
-                    team_id: team_id
+                    team_member_id: team_member_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -116,9 +117,13 @@
                 success: function (data) {
                     console.log(data);
                     if (data.code == 200) {
-
+                        mui.toast("认领成功");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500)
                     } else {
-
+                        mui.toast(data.msg);
+                        window.location.reload();
                     }
                 },
                 error: function (xhr, type, errorThrown) {
