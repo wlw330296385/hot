@@ -422,6 +422,34 @@ class Match extends Base {
     }
 
     // 联赛球队详情
+    public function teamInfo() {
+        $league_id = input('league_id', 0, 'intval');
+        $team_id = input('team_id', 0, 'intval');
+
+        // 获取联赛球队信息
+        $leagueService = new LeagueService();
+        $matchTeam = $leagueService->getMatchTeamInfoSimple([
+            'match_id' => $league_id,
+            'team_id' => $team_id
+        ]);
+        if (!$matchTeam) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 球队详情信息
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $matchTeam['team_id']]);
+        // 获取球队提交的参加联赛球员信息
+        $matchTeamMembers = $leagueService->getMatchTeamMembers([
+            'match_id' => $league_id,
+            'team_id' => $team_id
+        ]);
+
+        $this->assign('teamInfo', $teamInfo);
+        $this->assign('matchTeamMembers', $matchTeamMembers);
+        return view('Match/team/teamInfo');
+    }
+
+    // 联赛球队详情
     public function teaminfoofleague() {
         $league_id = input('league_id', 0, 'intval');
         $team_id = input('team_id', 0, 'intval');

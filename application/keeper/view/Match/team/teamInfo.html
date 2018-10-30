@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>球队详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .teamCont {
+            padding: 15px !important;
+            background: #fff !important;
+        }
+
+        .teamCont .teamLogo img {
+            width: 80px !important;
+            height: 80px !important;
+        }
+
+        .teamCont p {
+            padding: 10px;
+            margin: 0;
+        }
+        .teamMemberName {
+            padding-left: 10px;
+        }
+        .claim {
+            padding: 3px 9px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow"></a>
+    </header>
+
+    <div class="mui-content">
+        <div class="list">
+            <div class="mui-text-center teamCont">
+                <p class="teamLogo"><img src="{$teamInfo.logo}" alt="" class="img50"></p>
+                <p class="teamName">{$teamInfo.name}</p>
+            </div>
+
+            <!-- 领队 -->
+            <div class="page-header bggray2">
+                <span class="f14">领队</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli">
+                    <div class="mui-row" style="line-height: 27px;">
+                        <div class="mui-col-xs-1 mui-text-center">1</div>
+                        <div class="mui-col-xs-9 teamMemberName">{$teamInfo.name}</div>
+                        <div class="mui-col-xs-2 mui-text-right">
+                            <button type="button" class="mui-btn-danger claim">认领</button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- 参赛队员 -->
+            <div class="page-header bggray2">
+                <span class="f14">参赛队员</span>
+            </div>
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell listli">
+                    <div class="mui-row" style="line-height: 27px;">
+                        <div class="mui-col-xs-1 mui-text-center">1</div>
+                        <div class="mui-col-xs-9 teamMemberName">{$teamInfo.name}</div>
+                        <div class="mui-col-xs-2 mui-text-right">
+                            <button type="button" class="mui-btn-danger claim">认领</button>
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell listli">
+                    <div class="mui-row" style="line-height: 27px;">
+                        <div class="mui-col-xs-1 mui-text-center">2</div>
+                        <div class="mui-col-xs-9 teamMemberName">{$teamInfo.name}</div>
+                        <div class="mui-col-xs-2 mui-text-right">
+                            <button type="button" class="mui-btn-danger claim">认领</button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        $(document).on("tap", ".claim", function () {
+            league_id = "{$league_id}";
+            team_id = "{$teamInfo.id}";
+            mui.ajax("{:url('api//')}", {
+                data: {
+                    league_id: league_id,
+                    team_id: team_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+
+                    } else {
+
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        })
+    </script>
+
+</body>
+
+</html>
