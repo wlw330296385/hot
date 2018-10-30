@@ -4221,12 +4221,12 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 插入数据
-        try {
+        
             $result = $leagueS->saveMatchStage($data);
-        } catch (Exception $e) {
-            trace('error: ' . $e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
-        }
+        // } catch (Exception $e) {
+        //     trace('error: ' . $e->getMessage(), 'error');
+        //     return json(['code' => 100, 'msg' => $e->getMessage()]);
+        // }
         // 返回结果
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
