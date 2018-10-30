@@ -1211,6 +1211,13 @@ class League extends Base
                             'member_id' => $teamMemberRole['member_id'], 
                             'name' => $teamMemberRole['name']
                         ]);
+                        $myTeamMember = $teamService->getTeamMember([
+                            'team_id' => $val1['team_id'], 
+                            'member_id' => $this->memberInfo['id'], 
+                            'name' => $teamMemberRole['name'],
+                            'telephone' => $this->memberInfo['telephone']
+                        ]);
+                        $groupTeams[$k1]['my_info'] = $myTeamMember;
                         $groupTeams[$k1]['leader_info'] = $teamMember;
                     }
                 }
