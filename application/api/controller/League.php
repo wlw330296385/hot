@@ -4222,11 +4222,7 @@ class League extends Base
         }
         // 插入数据
         
-            $result = $leagueS->saveMatchStage($data);
-        // } catch (Exception $e) {
-        //     trace('error: ' . $e->getMessage(), 'error');
-        //     return json(['code' => 100, 'msg' => $e->getMessage()]);
-        // }
+        $result = $leagueS->saveMatchStage($data);
         // 返回结果
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
