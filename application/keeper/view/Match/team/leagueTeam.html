@@ -282,7 +282,12 @@
                                     </div>
                                     <ul class="mui-table-view mui-text-center leagueTypeSet">`
                             for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                var urls = "{:url('match/teamInfo',['league_id'=>$league_id])}"+"/team_id/"+data.data.data[i].group_teams[j].team_id
+                                var urls = "{:url('match/teamInfo',['league_id'=>$league_id])}"+"/team_id/"+data.data.data[i].group_teams[j].team_id;
+                                var claim_text ="可认领";
+                                if (data.data.data[i].group_teams[j].my_info == null) {
+                                    claim_text = "";
+                                }
+                                
                                 newli +=
                                     `<li class="mui-table-view-cell lineHeight32">
                                         <a href="${urls}">
@@ -292,7 +297,7 @@
                                                     <img src="${data.data.data[i].group_teams[j].team_logo}" class="circleIcon" />
                                                     <span>${data.data.data[i].group_teams[j].team.team}</span>
                                                 </li>
-                                                <li class="mui-col-sm-2 mui-col-xs-2 colorred">可认领</li>
+                                                <li class="mui-col-sm-2 mui-col-xs-2 colorred">${claim_text}</li>
                                             </ul>
                                             </a>
                                         </li>`;
