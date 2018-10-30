@@ -16,8 +16,14 @@ class Index extends Controller
         echo "<p><a href='/frontend/index'><h1>欢迎来到篮球管家</h1></p>";
     }
 
-    public function index1(){
-        $i = 0 ;
+    // 平台收入1(赠课收入)
+    public function sysincome5(){
+        $list = db('output')->where(['rebate_type'=>1,'type'=>1])->select();
+        foreach ($list as $key => $value) {
+            db('sys_income')->insert(
+                ['f_id'=>$value['id'],'type'=>5,'income'=>$value['output'],'camp_id'=>$value['camp_id'],'camp'=>$value['camp'],'create_time'=>$value['create_time']]
+            );
+        }
     }
 
     function exportExcel($expTitle,$expCellName,$expTableData){

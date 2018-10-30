@@ -42,6 +42,8 @@ class SalaryOutService {
         $data['status'] = 0;
         $data['buffer'] = $data['salary'];
         $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
+        $data['s_balance'] = $memberInfo['balance'];
+        $data['s_balance'] = $memberInfo['balance']-$data['salary'];
         if($data['salary']>$memberInfo['balance']){
              return ['msg' => '余额不足', 'code' => 100];
         }
@@ -52,6 +54,19 @@ class SalaryOutService {
         $result = $this->SalaryOut->allowField(true)->save($data);
         if($result){
             db('member')->where(['id'=>$data['member_id']])->setDec('balance',$data['salary']);
+            db('member_finance')->insert([
+                                'member_id' => $memberInfo['id'],
+                                'member' => $memberInfo['member'],
+                                's_balance'=>$memberInfo['balance'],
+                                'e_balance'=>$memberInfo['balance']-$data['salary'],
+                                'money' =>$data['salary'],
+                                'type'=>-1,
+                                'system_remarks'=>'提交提现申请',
+                                'f_id'=> $this->SalaryOut->id,
+                                'remarks'=>'',
+                                'create_time'=>time(),
+                                'date_str'=>date('Ymd',time())
+                            ]);
             $memberInfo = db('member')->where(['id'=>$data['member_id']])->find();
             session('memberInfo',$memberInfo,'think');
             return ['code'=>200,'msg'=>'申请成功','data'=>$data];

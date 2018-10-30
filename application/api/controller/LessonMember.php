@@ -172,18 +172,8 @@ class LessonMember extends Base{
                     // ->having("lesson.cost=$cost and lesson.camp_id=$camp_id")
                     ->order('lesson_member.id desc')
                     ->paginate(30);
-                    // ->select();
             if($result){
-                $list = $result->toArray();
-                foreach ($list['data'] as $k => $val) {
-                    $lessonmember = $model->where(['id' => $val['id']])->find();
-                    if ($lessonmember) {
-                        $lessonmemberArr = $lessonmember->toArray();
-                        $list['data'][$k]['type'] = $lessonmemberArr['type'];
-                        $list['data'][$k]['status'] = $lessonmemberArr['status'];
-                    }
-                }
-                return json(['code'=>200,'msg'=>'ok','data'=>$list]);
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
             }
@@ -191,6 +181,41 @@ class LessonMember extends Base{
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
     }
+
+
+    // 获取训练营相同价格的课程不分页带搜索
+    public function getSamePriceLessonMemberListNoPageApi(){
+        try{
+            $lesson_id = input('param.lesson_id');
+            $keyword = input('param.keyword');
+            $rest_schedule = input('param.rest_schedule');
+            $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
+            $model = new \app\model\LessonMember();
+            $map = ['lesson_member.is_school'=>-1];
+            $map = ['lesson_member.status'=>1];
+            if(!empty($keyword)&&$keyword != ' '&&$keyword != ''){
+                $map['lesson_member.student'] = ['LIKE','%'.$keyword.'%'];
+            } 
+            if(isset($rest_schedule)){
+                $map['lesson_member.rest_schedule'] = ['lt',$rest_schedule];
+            }
+            $result = Db::view('lesson','id lid,cost,camp_id')
+                    ->view('lesson_member','*','lesson_member.lesson_id = lesson.id')
+                    ->where($map)
+                    ->where("lesson.cost={$lessonInfo['cost']} and lesson.camp_id={$lessonInfo['camp_id']}")
+                    ->order('lesson_member.id desc')
+                    ->select();
+            if($result){
+                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+            }else{
+                return json(['code'=>100,'msg'=>'检查你的参数']);
+            }
+        }catch (Exception $e){
+            return json(['code'=>100,'msg'=>$e->getMessage()]);
+        }
+    }
+
+
 
     // 获取未分配班级的学生列表-带page
     public function getNoGradeMemberListByPageApi(){
@@ -219,6 +244,7 @@ class LessonMember extends Base{
     // 课程转移
     public function transferLessonApi(){
         try{
+            return json(['code'=>100,'msg'>"更新中,暂停使用"]);
             $data = input('post.');
             $remarks = input('param.remarks');
             $new_lesson_id = $data['new_lesson_id'];

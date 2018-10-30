@@ -22,4 +22,21 @@ class CampWithdraw extends Model {
         return $list[$status];
     }
 
+    public function getAgreeTimeAttr($value){
+        if($value){
+
+            return date('Y-m-d H:i:s',$value);
+        }else{
+            return '';
+        } 
+    }
+
+    public function getRemitTimeAttr($value){
+        if($value){
+
+            return date('Y-m-d H:i:s',$value);
+        }else{
+            return '';
+        } 
+    }
 }

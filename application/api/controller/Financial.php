@@ -174,17 +174,17 @@ class Financial extends Base {
                 return json(['code' => 100, 'msg' => __lang('MSG_402').',需要训练营信息']);
             }
             // 查询训练营信息，无训练营抛出提示
-            $campS = new CampService();
-            $camp = $campS->getCampInfo($camp_id);
-            if (!$camp) {
+            $CampService = new CampService();
+            $campInfo = $CampService->getCampInfo($camp_id);
+            if (!$campInfo) {
                 return json(['code' => 100, 'msg' => '训练营'.__lang('MSG_404')]);
             }
             // 有无权限查看数据
-            $campPower = getCampPower($camp['id'], $this->memberInfo['id']);
+            $campPower = getCampPower($campInfo['id'], $this->memberInfo['id']);
             if (!$campPower || $campPower < 3) {
                 return json(['code' => 100, 'msg' => __lang('MSG_403').',你无权查看此训练营相关信息']);
             }
-            $map['camp_id'] = $camp['id'];
+            $map['camp_id'] = $campInfo['id'];
             // 要查询的时间段（年、月），默认上个年月；
             if (input('?year') || input('?month')) {
                 // 判断年、月参数是否为数字格式
@@ -203,12 +203,14 @@ class Financial extends Base {
             // 组合时间查询条件
             $map['create_time'] = ['between', [$start, $end]];
            // 初始化统计输出结果
-            $resultArr = ['schedule_salaryin' => 0, 'system_extract' => 0, 'coach_salary' => 0, 'camp_income' => 0];
+            $resultArr = ['schedule_salaryin' => 0, 'system_extract' => 0, 'coach_salary' => 0,'gift_output'=>0,'total_income'=>0];
             $scheduleSalaryin = db('income')->where($map)->where(['type'=>3])->sum('income');
             if ($scheduleSalaryin) {
                 $resultArr['schedule_salaryin'] = $scheduleSalaryin;
+            }else{
+                $scheduleSalaryin = 0;
             }
-            // 获取教练工资支出
+            // 获取教练工资
             $salaryInS = new SalaryInService($this->memberInfo['id']);
             $coachMap = $map;
             $coachMap['member_type'] = ['lt', 5];
@@ -216,14 +218,22 @@ class Financial extends Base {
             $coachSalaryIn = $salaryInS->countSalaryin($coachMap);
             if ($coachSalaryIn) {
                 $resultArr['coach_salary'] = $coachSalaryIn;
+            }else{
+                $coachSalaryIn = 0;
             }
-            // 训练营直接收入
-            $campMap = $map;
-            $campMap['type'] =1;
-            $campMap['member_type'] = 5;
-            $campSalaryin = $salaryInS->countSalaryin($campMap);
-            if ($campSalaryin) {
-                $resultArr['camp_income'] = $campSalaryin;
+
+            // 赠课支出
+            $gift_output = db('output')->where(['type'=>1])->where($map)->sum('output');
+            if($gift_output){
+                $resultArr['gift_output'] = $gift_output;
+            }else{
+                $gift_output = 0;
+            }
+
+            if($campInfo['rebate_type'] == 1){
+                $resultArr['total_income'] = $scheduleSalaryin - $gift_output;
+            }else{
+                $resultArr['total_income'] = 0;
             }
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $resultArr]);
         } catch(Exception $e) {

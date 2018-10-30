@@ -67,6 +67,10 @@ class SalaryOut extends Base{
     public function applySalaryOut(){
         try{
             $data = input('post.');
+            $day = date('d',time());
+            if($day>15 || $daya<5){
+                return json(['code'=>100,'msg'=>'每月5号至15号可申请提现']);die;
+            }
             if($this->memberInfo['balance']<$data['salary'] || $data['salary']<0){
                 return json(['code'=>100,'msg'=>'余额不足']);die;
             }

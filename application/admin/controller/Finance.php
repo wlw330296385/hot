@@ -603,7 +603,19 @@ class Finance extends Backend {
                     if($result){
                         $this->AuthService->record('拒绝提现申请');
                         // 余额返回用户
-                        
+                        db('member_finance')->insert([
+                                'member_id' => $salaryOutInfo['member_id'],
+                                'member' => $salaryOutInfo['member'],
+                                's_balance'=>$salaryOutInfo['s_balance'],
+                                'e_balance'=>$salaryOutInfo['e_balance']+$salaryOutInfo['salary'],
+                                'money' =>$data['salary'],
+                                'type'=>-1,
+                                'system_remarks'=>'提交提现申请',
+                                'f_id'=> $this->SalaryOut->id,
+                                'remarks'=>'',
+                                'create_time'=>time(),
+                                'date_str'=>date('Ymd',time())
+                            ]);
                         db('member')->where(['id'=>$salaryOutInfo['member_id']])->inc('balance',$salaryOutInfo['buffer'])->update();
           
                         $this->success('操作成功,该笔冻结款解冻,返还用户余额');

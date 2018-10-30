@@ -44,14 +44,14 @@ class Member extends Base{
     }
 
 
-    // 提现申请
+    // 提现申请(废弃)
     public function withdrawApi(){
     	try{
     		$data = input('post.');
             $data['member_id'] = $this->memberInfo['id'];
             $data['member'] = $this->memberInfo['member'];
             // 余额
-            if($memberInfo['balance']<$data['money']){
+            if($this->memberInfo['balance']<$data['salary']){
                 return json(['code'=>200,'msg'=>'余额不足']);die;
             }
          	$result = $this->SalaryOut->saveSalaryOut($data);

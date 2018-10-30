@@ -69,7 +69,7 @@ class Withdraw extends Backend{
 
             if($action == 2){
                 // 同意提现
-                $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>$action,'buffer'=>0,'system_remarks'=>$system_remarks,'date_str'=>date('Ymd',time()),'agree_time'=>time()],['id'=>$campWithdraw_id]);
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,117行');
                 }
@@ -216,7 +216,7 @@ class Withdraw extends Backend{
                 $MessageService->sendMessageMember($member_id,$messageData,$saveData);        
                 $this->record("{$this->admin['username']}拒绝了{$campWithdrawInfo['camp']}的提现申请");
             }elseif ($action == 3) {//已打款
-                $res = $CampWithdraw->save(['status'=>$action,'system_remarks'=>$system_remarks],['id'=>$campWithdraw_id]);
+                $res = $CampWithdraw->save(['status'=>$action,'system_remarks'=>$system_remarks,'remit_time'=>time()],['id'=>$campWithdraw_id]);
                 if(!$res){
                     $this->error('操作失败,请务必截图并联系woo,139行');
                 }

@@ -19,10 +19,14 @@ class SystemFinance extends Backend {
         $b->add(new \DateInterval('P1M'));
         $e = $b->format('Y-m-01');
 
-
+        $map = [];
+        $type = input('param.type');
+        if($type){
+            $map['type'] = $type;
+        }
         $SysIncome = new \app\model\SysIncome;
-        $list = $SysIncome->whereTime('create_time','between',[$s, $e])->select();
-        $total = $SysIncome->whereTime('create_time','between',[$s, $e])->sum('income');
+        $list = $SysIncome->whereTime('create_time','between',[$s, $e])->where($map)->select();
+        $total = $SysIncome->whereTime('create_time','between',[$s, $e])->where($map)->sum('income');
 
 
         $this->assign('list',$list);
@@ -42,11 +46,15 @@ class SystemFinance extends Backend {
         $b->add(new \DateInterval('P1M'));
         $e = $b->format('Y-m-01');
 
-
+        $map = [];
+        $type = input('param.type');
+        if($type){
+            $map['type'] = $type;
+        }
 
         $SysOutput = new \app\model\SysOutput;
-        $list = $SysOutput->whereTime('create_time','between',[$s, $e])->select();
-        $total = $SysOutput->whereTime('create_time','between',[$s, $e])->sum('output');
+        $list = $SysOutput->whereTime('create_time','between',[$s, $e])->where($map)->select();
+        $total = $SysOutput->whereTime('create_time','between',[$s, $e])->where($map)->sum('output');
         $this->assign('list',$list);
         $this->assign('Ym',$Ym);
         $this->assign('total',$total?$total:0);

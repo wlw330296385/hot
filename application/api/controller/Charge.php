@@ -16,6 +16,7 @@ class Charge extends Frontend{
 	        $pay_type = input('param.pay_type','wxpay');
 	        $charge_order = input('param.charge_order');
 	        $type = input('param.type',1);
+	        $callback = input('param.callback');
 	        if($charge >= 1){//测试的时候改为0,平时是1;
 	        	if($member_id<1){
 	        		return json(['code'=>100,'msg'=>'未注册平台会员,购买未到账,请联系平台客服']);
@@ -34,6 +35,7 @@ class Charge extends Frontend{
 			        		'avatar'		=>$avatar,
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
+			        		'callback'		=>$callback,
 			        		'status'		=>1,
 			        		'pay_type'		=>$pay_type
 			        	]);
@@ -65,6 +67,7 @@ class Charge extends Frontend{
 			        		'avatar'		=>$avatar,
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
+			        		'callback'		=>$callback,
 			        		'status'		=>1,
 			        		'type'			=>2,
 			        		'pay_type'		=>$pay_type
@@ -92,6 +95,7 @@ class Charge extends Frontend{
 			        		'avatar'		=>$avatar,
 			        		'charge'		=>$charge,
 			        		'charge_order'	=>$charge_order,
+			        		'callback'		=>$callback,
 			        		'status'		=>1,
 			        		'type'			=>3,
 			        		'pay_type'		=>$pay_type
