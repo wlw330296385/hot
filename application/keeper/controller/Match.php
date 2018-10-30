@@ -423,11 +423,16 @@ class Match extends Base {
 
     // 联赛球队详情
     public function teamInfo() {
+        if (!$this->memberInfo['id']) {
+            $this->error(__lang('MSG_001'));
+        }
+
         $league_id = input('league_id', 0, 'intval');
         $team_id = input('team_id', 0, 'intval');
 
         // 获取联赛球队信息
         $leagueService = new LeagueService();
+        $teamService = new TeamService();
         $matchTeam = $leagueService->getMatchTeamInfoSimple([
             'match_id' => $league_id,
             'team_id' => $team_id
@@ -444,8 +449,29 @@ class Match extends Base {
             'team_id' => $team_id
         ]);
 
+        // 领队信息
+        $teamMemberRole = $teamService->getTeamMemberRole(['team_id' => $teamInfo['id']]);
+        $teamMember = $teamService->getTeamMember([
+            'team_id' => $teamMemberRole['team_id'], 
+            'member_id' => $teamMemberRole['member_id'], 
+            'name' => $teamMemberRole['name']
+        ]);
+
+        $teamMemberIdArray = [];
+        foreach ($matchTeamMembers as $row) {
+            if ($row['team_member_id'] != $teamMember['id']) {
+                array_push($teamMemberIdArray, $row['team_member_id']);
+            }
+        }
+        $teamMembers = $teamService->getTeamMemberListOnly(['id' => ['in', $teamMemberIdArray]]);
+
+        
+
+
         $this->assign('teamInfo', $teamInfo);
-        $this->assign('matchTeamMembers', $matchTeamMembers);
+        $this->assign('leaderInfo', $teamMember);
+        $this->assign('teamMembers', $teamMembers);
+        $this->assign('myTelephone',$this->memberInfo['telephone']);
         return view('Match/team/teamInfo');
     }
 
