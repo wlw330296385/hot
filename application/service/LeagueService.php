@@ -9,6 +9,7 @@ use app\model\MatchComment;
 use app\model\MatchGroup;
 use app\model\MatchGroupTeam;
 use app\model\MatchMember;
+use app\model\MatchMemberFee;
 use app\model\MatchOrg;
 use app\model\MatchOrgMember;
 use app\model\MatchRank;
@@ -1022,7 +1023,8 @@ class LeagueService
             '3' => '全明星赛',
             '4' => '淘汰赛',
             '5' => '决赛',
-            '6' => '复活赛',
+            '6' => '季军赛',
+            '7' => '复活赛',
             '0' => '其他'
         ];
         return $type;
@@ -1494,5 +1496,69 @@ class LeagueService
         $model = new MatchReferee();
         $res = $model->where($map)->delete(true);
         return $res;
+    }
+
+    public function getMatchMemberFee($map)
+    {
+        $model = new MatchMemberFee();
+        $res = $model->where($map)->find();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    public function getMatchMemberFeeList($map, $order = 'id asc')
+    {
+        $model = new MatchMemberFee();
+        $res = $model->where($map)->order($order)->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    public function getMatchMemberFeeListWithTotal($map) 
+    {
+        $model = new MatchMemberFee();
+        $res = $model->where($map)
+            ->field('match_id, member_id, realname, count(id) as count, sum(fee) as total, match_member_id, type')
+            ->group('match_member_id,type')
+            ->select();
+        if ($res) {
+            return $res->toArray();
+        } else {
+            return $res;
+        }
+    }
+
+    public function delMatchMemberFee($map)
+    {
+        $model = new MatchMemberFee();
+        $res = $model->where($map)->delete(true);
+        return $res;
+    }
+
+    public function saveMatchMemberFee($data)
+    {
+        $model = new MatchMemberFee();
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+            } else {
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res) {
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'data' => $model->id];
+        } else {
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
     }
 }

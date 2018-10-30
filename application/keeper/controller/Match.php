@@ -422,6 +422,60 @@ class Match extends Base {
     }
 
     // 联赛球队详情
+    public function teamInfo() {
+        if (!$this->memberInfo['id']) {
+            $this->error(__lang('MSG_001'));
+        }
+
+        $league_id = input('league_id', 0, 'intval');
+        $team_id = input('team_id', 0, 'intval');
+
+        // 获取联赛球队信息
+        $leagueService = new LeagueService();
+        $teamService = new TeamService();
+        $matchTeam = $leagueService->getMatchTeamInfoSimple([
+            'match_id' => $league_id,
+            'team_id' => $team_id
+        ]);
+        if (!$matchTeam) {
+            $this->error(__lang('MSG_404'));
+        }
+        // 球队详情信息
+        $teamS = new TeamService();
+        $teamInfo = $teamS->getTeam(['id' => $matchTeam['team_id']]);
+        // 获取球队提交的参加联赛球员信息
+        $matchTeamMembers = $leagueService->getMatchTeamMembers([
+            'match_id' => $league_id,
+            'team_id' => $team_id
+        ]);
+
+        // 领队信息
+        $teamMemberRole = $teamService->getTeamMemberRole(['team_id' => $teamInfo['id']]);
+        $teamMember = $teamService->getTeamMember([
+            'team_id' => $teamMemberRole['team_id'], 
+            'member_id' => $teamMemberRole['member_id'], 
+            'name' => $teamMemberRole['name']
+        ]);
+
+        $teamMemberIdArray = [];
+        foreach ($matchTeamMembers as $row) {
+            if ($row['team_member_id'] != $teamMember['id']) {
+                array_push($teamMemberIdArray, $row['team_member_id']);
+            }
+        }
+        $teamMembers = $teamService->getTeamMemberListOnly(['id' => ['in', $teamMemberIdArray]]);
+
+        
+
+
+        $this->assign('teamInfo', $teamInfo);
+        $this->assign('leaderInfo', $teamMember);
+        $this->assign('teamMembers', $teamMembers);
+        $this->assign('myTelephone',$this->memberInfo['telephone']);
+        return view('Match/team/teamInfo');
+    }
+
+    // 联赛球队详情
     public function teaminfoofleague() {
         $league_id = input('league_id', 0, 'intval');
         $team_id = input('team_id', 0, 'intval');
@@ -619,6 +673,169 @@ class Match extends Base {
         return view('Match/work/workListOfLeague', [
             'types' => $types,
             'myInfo' => $myInfo
+        ]);
+    }
+    public function workerFeeList() {
+
+        $data = input('param.');
+        if (!empty($data['league_id'])) {
+            $data['match_id'] = $data['league_id'];
+            unset($data['league_id']);
+        }
+
+        if (empty($data['match_id']) || empty($data['member_id']) || empty($data['match_member_id'])) {
+            $this->error('缺少参数');
+        }
+
+        $leagueS = new leagueService();
+        $refereeS = new RefereeService();
+        $matchS = new MatchService();
+
+        $types = $leagueS->getMatchMemberTypes();
+
+        $myInfo = $leagueS->getMatchMember([
+            'member_id' => $this->memberInfo['id'], 
+            'match_id' => $data['match_id'],
+            'status' => 1
+        ]);
+        if (empty($myInfo) || $myInfo['type'] < 9) {
+            $this->error("你不是该联赛的管理人员");
+        }
+
+        $matchMember = $leagueS->getMatchMember(['id' => $data['match_member_id'], 'match_id' => $data['match_id'], 'member_id' => $data['member_id']]);
+        if (empty($matchMember)) {
+            $this->error('该会员不是联赛的工作人员');
+        }
+
+        $matchMember['referee'] = [];
+        if ($matchMember['type'] == 7) {
+            $referee = $refereeS->getReferee(['member_id' => $data['member_id']]);
+            if ($referee) {
+                $matchMember['referee'] = $referee;
+            } else {
+                $this->error('未确认该工作人员的裁判身份');
+            }
+        }
+
+        $matchMemberFeeList = [];
+        $matchRecordList = $leagueS->getMatchRecords(['match_id' => $data['match_id']]);
+        if ($matchRecordList) {
+            foreach($matchRecordList as $matchRecord) {
+
+                    $tempData = [
+                        'match_id' => $data['match_id'],
+                        'match_record_id' => $matchRecord['id'],
+                        'match_member_id' => $matchMember['id'],
+                        'member_id' => $data['member_id'],
+                        'fee' => 0,
+                        'type' => $matchMember['type'],
+                        'status' => 0
+                    ];
+
+                    switch ($matchMember['type']) {
+                        case '8':
+                            // 记分员
+                            $scorerArray = json_decode($matchRecord['scorers'], true);
+                            if ($scorerArray) {
+                                foreach ($scorerArray as $scorer) {
+                                    if ($scorer['member_id'] == $data['member_id']) {
+                                        array_push($matchMemberFeeList, $tempData);
+                                    }
+                                }
+                            }
+                            break;
+                        case '7':
+                            // 裁判员
+                            if ($matchRecord['referee1_id'] == $matchMember['referee']['id'] ||
+                                $matchRecord['referee2_id'] == $matchMember['referee']['id'] ||
+                                $matchRecord['referee3_id'] == $matchMember['referee']['id'] ) {
+                                array_push($matchMemberFeeList, $tempData);
+                            }
+                            break;
+                        case '0':
+                            // 工作人员
+                            $workerArray = json_decode($matchRecord['workers'], true);
+                            if ($workerArray) {
+                                foreach ($workerArray as $worker) {
+                                    if ($worker['member_id'] == $data['member_id']) {
+                                        array_push($matchMemberFeeList, $tempData);
+                                    }
+                                }
+                            }
+                        default:
+                            break;
+                    }
+
+            }
+            
+        }
+        $feeList =  $leagueS->getMatchMemberFeeList([
+            'match_id' => $data['match_id'],
+            'member_id' => $data['member_id'],
+            'type' => $matchMember['type'],
+            'match_member_id' => $matchMember['id']
+        ]);
+
+        foreach ($matchMemberFeeList as $key => $row) {
+            $temp = $matchS->getMatchRecord(['id' => $row['match_record_id']]);
+            $matchMemberFeeList[$key]['match_record'] = empty($temp) ? '' : $temp;
+            if (!empty($feeList)) {
+                foreach ($feeList as $key => $feeInfo) {
+                    if ($feeInfo['match_record_id'] == $row['match_record_id']) {
+                        $matchMemberFeeList[$key]['fee'] = $feeInfo['fee'];
+                        unset($feeList[$key]);
+                    }
+                }
+            }
+        }
+        return view('Match/work/workerFeeList', [
+            'types' => $types,
+            'myInfo' => $myInfo,
+            'matchMember' => $matchMember,
+            'matchMemberFeeList' => $matchMemberFeeList
+        ]);
+    }
+
+    public function workerAllFeeList() {
+        // 工作人员类型
+        $data = input('param.');
+        if (!empty($data['league_id'])) {
+            $data['match_id'] = $data['league_id'];
+            unset($data['league_id']);
+        }
+
+        $leagueS = new LeagueService();
+        $member_id = input('member_id', 0, 'intval');
+
+        $myInfo = $leagueS->getMatchMember(['member_id' => $this->memberInfo['id'], 'match_id' => $data['match_id'], 'status' => 1]);
+        if (empty($myInfo) || $myInfo['type'] < 9) {
+            $this->error("你不是该联赛的管理人员");
+        }
+        
+        $refereeList = $scorerList = $workerList = [];
+        $list = $leagueS->getMatchMemberFeeListWithTotal(['match_id' => $data['match_id']]);
+        if ($list) {
+            foreach ($list as $row) {
+                switch ($row['type']) {
+                    case '8':
+                        array_push($scorerList, $row);
+                        break;
+                    case '7':
+                        array_push($refereeList, $row);
+                        break;
+                    case '0':
+                        array_push($workerList, $row);
+                        break;
+                }
+            }
+        }
+        $types = $leagueS->getMatchMemberTypes();
+         return view('Match/work/workerAllFeeList', [
+            'types' => $types,
+            'myInfo' => $myInfo,
+            'refereeList' => $refereeList,
+            'scorerList' => $scorerList,
+            'workerList' => $workerList
         ]);
     }
 
@@ -1192,6 +1409,7 @@ class Match extends Base {
         $leagueId = input('league_id', 0,'intval');
         $leagueS = new LeagueService();
         $matchS = new MatchService();
+        $refereeS = new RefereeService();
         $matchRecordInfo = $matchS->getMatchRecord([
             'id' => $id,
             'match_id' => $leagueId
@@ -1199,7 +1417,44 @@ class Match extends Base {
         if(!empty($matchRecordInfo['album'])) {
             $matchRecordInfo['album'] = json_decode($matchRecordInfo['album'], true);
         }
+
+        $allow_referee_comment = 0;
+        $refereeComment1 = $refereeComment2 = $refereeComment3 = [];
+        if(!empty($matchRecordInfo) && $this->memberInfo['id'] > 0) {
+            $res = $matchS->getMatchRecordMember([
+                'match_id' => $leagueId,
+                'match_record_id' => $id,
+                'team_id' => ['in', [$matchRecordInfo['home_team_id'], $matchRecordInfo['away_team_id']]],
+                'member_id' => $this->memberInfo['id']
+            ]);
+            if (!empty($res)) {
+                $allow_referee_comment = 1;
+
+                $map = [
+                    'match_id' => $leagueId, 
+                    'match_record_id' => $id, 
+                    'member_id' => $this->memberInfo['id']
+                ];
+                if (!empty($matchRecordInfo['referee1_id'])) {
+                    $map['referee_id'] = $matchRecordInfo['referee1_id'];
+                    $refereeComment1 = $refereeS->getRefereeComment($map);
+                }
+                if (!empty($matchRecordInfo['referee2_id'])) {
+                    $map['referee_id'] = $matchRecordInfo['referee2_id'];
+                    $refereeComment2 = $refereeS->getRefereeComment($map);
+                }
+                if (!empty($matchRecordInfo['referee3_id'])) {
+                    $map['referee_id'] = $matchRecordInfo['referee3_id'];
+                    $refereeComment3 = $refereeS->getRefereeComment($map);
+                }
+            }
+        }
+
         $this->assign('matchRecordInfo', $matchRecordInfo);
+        $this->assign('allow_referee_comment', $allow_referee_comment);
+        $this->assign('refereeComment1', $refereeComment1);
+        $this->assign('refereeComment2', $refereeComment2);
+        $this->assign('refereeComment3', $refereeComment3);
         return view('Match/record/recordInfo');
     }
 
@@ -1308,7 +1563,7 @@ class Match extends Base {
         $this->assign('honorInfo', $honorInfo);
         $this->assign('honorStr', $honorStr);
         $this->assign('is_manager', $is_manager);
-        return view('Match/honor/infoOfLeague');
+        return view('Match/honor/InfoOfLeague');
     }
     // 联赛编辑荣誉
     public function honotEditOfLeague() {
@@ -1547,4 +1802,6 @@ class Match extends Base {
     public function quickSignUpEWM() {
         return view('Match/quickSignUpEWM');
     }
+
+    
 }

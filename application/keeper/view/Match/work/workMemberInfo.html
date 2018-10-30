@@ -42,6 +42,7 @@
                 <input type="text" name="telephone" value="{$matchMemberInfo.telephone}" class="data" placeholder="请填写电话">
                 {/if}
             </div>
+
             <div class="page-header bggray2">
                 <span class="course wd45">
                     <strong>角色</strong>
@@ -57,15 +58,15 @@
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
-            {if $memberInfo.id == $matchMemberInfo.member_id}
-            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bggreen confirmBtn">
-                提交
-            </li>
-            {else/}
+            {if $myInfo.type >$matchMemberInfo.type}
             <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bgred deleteWorker">
                 <a href="#myWorkerList">删除</a>
             </li>
             <li class="mui-table-view-cell mui-col-sm-5 mui-col-xs-5 opli bggreen confirmBtn">
+                提交
+            </li>
+            {else/}
+            <li class="mui-table-view-cell mui-col-sm-10 mui-col-xs-10 opli bggreen confirmBtn">
                 提交
             </li>
             {/if}
@@ -263,31 +264,41 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli +=
-                                `
-                                <div class="roleCont">
-                                    <a href="#workerList" class="typeRole">
-                        <div class="mui-input-row">
-                                <div class="mui-navigate-right">
-                                    <label>角色<text>${i+1}</text></label>
-                                    <span class="worker" data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
-                                </div>
-                        </div>
-                    </a>
-                        <div class="mui-input-row">
-                            <label>职称</label>`
+                                `<div class="roleCont">`
+                            if ("{$myInfo.type}" == data.data[i].type) {
+                                newli +=
+                                    `<div class="mui-input-row">
+                                            <div class="mui-navigate-right">
+                                                <label>角色<text>${i+1}</text></label>
+                                                <span class="worker" data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
+                                            </div>
+                                        </div>`
+                            } else {
+                                newli +=
+                                    `<a href="#workerList" class="typeRole">
+                                        <div class="mui-input-row">
+                                            <div class="mui-navigate-right">
+                                                <label>角色<text>${i+1}</text></label>
+                                                <span class="worker" data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</span>
+                                            </div>
+                                        </div>
+                                    </a>`
+                            }
+                            newli +=
+                                `<div class="mui-input-row">
+                                        <label>职称</label>`
                             if (data.data[i].job_description == null) {
                                 newli +=
                                     ` <input type="text" name="job_description" value="" 
-                                placeholder="请填写职称信息">`
+                                            placeholder="请填写职称信息">`
                             } else {
                                 newli +=
                                     ` <input type="text" name="job_description" value="${data.data[i].job_description}" 
-                                placeholder="请填写职称信息">`
+                                            placeholder="请填写职称信息">`
                             }
 
                             newli += `</div>
-                        </div>
-                        `
+                                    </div>`
                             newli1 +=
                                 `<li class="mui-table-view-cell listli" data-id="${data.data[i].id}" data-type="${data.data[i].type}">${data.data[i].type_text}</li>`
                         }

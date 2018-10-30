@@ -40,7 +40,7 @@ class Claim extends Base
             $teamMemberRoleIdArray = [];
             foreach($teamMemberRoleList as $row) {
                 array_push($teamMemberRoleIdArray, $row['id']);
-                if ($row['type'] == 3) {
+                if ($row['type'] == 3 || $row['type'] == 6) {
                     $is_leader = 1;
                 }
             }

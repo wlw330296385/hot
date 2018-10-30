@@ -18,6 +18,10 @@
         .editor {
             padding: 3px 9px !important;
         }
+
+        .recruitmentWorker::after{
+            height: 0 !important;
+        }
     </style>
 </head>
 
@@ -49,9 +53,12 @@
             </li>
         </ul>
 
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell listli mui-text-center colororange recruitmentWorker">
+        <ul class="mui-table-view ">
+            <li class="mui-table-view-cell listli mui-col-xs-6 mui-text-center colororange recruitmentWorker fl">
                 招募比赛工作人员
+            </li>
+            <li class="mui-table-view-cell listli mui-col-xs-6 mui-text-center colororange">
+                <a href="{:url('match/workerAllFeeList',['league_id'=>$leagueInfo.id])}">工作人员统计报表</a>
             </li>
         </ul>
 
@@ -183,6 +190,8 @@
                     for (var i = 0; i <= data.data.length - 1; i++) {
                         var urls = "{:url('match/workMemberInfo')}" + '/league_id/' + "{$league_id}" +
                             '/member_id/' + data.data[i].member_id;
+                        var urltj = "{:url('match/workerFeeList')}" + '/league_id/' + "{$league_id}" +
+                            '/member_id/' + data.data[i].member_id + '/match_member_id/' + data.data[i].id;
                         // var role_text = data.data[i].role_arr.join(',');
                         // var job_description_text = data.data[i].job_description_arr.join(',');
 
@@ -199,15 +208,17 @@
                                 newli10 +=
                                     `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
                             }
-
-                            newli10 +=
-                                `<div class="mui-col-xs-2 mui-text-right">
+                            if ("{$myInfo.type}" == 10) {
+                                newli10 +=
+                                    `<div class="mui-col-xs-2 mui-text-right">
                                             <a href="${urls}">
                                                 <button type="button" class="btn editor">编辑</button> 
                                             </a>
                                         </div>
                                     </div>
                                 </li>`
+                            }
+
                         }
                         if (data.data[i].type == 9) {
                             newli9 +=
@@ -236,20 +247,23 @@
                             newli8 +=
                                 `<li class="mui-table-view-cell listli">
                                     <div class="mui-row" style="line-height:27px;">
-                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>`
                             if (data.data[i].job_description == null) {
                                 newli8 +=
-                                    `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称"></div>`
+                                    `<div class="mui-col-xs-2 mui-text-center jobText" ontenteditable="" placeholder="暂无职称"></div>`
                             } else {
                                 newli8 +=
-                                    `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
+                                    `<div class="mui-col-xs-2 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
                             }
 
                             newli8 +=
-                                `<div class="mui-col-xs-2 mui-text-right">
-                                            <a href="${urls}">
-                                                <button type="button" class="btn editor">编辑</button> 
+                                `<div class="mui-col-xs-4 mui-text-right">
+                                        <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button>
+                                            </a>
+                                            <a href="${urltj}">
+                                                <button type="button" class="btn mui-btn-danger editor">统计</button> 
                                             </a>
                                         </div>
                                     </div>
@@ -259,20 +273,23 @@
                             newli7 +=
                                 `<li class="mui-table-view-cell listli">
                                     <div class="mui-row" style="line-height:27px;">
-                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>`
                             if (data.data[i].job_description == null) {
                                 newli7 +=
-                                    `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称"></div>`
+                                    `<div class="mui-col-xs-2 mui-text-center jobText" ontenteditable="" placeholder="暂无职称"></div>`
                             } else {
                                 newli7 +=
-                                    `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
+                                    `<div class="mui-col-xs-2 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
                             }
 
                             newli7 +=
-                                `<div class="mui-col-xs-2 mui-text-right">
+                                `<div class="mui-col-xs-4 mui-text-right">
                                             <a href="${urls}">
-                                                <button type="button" class="btn editor">编辑</button> 
+                                                <button type="button" class="btn editor">编辑</button>
+                                            </a>
+                                            <a href="${urltj}">
+                                                <button type="button" class="btn mui-btn-danger editor">统计</button> 
                                             </a>
                                         </div>
                                     </div>
@@ -282,19 +299,22 @@
                             newli0 +=
                                 `<li class="mui-table-view-cell listli">
                                     <div class="mui-row" style="line-height:27px;">
-                                        <div class="mui-col-xs-4 colororange">${data.data[i].realname}</div>
+                                        <div class="mui-col-xs-3 colororange">${data.data[i].realname}</div>
                                         <div class="mui-col-xs-3 mui-text-center">${data.data[i].telephone}</div>`
                             if (data.data[i].job_description == null) {
                                 newli0 +=
-                                    `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称"></div>`
+                                    `<div class="mui-col-xs-2 mui-text-center jobText" ontenteditable="" placeholder="暂无职称"></div>`
                             } else {
                                 newli0 +=
-                                    `<div class="mui-col-xs-3 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
+                                    `<div class="mui-col-xs-2 mui-text-center jobText" ontenteditable="" placeholder="暂无职称">${data.data[i].job_description}</div>`
                             }
                             newli0 +=
-                                `<div class="mui-col-xs-2 mui-text-right">
-                                            <a href="${urls}">
-                                                <button type="button" class="btn editor">编辑</button> 
+                                `<div class="mui-col-xs-4 mui-text-right">
+                                        <a href="${urls}">
+                                                <button type="button" class="btn editor">编辑</button>
+                                            </a>
+                                            <a href="${urltj}">
+                                                <button type="button" class="btn mui-btn-danger editor">统计</button> 
                                             </a>
                                         </div>
                                     </div>

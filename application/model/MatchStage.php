@@ -18,7 +18,8 @@ class MatchStage extends Model
             '3' => '全明星赛',
             '4' => '淘汰赛',
             '5' => '决赛',
-            '6' => '复活赛',
+            '6' => '季军赛',
+            '7' => '复活赛',
             '0' => '其他'
         ];
         return $type[$data['type']];

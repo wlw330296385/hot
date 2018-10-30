@@ -2,6 +2,7 @@
 namespace app\service;
 use app\model\MatchRefereeApply;
 use app\model\Referee;
+use app\model\RefereeComment;
 use app\common\validate\RefereeVal;
 use app\model\Grade;
 use think\Db;
@@ -173,6 +174,45 @@ class RefereeService{
         }else{
             return ['code' => 100, 'msg' => $RefereeComemnt->getError()];
         }
+    }
+
+    // 保存裁判评论
+    public function saveRefereeComment($data) {
+
+        $model = new RefereeComment;
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res == false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res == false) {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
+
+    public function getRefereeComment($map) {
+
+        $model = new RefereeComment;
+        $res = $model->where($map)->find();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
+    }
+
+    public function getRefereeCommentList($map, $order='id asc') {
+        $model = new RefereeComment;
+        $res = $model->where($map)->order($order)->select();
+        if (!$res) {
+            return $res;
+        }
+        return $res->toArray();
     }
 
 }

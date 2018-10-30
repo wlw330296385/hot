@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>统计报表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .dcPriceInput {
+            margin-top: 5px;
+        }
+
+        .priceInput {
+            margin-bottom: 0 !important;
+            padding: 5px !important;
+            font-size: 12px;
+            height: 30px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href=""></a>
+        <h1 class="mui-title">{$matchMember.realname} 工资详情</h1>
+    </header>
+    <div class="mui-content mt55">
+
+        <div class="list">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli" style="padding:11px 15px;">
+                    <a href="javascript:;">
+                        <img class="img50 mui-pull-left" src="/uploads/images/cert/2017/10/59f84e64d460c.jpg">
+                        <div class="mui-media-body">
+                            {$matchMember.realname}
+                            <p class="mui-ellipsis">{$types[$matchMember.type]}</p>
+                        </div>
+                        <div class="fr f14" style="margin-top: 28px">
+                            出场总数：
+                            <text class="colororange">{:count($matchMemberFeeList)}</text>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            {if condition="empty($matchMemberFeeList)"}
+            <ul class="mui-table-view mb">
+                <li class="nodata">
+                    <i class="icon iconfont icon-logo-Big"></i>
+                    <p>没有相关数据</p>
+                </li>
+            </ul>
+            {else/}
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell">
+                    <div class="mui-row f14">
+                        <div class="mui-col-xs-9" style="line-height: 30px;">日期 / 对阵球队</div>
+                        <div class="mui-col-xs-3 mui-text-center">
+                            <input type="text" value="" class="mui-text-center priceInput plPriceInput" placeholder="批量设置费用">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            {/if}
+            <ul class="mui-table-view workerFeeList">
+                {volist name="matchMemberFeeList" id='vo'}
+                <li class="mui-table-view-cell" data-match_record_id="{$vo.match_record_id}">
+                    <div class="mui-row f14">
+                        <div class="mui-col-xs-9">
+                            <text class="colorgray">{$vo.match_record.match_time}</text>
+                            <br>{$vo.match_record.home_team} vs {$vo.match_record.away_team}</div>
+                        <div class="mui-col-xs-3">
+                            <input type="text" {if condition='isset($vo.fee)' } value='{$vo.fee}' {/if} class="mui-text-center priceInput dcPriceInput"
+                                placeholder="单场费用">
+                        </div>
+                    </div>
+                </li>
+                {/volist}
+            </ul>
+
+        </div>
+
+        <ul class="mui-table-view operation mt">
+            <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli colororange">
+                <strong>合计：￥
+                    <text class="totalPrice f18">0</text>元</strong>
+            </li>
+            <li class="mui-table-view-cell mui-col-sm-6 mui-col-xs-6 opli bggreen comfirmBtn">
+                确认无误并提交
+            </li>
+        </ul>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+
+        // 批量设置费用
+        $(document).on("blur", ".plPriceInput", function () {
+            var plVal = $(this).val();
+            $(".workerFeeList .dcPriceInput").val(plVal);
+            var sum = 0;
+            $(".dcPriceInput").each(function () {
+                var checkDcVal = $(this).val();
+                sum += Number(checkDcVal);
+                $(".totalPrice").text(sum);
+            })
+        });
+
+        // 单场费用失去焦点计算总值
+        $(document).on("blur", ".dcPriceInput", function () {
+            var sum2 = 0;
+            $(".dcPriceInput").each(function () {
+                var dcVal = $(this).val();
+                sum2 += Number(dcVal);
+                $(".totalPrice").text(sum2);
+            })
+        });
+
+        // 确认无误提交数据
+        $(".comfirmBtn").on("tap", '', function () {
+            var fee_list = [];
+            var match_id = "{$league_id}"
+            var member_id = "{$matchMember.member_id}";
+            var match_member_id = "{$matchMember.id}";
+            var realname = "{$matchMember.realname}";
+            var type = "{$matchMember.type}";
+
+            var isOk = true;
+            $(".workerFeeList li").each(function () {
+                var match_record_id = $(this).attr("data-match_record_id");
+                var fee = $(this).find(".dcPriceInput").val();
+                if (fee == '') {
+                    mui.toast("请填写单场费用");
+                    return isOk = false;
+                }
+                fee_list.push({
+                    match_record_id,
+                    fee
+                })
+            })
+            if (!isOk) {
+                return isOk
+            }
+            console.log(fee_list)
+            if (fee_list == '') {
+                mui.toast("暂无可提交的数据");
+                return isOk = false;
+            }
+
+            mui.ajax("{:url('api/league/saveWorkerFeeDetails')}", {
+                data: {
+                    match_id: match_id,
+                    member_id: member_id,
+                    match_member_id: match_member_id,
+                    realname: realname,
+                    type: type,
+                    fee_list: fee_list
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    //服务器返回响应，根据响应结果，分析是否登录成功；
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast(data.msg);
+                        setTimeout(function () {
+                            window.location.href =
+                                "{:url('match/worklistofleague',['league_id'=>$league_id])}";
+                        }, 1500);
+                    } else {
+                        mui.toast(data.msg);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -80,14 +80,6 @@
             }
         }
 
-        .choiseFont .mui-input-row {
-            height: 37px !important
-        }
-
-        .choiseFont .bgorange {
-            color: #fff !important
-        }
-
         .desimg img {
             width: 100%;
         }
@@ -286,7 +278,7 @@
                         class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b newMatch"></ul>
+            <ul class="mui-table-view list mainInfo border-b newMatch"></ul>
 
             <!--赛事纪录-->
             <!-- <div class="page-header border-b">
@@ -297,7 +289,7 @@
                     <a href="{:url('team/matchList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mui-text-center mainInfo border-b recordMatch"></ul> -->
+            <ul class="mui-table-view list mui-text-center mainInfo border-b recordMatch"></ul> -->
 
             <!--最新活动-->
             <div class="page-header border-b">
@@ -309,7 +301,7 @@
                         class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b newEvent"></ul>
+            <ul class="mui-table-view list mainInfo border-b newEvent"></ul>
 
             <!--活动纪录-->
             <!-- <div class="page-header border-b">
@@ -331,7 +323,7 @@
                     <a href="{:url('team/honorList',['team_id'=>$teamInfo['id']])}" class="mui-navigate-right">更多</a>
                 </span>
             </div>
-            <ul class="mui-table-view detalis-list list mainInfo border-b honor"></ul>
+            <ul class="mui-table-view list mainInfo border-b honor"></ul>
 
             <!--球队相册-->
             <!-- <div class="page-header whitebg border-b">
@@ -370,12 +362,18 @@
             <div class="impress whitebg tagCommentList border-b"></div>
 
             <!-- 球队介绍 -->
+            {if $teamInfo.introduce==''}
+            <div class="page-header border-b">
+                <span class="course">球队介绍
+                    <span class="noDataTip">（暂无）</span>
+                </span>
+            </div>
+            {else/}
             <div class="page-header border-b">
                 <span class="course">球队介绍
                     <span class="noDataTip"></span>
                 </span>
             </div>
-
             <ul class="mui-table-view mb">
                 <li class="listli desimg">
                     <div id="editor-container">
@@ -383,7 +381,7 @@
                     </div>
                 </li>
             </ul>
-
+            {/if}
 
             <div class="page-header border-b">
                 <span class="course wd52">评论</span>
@@ -458,6 +456,7 @@
             </ul>
         </div>
     </div>
+
     <!-- 发表印象 -->
     <div id="Impress" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
         <div class="list">
@@ -549,12 +548,6 @@
                     }
                 });
                 return false;
-            }
-
-            //球队详细介绍内容
-            var introduce = '{$teamInfo.introduce}';
-            if (introduce == '') {
-                $(".introBox").append("<p class='nohave' style='margin-left:0'>该球队还没有图文简介哦</p>")
             }
 
             // 印象评价
@@ -680,11 +673,11 @@
                 });
             });
 
-
             // 点击评论赋值标记+判断是否可以删除
             $(document).on("tap", ".comment-list li", function () {
                 $(".checkDelId").val($(this).attr("data-id"));
-            })
+            });
+
             //删除评论功能
             $(document).on("tap", ".commemtDeleteBtn", function () {
                 var thisID = $(this).children().val();
@@ -830,7 +823,6 @@
                     }
                 });
             });
-
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
@@ -1432,10 +1424,11 @@
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].max_role != 0) {
-                                newli += '<li class="mui-table-view-cell listli" data-team_id="' + data.data[i]
-                                    .team_id + '" data-max_role="' + data.data[i].max_role + '">'
-                                    + data.data[i].team.name
-                                    +'</li>'
+                                newli += '<li class="mui-table-view-cell listli" data-team_id="' + data.data[
+                                        i]
+                                    .team_id + '" data-max_role="' + data.data[i].max_role + '">' +
+                                    data.data[i].team.name +
+                                    '</li>'
                             }
                         }
                         $(".myTeamList").append(newli);

@@ -228,6 +228,12 @@ class MatchService {
         } else {
             $result['scorers_list'] = [];
         }
+
+        if ( !empty($result['workers']) && !is_null( json_decode( $result['workers'] ) ) ) {
+            $result['workers_list'] = json_decode($result['workers'], true);
+        } else {
+            $result['workers_list'] = [];
+        }
         return $result;
     }
 

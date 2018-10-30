@@ -319,47 +319,59 @@
                             裁判评价
                         </span>
                     </div>
-                    <!-- <a href="{:url('referee/refereeinfo',['referee_id'=>$matchRecordInfo.referee3_id])}" class="mui-navigate-right"> -->
+                    <!-- {:dump($refereeComment1)} -->
                     <ul class="mui-table-view mb refereeContent">
                         <li class="mui-table-view-cell listli">
-                            {if $matchRecordInfo.referee1_id ==''}
+                            {if $matchRecordInfo.referee1_id =='' || $allow_referee_comment == 0 }
                             <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
-                            <span>暂无</span>
+                            <span>{:empty($matchRecordInfo.referee1) ? "暂无" : $matchRecordInfo.referee1 }</span>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
-                                <div class="mui-col-xs-3 mui-text-center thisReferee">{$matchRecordInfo.referee1}</div>
-                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore">0</text>&nbsp;分</div>
-                                <div class="mui-col-xs-3 mui-text-right"><a href="#score"><button class="btn pjBtn"
-                                            data-num="1">去评价</button></a></div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee" data-referee="{$matchRecordInfo.referee1_id}">{$matchRecordInfo.referee1}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore refereeScore1">--</text>&nbsp;分</div>
+                                {if $allow_referee_comment==1}
+                                <div class="mui-col-xs-3 mui-text-right">
+                                    <a href="#score"><button class="btn pjBtn" data-num="1">{if
+                                            $refereeComment1==''}去评价{else/}已评价{/if}</button></a>
+                                </div>
+                                {/if}
                             </div>
                             {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
-                            {if $matchRecordInfo.referee2_id ==''}
+                            {if $matchRecordInfo.referee2_id =='' || $allow_referee_comment == 0}
                             <label><span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁判</label>
-                            <span>暂无</span>
+                            <span>{:empty($matchRecordInfo.referee2) ? "暂无" : $matchRecordInfo.referee2 }</span>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;副裁判</div>
-                                <div class="mui-col-xs-3 mui-text-center thisReferee">{$matchRecordInfo.referee2}</div>
-                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore">0</text>&nbsp;分</div>
-                                <div class="mui-col-xs-3 mui-text-right"><a href="#score"><button class="btn pjBtn"
-                                            data-num="2">去评价</button></a></div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee" data-referee="{$matchRecordInfo.referee2_id}">{$matchRecordInfo.referee2}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore refereeScore2">--</text>&nbsp;分</div>
+                                {if $allow_referee_comment==1}
+                                <div class="mui-col-xs-3 mui-text-right">
+                                    <a href="#score"><button class="btn pjBtn" data-num="2">{if
+                                            $refereeComment2==''}去评价{else/}已评价{/if}</button></a>
+                                </div>
+                                {/if}
                             </div>
                             {/if}
                         </li>
                         <li class="mui-table-view-cell listli">
-                            {if $matchRecordInfo.referee3_id ==''}
+                            {if $matchRecordInfo.referee3_id =='' || $allow_referee_comment == 0}
                             <label><span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁判</label>
-                            <span>暂无</span>
+                            <span>{:empty($matchRecordInfo.referee3) ? "暂无" : $matchRecordInfo.referee3 }</span>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;副裁判</div>
-                                <div class="mui-col-xs-3 mui-text-center thisReferee">{$matchRecordInfo.referee3}</div>
-                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore">0</text>&nbsp;分</div>
-                                <div class="mui-col-xs-3 mui-text-right"><a href="#score"><button class="btn pjBtn"
-                                            data-num="3">去评价</button></a></div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee" data-referee="{$matchRecordInfo.referee3_id}">{$matchRecordInfo.referee3}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore refereeScore3">--</text>&nbsp;分</div>
+                                {if $allow_referee_comment==1}
+                                <div class="mui-col-xs-3 mui-text-right">
+                                    <a href="#score"><button class="btn pjBtn" data-num="3">{if
+                                            $refereeComment3==''}去评价{else/}已评价{/if}</button></a>
+                                </div>
+                                {/if}
                             </div>
                             {/if}
                         </li>
@@ -523,7 +535,7 @@
     <div id="score" class="mui-popover mui-popover-action mui-popover-bottom actionsheet" style="height: 565px;">
         <div class="scoreCont whitebg">
 
-            <h5 class="mui-text-left border-b">评价裁判
+            <h5 class="mui-text-left border-b"><text class="htitle">评价裁判</text>
                 <a class="mui-icon mui-icon-closeempty" href="#score"></a>
             </h5>
             <div class="refereeInfo">
@@ -532,7 +544,7 @@
             </div>
             <button id="submit" style="display: none"></button>
             <div id='image-list' id="question" style="display:none"></div>
-            <div class="mui-row scoreStart">
+            <div class="mui-row scoreStart fairnessCont">
                 <div class="mui-col-xs-3 mui-col-sm-3">公平公正</div>
                 <div class="mui-col-xs-7 mui-col-sm-7">
                     <div class="mui-page-content">
@@ -546,11 +558,11 @@
                     </div>
                 </div>
                 <div class="mui-col-xs-2 mui-col-sm-2">
-                    <span class="domData score_item1" name="score_item1">0</span>分
+                    <span class="domData fairness" name="score_item1">0</span>分
                 </div>
             </div>
 
-            <div class="mui-row scoreStart">
+            <div class="mui-row scoreStart punctualityCont">
                 <div class="mui-col-xs-3 mui-col-sm-3">是否准时</div>
                 <div class="mui-col-xs-7 mui-col-sm-7">
                     <div class="mui-page-content">
@@ -564,11 +576,11 @@
                     </div>
                 </div>
                 <div class="mui-col-xs-2 mui-col-sm-2">
-                    <span class="domData score_item2" name="score_item2">0</span>分
+                    <span class="domData punctuality" name="score_item2">0</span>分
                 </div>
             </div>
 
-            <div class="mui-row scoreStart">
+            <div class="mui-row scoreStart professionCont">
                 <div class="mui-col-xs-3 mui-col-sm-3">专业程度</div>
                 <div class="mui-col-xs-7 mui-col-sm-7">
                     <div class="mui-page-content">
@@ -582,11 +594,11 @@
                     </div>
                 </div>
                 <div class="mui-col-xs-2 mui-col-sm-2">
-                    <span class="domData score_item3" name="score_item3">0</span>分
+                    <span class="domData profession" name="score_item3">0</span>分
                 </div>
             </div>
 
-            <div class="mui-row scoreStart">
+            <div class="mui-row scoreStart attitudeCont">
                 <div class="mui-col-xs-3 mui-col-sm-3">执裁态度</div>
                 <div class="mui-col-xs-7 mui-col-sm-7">
                     <div class="mui-page-content">
@@ -600,13 +612,14 @@
                     </div>
                 </div>
                 <div class="mui-col-xs-2 mui-col-sm-2">
-                    <span class="domData score_item4" name="score_item4">0</span>分
+                    <span class="domData attitude" name="score_item4">0</span>分
                 </div>
             </div>
 
             <div class="mui-row scoreStart" style="border-bottom: 0;">
-                <textarea rows="3" placeholder="感谢您的评价，顺便写点意见吧" name="comment" class="data f14" style="margin-bottom: 0"></textarea>
-                <p class="mui-checkbox mui-left anonymousCont">匿名评价<input type="checkbox" checked value=""></p>
+                <textarea rows="3" placeholder="感谢您的评价，顺便写点意见吧" class="data f14 refereeComment" style="margin-bottom: 0"></textarea>
+                <p class="mui-checkbox mui-left anonymousCont">匿名评价<input type="checkbox" name="anonymous" checked=true
+                        value="0"></p>
             </div>
 
 
@@ -622,6 +635,7 @@
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script src="/static/frontend/js/mui.zoom.js"></script>
     <script src="/static/frontend/js/mui.previewimage.js"></script>
+    <script src="/static/frontend/js/starshow.js"></script>
     <script>
         mui.previewImage();
         //初始化
@@ -645,7 +659,6 @@
             })
         })(mui);
 
-
         var match_record_id = "{$matchRecordInfo.id}";
         var match_id = "{$matchRecordInfo.match_id}";
         var home_team_id = "{$matchRecordInfo.home_team_id}";
@@ -655,41 +668,230 @@
         toAwayMembersList(); //客队有数据的球员列表
         toCommentList();
         // isthumbsup() //点赞状态
-        
+        var commentStatus = "";
+        var starAllShow = `<i data-index="1" class="mui-icon mui-icon-star"></i><i data-index="2" class="mui-icon mui-icon-star"></i><i data-index="3" class="mui-icon mui-icon-star"></i><i data-index="4" class="mui-icon mui-icon-star"></i><i data-index="5" class="mui-icon mui-icon-star"></i>`
         $(function () {
-
+          
             // 球队logo样式设置
             var imgWidth = $(".teamLogo").width();
             $(".teamLogo").css("height", imgWidth)
 
-            // 点击评价获取对应裁判信息
+            // 选择是否匿名
+            $("input[name=anonymous]").on("tap", function () {
+                var status = $("input[name=anonymous]").val();
+                if (status == 0) {
+                    $("input[name=anonymous]").val(1);
+                } else {
+                    $("input[name=anonymous]").val(0)
+                }
+            })
+            
+            $(".delete-btn").on("tap",function(){
+                console.log(123)
+                var thisLength = $('.table-div tr').find(".checkbox input[type=checkbox]").length;  //这个是列表选中的条数/长度
+                console.log(thisLength)
+                if (thisLength == 0){
+                    //如果没有选中就调用你写的模态框
+                    $('#delete-box').modal()  //这就是你写好的模态框 id="delete-box"
+                }else {
+                    //如果有选中
+                    alert("确认删除选中？") //给个提示
+                }
+            })
+            
+            var refereeComment1 = "{:empty($refereeComment1) == true ? 0 : 1}"
+            var refereeComment2 = "{:empty($refereeComment2) == true ? 0 : 1}"
+            var refereeComment3 = "{:empty($refereeComment3) == true ? 0 : 1}"
+            
+            // 进入页面直接赋值星级分数
+            {if condition="!empty($refereeComment1)"} 
+                if (refereeComment1 == 1) {
+                    var fairness1 = Number("{$refereeComment1.fairness}");
+                    var punctuality1 = Number("{$refereeComment1.punctuality}");
+                    var profession1 = Number("{$refereeComment1.profession}");
+                    var attitude1 = Number("{$refereeComment1.attitude}");
+                    var score_avg1 = (fairness1 + punctuality1 + profession1 + attitude1) / 4;
+                    $(".refereeScore1").text(score_avg1.toFixed(1));
+                }
+            {/if}
+
+            //进入页面直接赋值星级分数
+            {if condition="!empty($refereeComment2)"} 
+                if (refereeComment2 == 1) {
+                    var fairness2 = Number("{$refereeComment2.fairness}");
+                    var punctuality2 = Number("{$refereeComment2.punctuality}");
+                    var profession2 = Number("{$refereeComment2.profession}");
+                    var attitude2 = Number("{$refereeComment2.attitude}");
+                    var score_avg2 = (fairness2 + punctuality2 + profession2 + attitude2) / 4;
+                    $(".refereeScore2").text(score_avg2.toFixed(1));
+                }
+            {/if}
+
+            //进入页面直接赋值星级分数
+            {if condition="!empty($refereeComment3)"}
+                if (refereeComment3 == 1) {
+                    var fairness3 = Number("{$refereeComment3.fairness}");
+                    var punctuality3 = Number("{$refereeComment3.punctuality}");
+                    var profession3 = Number("{$refereeComment3.profession}");
+                    var attitude3 = Number("{$refereeComment3.attitude}");
+                    var score_avg3 = (fairness3 + punctuality3 + profession3 + attitude3) / 4;
+                    $(".refereeScore3").text(score_avg3.toFixed(1));
+                }
+            {/if}
+
+            // 点击评价按钮
             $(".pjBtn").on("tap", function () {
+                // 获取对应裁判信息
                 var thisReferee = $(this).parents(".mui-row").find(".thisReferee").text();
+                var thisRefereeId = $(this).parents(".mui-row").find(".thisReferee").attr("data-referee");
                 var dataNUm = $(this).attr("data-num");
+                var isdata = $(this).text();
                 $("#score").find(".refereeName").text(thisReferee);
                 $("#score").attr("data-number", dataNUm);
+                $("#score").find(".refereeName").attr("data-referee_id", thisRefereeId);
+                $("#score").attr("data-is_data", isdata)
+                commentStatus = $("#score").attr("data-is_data");
+                
+                var scoreNum = $("#score").attr("data-number");
+                
+                // 主裁判1
+                if(scoreNum==1){
+                    // 还原
+                    reduction();
+                    // 在裁判信息不为空的情况下执行
+                    {if condition="!empty($refereeComment1)"} 
+                        if (refereeComment1 == 1) {
+                            var fairness1 = Number("{$refereeComment1.fairness}");
+                            var punctuality1 = Number("{$refereeComment1.punctuality}");
+                            var profession1 = Number("{$refereeComment1.profession}");
+                            var attitude1 = Number("{$refereeComment1.attitude}");
+                            var score_avg1 = (fairness1 + punctuality1 + profession1 + attitude1) / 4;
+                            $(".refereeScore1").text(score_avg1.toFixed(1));
+                            if(commentStatus=="已评价"){
+                                $("#score").css("height","528px");
+                                $("#score .htitle").text("您已评价，感谢您的评价");
+                                $("#score .operation").hide();
+                                $(".fairnessCont .fairness").text(fairness1);
+                                $(".punctualityCont .punctuality").text(punctuality1);
+                                $(".professionCont .profession").text(profession1);
+                                $(".attitudeCont .attitude").text(attitude1);
+                                $(".refereeComment").val("{$refereeComment1.comment}");
+                                $(".refereeComment").attr("disabled",true);
+                                $("input[name=anonymous]").attr("disabled",true);
+                                fairnessStar(fairness1)
+                                punctualityStar(punctuality1)
+                                professionStar(profession1)
+                                attitudeStar(attitude1)
+                            }
+                        }
+                    {/if}
+                }
+
+                if(scoreNum == 2){
+                    // 还原
+                    reduction();
+                    // 在裁判信息不为空的情况下执行
+                    {if condition="!empty($refereeComment2)"} 
+                        if (refereeComment2 == 1) {
+                            var fairness2 = Number("{$refereeComment2.fairness}");
+                            var punctuality2 = Number("{$refereeComment2.punctuality}");
+                            var profession2 = Number("{$refereeComment2.profession}");
+                            var attitude2 = Number("{$refereeComment2.attitude}");
+                            var score_avg2 = (fairness2 + punctuality2 + profession2 + attitude2) / 4;
+                            $(".refereeScore2").text(score_avg2.toFixed(1));
+                            if(commentStatus=="已评价"){
+                                $("#score").css("height","528px");
+                                $("#score .htitle").text("您已评价，感谢您的评价");
+                                $("#score .operation").hide();
+                                $(".fairnessCont .fairness").text(fairness2);
+                                $(".punctualityCont .punctuality").text(punctuality2);
+                                $(".professionCont .profession").text(profession2);
+                                $(".attitudeCont .attitude").text(attitude2);
+                                $(".refereeComment").val("{$refereeComment2.comment}");
+                                $(".refereeComment").attr("disabled",true);
+                                $("input[name=anonymous]").attr("disabled",true);
+                                fairnessStar(fairness2)
+                                punctualityStar(punctuality2)
+                                professionStar(profession2)
+                                attitudeStar(attitude2)
+                            }
+                        }
+                    {/if}
+                }
+
+                if(scoreNum == 3){
+                    // 还原
+                    reduction();
+                    // 在裁判信息不为空的情况下执行
+                    {if condition="!empty($refereeComment3)"} 
+                        if (refereeComment3 == 1) {
+                            var fairness3 = Number("{$refereeComment3.fairness}");
+                            var punctuality3 = Number("{$refereeComment3.punctuality}");
+                            var profession3 = Number("{$refereeComment3.profession}");
+                            var attitude3 = Number("{$refereeComment3.attitude}");
+                            var score_avg3 = (fairness3 + punctuality3 + profession3 + attitude3) / 4;
+                            $(".refereeScore3").text(score_avg3.toFixed(1));
+                            if(commentStatus=="已评价"){
+                                $("#score").css("height","528px");
+                                $("#score .htitle").text("您已评价，感谢您的评价");
+                                $("#score .operation").hide();
+                                $(".fairnessCont .fairness").text(fairness3);
+                                $(".punctualityCont .punctuality").text(punctuality3);
+                                $(".professionCont .profession").text(profession3);
+                                $(".attitudeCont .attitude").text(attitude3);
+                                $(".refereeComment").val("{$refereeComment3.comment}");
+                                $(".refereeComment").attr("disabled",true);
+                                $("input[name=anonymous]").attr("disabled",true);
+                                fairnessStar(fairness3)
+                                punctualityStar(punctuality3)
+                                professionStar(profession3)
+                                attitudeStar(attitude3)
+                            }
+                        }
+                    {/if}
+                }
             });
+    
 
             // 赋值评价星级分数
-            mui('.icons').on('tap', 'i', function () {
+            $(document).on("tap",".icons i",function(){
                 var index = parseInt(this.getAttribute("data-index")); //获取当前元素的索引值
                 $(this).parent().parent().parent().siblings().children().text(index);
-            });
+            })
 
             // 提交裁判星级评分和评价
             $(".confirmReferee").on("tap", function () {
+                var league_id = "{$league_id}";
+                var match_record_id = "{$matchRecordInfo.id}";
+                var referee_id = $(".refereeName").attr("data-referee_id");
                 var confirmNum = $("#score").attr("data-number");
-                var score_item1 = Number($("#score .score_item1").text());
-                var score_item2 = Number($("#score .score_item2").text());
-                var score_item3 = Number($("#score .score_item3").text());
-                var score_item4 = Number($("#score .score_item4").text());
-                var score_avg = (score_item1 + score_item2 + score_item3 + score_item4) / 4
+                var fairness = Number($("#score .fairness").text());
+                var punctuality = Number($("#score .punctuality").text());
+                var profession = Number($("#score .profession").text());
+                var attitude = Number($("#score .attitude").text());
+                var score_avg = (fairness + punctuality + profession + attitude) / 4;
+                var anonymous = Number($("input[name=anonymous]").val());
+                var comment = $(".refereeComment").val();
+                if (score_avg == 0) {
+                    mui.toast("请先评价裁判");
+                    return false;
+                }
+                console.log(referee_id)
                 $(".pjBtn").each(function () {
                     var thisDataNum = $(this).attr("data-num");
+                    var $this = $(this).parents(".mui-row").find(".refereeScore")
                     if (thisDataNum == confirmNum) {
-                        mui.ajax("{:url('api/league/')}", {
+                        mui.ajax("{:url('api/league/addRefereeComment')}", {
                             data: {
-                                match_id: match_id,
+                                league_id: league_id,
+                                match_record_id: match_record_id,
+                                referee_id: referee_id,
+                                fairness: fairness,
+                                punctuality: punctuality,
+                                profession: profession,
+                                attitude: attitude,
+                                anonymous: anonymous,
+                                comment: comment
                             },
                             dataType: 'json', //服务器返回json格式数据
                             type: 'post', //HTTP请求类型
@@ -700,8 +902,9 @@
                             success: function (data) {
                                 console.log(data);
                                 if (data.code == 200) {
-                                    $(this).parents(".mui-row").find(
-                                        ".refereeScore").text(score_avg);
+                                    $this.text(score_avg)
+                                    mui.toast("评价裁判成功，感谢你的评价！");
+                                    window.location.reload();
                                     mui('#score').popover('toggle');
                                 } else {
                                     mui.toast(data.msg);
@@ -715,7 +918,8 @@
                         });
                     }
                 })
-            })
+            });
+
 
             //评论功能
             $(".commentBtn").on('tap', function () {
@@ -789,7 +993,20 @@
                 });
             });
         })
-
+        
+        
+        // 还原结构
+        function reduction(){
+            $("#score").css("height","565px");
+            $(".operation").show();
+            $(".scoreStart").find(".mui-icon").addClass("mui-icon-star").removeClass("mui-icon-star-filled");
+            $(".scoreStart .domData").text(0);
+            $(".refereeComment").val('');
+            $(".refereeComment").attr('disabled',false);
+            $("input[name=anonymous]").val(0);
+            $("input[name=anonymous]").attr('disabled',false);
+            $(".icons").empty().append(starAllShow)
+        }
 
         // 点赞状态
         function isthumbsup() {

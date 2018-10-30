@@ -522,10 +522,20 @@ class League extends Base
 
             // 获取参加联赛的球队列表
             $leagueS = new LeagueService();
+            $teamS = new TeamService();
             $result = $leagueS->getMatchTeamWithTeamPaginator($data);
             if (!$result) {
                 $response = ['code' => 100, 'msg' => __lang('MSG_000')];
             } else {
+                foreach ($result as $key => $value) {
+                    $teamMemberRole = $teamS->getTeamMemberRole(['team_id' => $value['team_id']]);
+                    $teamMember = $teamS->getTeamMember([
+                        'team_id' => $value['team_id'],
+                        'member_id' => $teamMemberRole['member_id'],
+                        'name' => $teamMemberRole['name']
+                    ]);
+                    $result[$key]['leader_info'] = $teamMember;
+                }
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             }
             return json($response);
@@ -894,6 +904,7 @@ class League extends Base
             }
             $leagueService = new LeagueService();
             $matchService = new MatchService();
+            $teamService = new TeamService();
             $result = $matchService->getMatchApplyWithTeamPaginator($data);
 
             // 返回结果
@@ -906,6 +917,14 @@ class League extends Base
                 // $matchTeamInfo = $leagueService->getMatchTeamInfoSimple(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
                 $matchTeamMembers = $leagueService->getMatchTeamMembers(['match_id' => $value['match_id'], 'team_id' => $value['team_id']]);
                 $result['data'][$key]['checkin_member_num'] = count($matchTeamMembers);
+
+                $teamMemberRole = $teamService->getTeamMemberRole(['team_id' => $value['team_id']]);
+                $teamMember = $teamService->getTeamMember([
+                    'team_id' => $value['team_id'], 
+                    'member_id' => $teamMemberRole['member_id'], 
+                    'name' => $teamMemberRole['name']
+                ]);
+                $result['data'][$key]['leader_info'] = $teamMember;
             }
             $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result];
             return json($response);
@@ -1173,6 +1192,7 @@ class League extends Base
             }
             // 获取数据
             $leagueService = new LeagueService();
+            $teamService = new TeamService();
             $result = $leagueService->getMatchGroupPaginator($data, 'name asc');
             if (!$result) {
                 return json(['code' => 100, 'msg' => __lang('MSG_000')]);
@@ -1184,6 +1204,23 @@ class League extends Base
                     foreach ($groupTeams as $k1 => $val1) {
                         $matchteam = $leagueService->getMatchTeamInfoSimple(['team_id' => $val1['team_id']]);
                         $groupTeams[$k1]['team'] = $matchteam;
+
+                        $teamMemberRole = $teamService->getTeamMemberRole(['team_id' => $val1['team_id']]);
+                        $teamMember = $teamService->getTeamMember([
+                            'team_id' => $val1['team_id'], 
+                            'member_id' => $teamMemberRole['member_id'], 
+                            'name' => $teamMemberRole['name']
+                        ]);
+                        $myTeamMember = null;
+                        if (!empty($this->memberInfo['telephone'])) {
+                            $myTeamMember = $teamService->getTeamMember([
+                                'team_id' => $val1['team_id'], 
+                                'member_id' => -1,
+                                'telephone' => $this->memberInfo['telephone']
+                            ]);
+                        }
+                        $groupTeams[$k1]['my_info'] = $myTeamMember;
+                        $groupTeams[$k1]['leader_info'] = $teamMember;
                     }
                 }
                 $result['data'][$k]['group_teams'] = $groupTeams;
@@ -4193,12 +4230,8 @@ class League extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 插入数据
-        try {
-            $result = $leagueS->saveMatchStage($data);
-        } catch (Exception $e) {
-            trace('error: ' . $e->getMessage(), 'error');
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
-        }
+        
+        $result = $leagueS->saveMatchStage($data);
         // 返回结果
         if (!$result) {
             return json(['code' => 100, 'msg' => __lang('MSG_400')]);
@@ -5058,6 +5091,7 @@ class League extends Base
                 ];
                 
                 db('match_referee')->where($mapDel)->delete();
+                db('referee_comment')->where($mapDel)->delete();
                 db('referee')->where('id', 'in', $delRefereeIds)->setDec('total_played', 1);
             }
 
@@ -5827,6 +5861,20 @@ class League extends Base
         $leagueS = new LeagueService();
 
         $result = $leagueS->getMatchHonorList($data, $page);
+        foreach ($result as $key => $row) {
+            $awardeeArray = [];
+            $list = $leagueS->getMatchHonorMemberList(['match_honor_id' => $row['id']]);
+            foreach ($list as $item) {
+                if ($row['type'] == 1) {
+                    array_push($awardeeArray, $item['name']);
+                } else if ($row['type'] == 2) {
+                    array_push($awardeeArray, $item['team']);
+                }
+            }
+            $awardeeArray = array_unique($awardeeArray);
+            $result[$key]['awardee_str'] = implode(', ', $awardeeArray);
+            
+        } 
         if ($result) {
             return json(['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $result]);
         } else {
@@ -6108,5 +6156,208 @@ class League extends Base
         }
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    }
+
+    public function addRefereeComment() {
+        $data = input('post.');
+
+        if ($this->memberInfo['id'] == 0) {
+            return json(['code' => 100, 'msg' => '请先登录或注册会员']);
+        }
+
+        if (empty($data["league_id"])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').' league_id']);
+        } else {
+            $data['match_id'] = $data["league_id"];
+            unset($data['league_id']);
+        }
+
+        if (empty($data['match_record_id'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').' match_record_id']);
+        } else if (empty($data['referee_id'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402').' referee_id']);
+        }
+
+        if (isset($data['fairness']) && isset($data['punctuality']) && isset($data['profession']) && isset($data['attitude'])) {
+            if ($data['fairness'] > 5 || $data['fairness'] < 0 ||
+                $data['punctuality'] > 5 || $data['punctuality'] < 0 ||
+                $data['profession'] > 5 || $data['profession'] < 0 ||
+                $data['attitude'] > 5 || $data['attitude'] < 0 ) {
+                return json(['code' => 100, 'msg' => '所评分数超出0-5的有效范围']);
+            }
+        } else {
+            return json(['code' => 100, 'msg' => '裁判员也非常辛苦，帮他们打个分吧']);
+        }
+
+        $matchS = new MatchService();
+        $matchRecordInfo = $matchS->getMatchRecord([
+            'id' => $data['match_record_id'],
+            'match_id' => $data['match_id']
+        ]);
+        if (empty($matchRecordInfo)) {
+            return json(['code' => 100, 'msg' => __lang('MSG_404'). '比赛记录']);
+        }
+
+        if ($data['referee_id'] == $matchRecordInfo['referee1_id']) {
+            $data['referee'] = $matchRecordInfo['referee1'];
+        } else if ($data['referee_id'] == $matchRecordInfo['referee2_id']) {
+            $data['referee'] = $matchRecordInfo['referee2'];
+        } else if ($data['referee_id'] == $matchRecordInfo['referee3_id']) {
+            $data['referee'] = $matchRecordInfo['referee3'];
+        } else {
+            return json(['code' => 100, 'msg' => '该裁判未参加该场比赛，无法为该裁判评分']);
+        }
+
+        $leagueS = new LeagueService();
+        $matchTeamMember = $leagueS->getMatchTeamMember([
+            'match_id' => $data['match_id'], 
+            'team_id' => ['in', [$matchRecordInfo['home_team_id'], $matchRecordInfo['away_team_id']]],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (empty($matchTeamMember)) {
+            return json(['code' => 100, 'msg' => '您未参加该场比赛，无法为该裁判评分']);
+        }
+
+        $refereeS = new RefereeService();
+        $refereeComment = $refereeS->getRefereeComment([
+            'match_id' => $data['match_id'],
+            'match_record_id' => $data['match_record_id'],
+            'referee_id' => $data['referee_id'],
+            'member_id' => $this->memberInfo['id']
+        ]);
+        if (!empty($refereeComment)) {
+            return json(['code' => 100, 'msg' => '你已为该场的裁判评分，暂时无法修改评分']);
+        }
+        $data['team_id'] = $matchTeamMember['team_id'];
+        $data['team_member_id'] = $matchTeamMember['team_member_id'];
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['avatar'] = $this->memberInfo['avatar'];
+        $data['anonymous'] = isset($data['anonymous']) && $data['anonymous'] === 0 ? 0 : 1;
+
+        $res = $refereeS->saveRefereeComment($data);
+        if ($res) {
+            return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+        }
+
+    }
+
+    public function saveWorkerFeeDetails() {
+
+        $data = input('post.');
+        if (!empty($data['league_id'])) {
+            $data['match_id'] = $data['league_id'];
+            unset($data['league_id']);
+        }
+
+        if (empty($data['match_id']) || empty($data['member_id']) || empty($data['match_member_id']) || 
+            empty($data['realname']) || !isset($data['type']) || !isset($data['fee_list'])) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        $leagueS = new LeagueService();
+        $matchS = new MatchService();
+        $refereeS = new RefereeService();
+        // 检查请求者身份
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $data['match_id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($power < 9) {
+            return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+        }
+
+        // 参数验证
+        $matchMember = $leagueS->getMatchMember([
+            'id' => $data['match_member_id'], 
+            'match_id' => $data['match_id'], 
+            'member_id' => $data['member_id'],
+            'type' => $data['type']
+        ]);
+        if (!$matchMember) {
+            return json(['code' => 100, 'msg' => '未找到该联赛工作人员']);
+        }
+        $matchMember['referee'] = [];
+        if ($matchMember['type'] == 7) {
+            $referee = $refereeS->getReferee(['member_id' => $data['member_id']]);
+            if ($referee) {
+                $matchMember['referee'] = $referee;
+            } else {
+                return json(['code' => 100, 'msg' => '未确认该工作人员的裁判身份']);
+            }
+        }
+
+        $finalData = []; 
+        $fee_list = $data['fee_list'];
+        if ($fee_list) {
+            foreach ($fee_list as $row) {
+
+                $matchRecord = $matchS->getMatchRecord(['id' => $row['match_record_id']]);
+                if (!$matchRecord) {
+                    return json(['code' => 100, 'msg' => '找不到比赛记录'. $row['match_record_id']]);
+                }
+
+                switch ($matchMember['type']) {
+                    case '8':
+                        // 记分员
+                        $scorerArray = json_decode($matchRecord['scorers'], true);
+                        $scorerIdArray = [];
+                        foreach ($scorerArray as $scorer) {
+                            array_push($scorerIdArray, $scorer['member_id']);
+                        }
+                        if (!in_array($matchMember['member_id'], $scorerIdArray)) {
+                            return json(['code' => 100, 'msg' => '该记录员未参与记录该场比赛'. $row['match_record_id']]);
+                        }
+                        break;
+                    case '7':
+                        // 裁判员
+                        if ($matchRecord['referee1_id'] != $matchMember['referee']['id'] &&
+                            $matchRecord['referee2_id'] != $matchMember['referee']['id'] &&
+                            $matchRecord['referee3_id'] != $matchMember['referee']['id'] ) {
+                            return json(['code' => 100, 'msg' => '该裁判未执裁该场比赛'. $row['match_record_id']]);
+                        }
+                        break;
+                }
+
+                $tempData = [
+                    'match_id' => $data['match_id'],
+                    'match_record_id' => $row['match_record_id'],
+                    'member_id' => $data['member_id'],
+                    'match_member_id' => $data['match_member_id'],
+                    'type' => $data['type']
+                ];
+                // $matchMemberFee = $leagueS->getMatchMemberFee($tempData);
+                // if (!empty($matchMemberFee)) {
+                //     $tempData['id'] = $matchMemberFee['id'];
+                // }
+                $tempData['realname'] = $data['realname'];
+                $tempData['fee'] = $row['fee'];
+                $tempData['status'] = 0;
+                array_push($finalData, $tempData);
+            }
+
+            Db::startTrans();
+            try {
+                $leagueS->delMatchMemberFee([
+                    'match_id' => $data['match_id'],
+                    'member_id' => $data['member_id'],
+                    'match_member_id' => $data['match_member_id'],
+                    'type' => $data['type']
+                ]);
+                foreach($finalData as $item) {
+                    $leagueS->saveMatchMemberFee($item);
+                }
+                Db::commit();
+                return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+            } catch (\Exception $e) {
+                Db::rollback();
+                trace('error:' . $e->getMessage(), 'error');
+                return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+            }
+
+
+        }
+        return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+
     }
 }

@@ -919,7 +919,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $studentInfo['yearsexp'],
                     'birthday' => $studentInfo['student_birthday'],
-                    'age' => $studentInfo['age'],
+                    'age' => getAgeByBirthday($studentInfo['student_birthday']),
                     'height' => $studentInfo['student_height'],
                     'weight' => $studentInfo['student_weight'],
                     'shoe_size' => $studentInfo['student_shoe_code'],
@@ -968,7 +968,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $memberInfo['yearsexp'],
                     'birthday' => $memberInfo['birthday'],
-                    'age' => $memberInfo['age'],
+                    'age' => getAgeByBirthday($memberInfo['birthday']),
                     'height' => $memberInfo['height'],
                     'weight' => $memberInfo['weight'],
                     'shoe_size' => $memberInfo['shoe_code'],
@@ -1322,6 +1322,7 @@ class Team extends Base
             if (!$teamInfo) {
                 return json(['code' => 100, 'msg' => __lang('MSG_404') . '，请选择其他球队']);
             }
+            
             // 区分平台会员/非平台会员业务
             if ($teamMemberInfo['member_id'] > 0 ) {
                 // 平台会员： 发送球队邀请
@@ -1344,7 +1345,7 @@ class Team extends Base
                     'avatar' => $memberInfo['avatar'],
                     'yearsexp' => $memberInfo['yearsexp'],
                     'birthday' => $memberInfo['birthday'],
-                    'age' => $memberInfo['age'],
+                    'age' => getAgeByBirthday($memberInfo['birthday']),
                     'height' => $memberInfo['height'],
                     'weight' => $memberInfo['weight'],
                     'shoe_size' => $memberInfo['shoe_code'],

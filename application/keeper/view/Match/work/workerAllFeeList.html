@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>统计报表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
+    <!--自定义style.css-->
+    <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+</head>
+
+<body>
+
+    <header class="mui-bar mui-bar-nav subheader">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left arrow" href=""></a>
+        <h1 class="mui-title">{$leagueInfo.name}工作人员出场统计</h1>
+    </header>
+    <div class="mui-content mt55">
+
+        <div class="list">
+
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell">
+                    <div class="mui-row mui-text-center f14">
+                        <div class="mui-col-xs-4 mui-text-left">姓名</div>
+                        <div class="mui-col-xs-4">出场数</div>
+                        <div class="mui-col-xs-4">总费用</div>
+                    </div>
+                </li>
+            </ul>
+
+            <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 88px">
+                <div class="mui-scroll">
+
+                    <div class="page-header">
+                        <span class="course">裁判员</span>
+                    </div>
+                    {if condition="!empty($refereeList)"}
+                    <ul class="mui-table-view workContList">
+                        {volist name="refereeList" id="vo1"}
+                        <li class="mui-table-view-cell">
+                            <div class="mui-row  mui-text-center f14">
+                                <div class="mui-col-xs-4 mui-text-left">{$vo1.realname}</div>
+                                <div class="mui-col-xs-4">{$vo1.count}场</div>
+                                <div class="mui-col-xs-4"><span class="colororange">{$vo1.total}</span>元</div>
+                            </div>
+                        </li>
+                        {/volist}
+                    </ul>
+                    {else/}
+                    <p class="nohave whitebg">暂无裁判员数据</p>
+                    {/if}
+
+                    <div class="page-header">
+                        <span class="course">记录员</span>
+                    </div>
+                    {if condition="!empty($scorerList)"}
+                    <ul class="mui-table-view workContList">
+                        {volist name="scorerList" id="vo2"}
+                        <li class="mui-table-view-cell">
+                            <div class="mui-row  mui-text-center f14">
+                                <div class="mui-col-xs-4 mui-text-left">{$vo2.realname}</div>
+                                <div class="mui-col-xs-4">{$vo2.count}场</div>
+                                <div class="mui-col-xs-4"><span class="colororange">{$vo2.total}</span>元</div>
+                            </div>
+                        </li>
+                        {/volist}
+                    </ul>
+                    {else/}
+                    <p class="nohave whitebg">暂无记录员数据</p>
+                    {/if}
+
+                    <div class="page-header">
+                        <span class="course">工作人员</span>
+                    </div>
+                    {if condition="!empty($workerList)"}
+                    <ul class="mui-table-view workContList">
+                        {volist name="workerList" id="vo3"}
+                        <li class="mui-table-view-cell">
+                            <div class="mui-row  mui-text-center f14">
+                                <div class="mui-col-xs-4 mui-text-left">{$vo3.realname}</div>
+                                <div class="mui-col-xs-4">{$vo3.count}场</div>
+                                <div class="mui-col-xs-4"><span class="colororange">{$vo3.total}</span>元</div>
+                            </div>
+                        </li>
+                        {/volist}
+                    </ul>
+                    {else/}
+                    <p class="nohave whitebg">暂无工作人员数据</p>
+                    {/if}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="/static/frontend/js/mui.min.js"></script>
+    <script src='/static/frontend/js/jquery-3.2.1.min.js'></script>
+    <script>
+        //初始化
+        mui.init({
+            swipeBack: true //启用右滑关闭功能
+        });
+    </script>
+</body>
+
+</html>
