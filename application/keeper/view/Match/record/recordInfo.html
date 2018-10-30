@@ -659,7 +659,6 @@
             })
         })(mui);
 
-
         var match_record_id = "{$matchRecordInfo.id}";
         var match_id = "{$matchRecordInfo.match_id}";
         var home_team_id = "{$matchRecordInfo.home_team_id}";
@@ -670,13 +669,9 @@
         toCommentList();
         // isthumbsup() //点赞状态
         var commentStatus = "";
+        var starAllShow = `<i data-index="1" class="mui-icon mui-icon-star"></i><i data-index="2" class="mui-icon mui-icon-star"></i><i data-index="3" class="mui-icon mui-icon-star"></i><i data-index="4" class="mui-icon mui-icon-star"></i><i data-index="5" class="mui-icon mui-icon-star"></i>`
         $(function () {
-            var star1 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i>';
-            var star2 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i>';
-            var star3 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i>';
-            var star4 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i>';
-            var star5 = '<i data-index="1" class="mui-icon mui-icon-star-filled"></i><i data-index="2" class="mui-icon mui-icon-star-filled"></i><i data-index="3" class="mui-icon mui-icon-star-filled"></i><i data-index="4" class="mui-icon mui-icon-star-filled"></i><i data-index="5" class="mui-icon mui-icon-star-filled"></i>';
-
+          
             // 球队logo样式设置
             var imgWidth = $(".teamLogo").width();
             $(".teamLogo").css("height", imgWidth)
@@ -690,17 +685,65 @@
                     $("input[name=anonymous]").val(0)
                 }
             })
-
-
+            
+            $(".delete-btn").on("tap",function(){
+                console.log(123)
+                var thisLength = $('.table-div tr').find(".checkbox input[type=checkbox]").length;  //这个是列表选中的条数/长度
+                console.log(thisLength)
+                if (thisLength == 0){
+                    //如果没有选中就调用你写的模态框
+                    $('#delete-box').modal()  //这就是你写好的模态框 id="delete-box"
+                }else {
+                    //如果有选中
+                    alert("确认删除选中？") //给个提示
+                }
+            })
+            
             var refereeComment1 = "{:empty($refereeComment1) == true ? 0 : 1}"
             var refereeComment2 = "{:empty($refereeComment2) == true ? 0 : 1}"
             var refereeComment3 = "{:empty($refereeComment3) == true ? 0 : 1}"
-           
-            // 点击评价获取对应裁判信息
+            
+            // 进入页面直接赋值星级分数
+            {if condition="!empty($refereeComment1)"} 
+                if (refereeComment1 == 1) {
+                    var fairness1 = Number("{$refereeComment1.fairness}");
+                    var punctuality1 = Number("{$refereeComment1.punctuality}");
+                    var profession1 = Number("{$refereeComment1.profession}");
+                    var attitude1 = Number("{$refereeComment1.attitude}");
+                    var score_avg1 = (fairness1 + punctuality1 + profession1 + attitude1) / 4;
+                    $(".refereeScore1").text(score_avg1);
+                }
+            {/if}
+
+            //进入页面直接赋值星级分数
+            {if condition="!empty($refereeComment2)"} 
+                if (refereeComment2 == 1) {
+                    var fairness2 = Number("{$refereeComment2.fairness}");
+                    var punctuality2 = Number("{$refereeComment2.punctuality}");
+                    var profession2 = Number("{$refereeComment2.profession}");
+                    var attitude2 = Number("{$refereeComment2.attitude}");
+                    var score_avg2 = (fairness2 + punctuality2 + profession2 + attitude2) / 4;
+                    $(".refereeScore2").text(score_avg2);
+                }
+            {/if}
+
+            //进入页面直接赋值星级分数
+            {if condition="!empty($refereeComment3)"}
+                if (refereeComment3 == 1) {
+                    var fairness3 = Number("{$refereeComment3.fairness}");
+                    var punctuality3 = Number("{$refereeComment3.punctuality}");
+                    var profession3 = Number("{$refereeComment3.profession}");
+                    var attitude3 = Number("{$refereeComment3.attitude}");
+                    var score_avg3 = (fairness3 + punctuality3 + profession3 + attitude3) / 4;
+                    $(".refereeScore3").text(score_avg3);
+                }
+            {/if}
+
+            // 点击评价按钮
             $(".pjBtn").on("tap", function () {
+                // 获取对应裁判信息
                 var thisReferee = $(this).parents(".mui-row").find(".thisReferee").text();
-                var thisRefereeId = $(this).parents(".mui-row").find(".thisReferee").attr(
-                    "data-referee");
+                var thisRefereeId = $(this).parents(".mui-row").find(".thisReferee").attr("data-referee");
                 var dataNUm = $(this).attr("data-num");
                 var isdata = $(this).text();
                 $("#score").find(".refereeName").text(thisReferee);
@@ -710,36 +753,43 @@
                 commentStatus = $("#score").attr("data-is_data");
                 
                 var scoreNum = $("#score").attr("data-number");
-                if(scoreNum==1){
-                    {if condition="!empty($refereeComment1)"} 
-                    if (refereeComment1 == 1) {
-                        console.log(123456498)
-                        var fairness1 = Number("{$refereeComment1.fairness}");
-                        var punctuality1 = Number("{$refereeComment1.punctuality}");
-                        var profession1 = Number("{$refereeComment1.profession}");
-                        var attitude1 = Number("{$refereeComment1.attitude}");
-                        var score_avg1 = (fairness1 + punctuality1 + profession1 + attitude1) / 4;
-                        $(".refereeScore1").text(score_avg1);
-                        if(commentStatus=="已评价"){
-                            $("#score").css("height","528px");
-                            $(".operation").hide();
-                            $(".fairnessCont .fairness").text(fairness1);
-                            $(".punctualityCont .punctuality").text(punctuality1);
-                            $(".professionCont .profession").text(profession1);
-                            $(".attitudeCont .attitude").text(attitude1);
-                            $(".refereeComment").val("{$refereeComment1.comment}");
-                            $(".refereeComment").attr("disabled",true);
-                            $("input[name=anonymous]").attr("disabled",true);
-                            fairnessStar(fairness1)
-                            punctualityStar(punctuality1)
-                            professionStar(profession1)
-                            attitudeStar(attitude1)
-                        }
-                    }
-                {/if}
-                }
                 
+                // 主裁判1
+                if(scoreNum==1){
+                    // 还原
+                    reduction();
+                    // 在裁判信息不为空的情况下执行
+                    {if condition="!empty($refereeComment1)"} 
+                        if (refereeComment1 == 1) {
+                            var fairness1 = Number("{$refereeComment1.fairness}");
+                            var punctuality1 = Number("{$refereeComment1.punctuality}");
+                            var profession1 = Number("{$refereeComment1.profession}");
+                            var attitude1 = Number("{$refereeComment1.attitude}");
+                            var score_avg1 = (fairness1 + punctuality1 + profession1 + attitude1) / 4;
+                            $(".refereeScore1").text(score_avg1);
+                            if(commentStatus=="已评价"){
+                                $("#score").css("height","528px");
+                                $(".operation").hide();
+                                $(".fairnessCont .fairness").text(fairness1);
+                                $(".punctualityCont .punctuality").text(punctuality1);
+                                $(".professionCont .profession").text(profession1);
+                                $(".attitudeCont .attitude").text(attitude1);
+                                $(".refereeComment").val("{$refereeComment1.comment}");
+                                $(".refereeComment").attr("disabled",true);
+                                $("input[name=anonymous]").attr("disabled",true);
+                                fairnessStar(fairness1)
+                                punctualityStar(punctuality1)
+                                professionStar(profession1)
+                                attitudeStar(attitude1)
+                            }
+                        }
+                    {/if}
+                }
+
                 if(scoreNum == 2){
+                    // 还原
+                    reduction();
+                    // 在裁判信息不为空的情况下执行
                     {if condition="!empty($refereeComment2)"} 
                         if (refereeComment2 == 1) {
                             var fairness2 = Number("{$refereeComment2.fairness}");
@@ -768,6 +818,9 @@
                 }
 
                 if(scoreNum == 3){
+                    // 还原
+                    reduction();
+                    // 在裁判信息不为空的情况下执行
                     {if condition="!empty($refereeComment3)"} 
                         if (refereeComment3 == 1) {
                             var fairness3 = Number("{$refereeComment3.fairness}");
@@ -794,54 +847,14 @@
                         }
                     {/if}
                 }
-               
             });
-            
-
-            // 
-         
-            {if condition="!empty($refereeComment1)"} 
-            if (refereeComment1 == 1) {
-                var fairness1 = Number("{$refereeComment1.fairness}");
-                var punctuality1 = Number("{$refereeComment1.punctuality}");
-                var profession1 = Number("{$refereeComment1.profession}");
-                var attitude1 = Number("{$refereeComment1.attitude}");
-                var score_avg1 = (fairness1 + punctuality1 + profession1 + attitude1) / 4;
-                $(".refereeScore1").text(score_avg1);
     
-            }
-            {/if}
-
-            //
-            {if condition="!empty($refereeComment2)"} 
-            if (refereeComment2 == 1) {
-                var fairness2 = Number("{$refereeComment2.fairness}");
-                var punctuality2 = Number("{$refereeComment2.punctuality}");
-                var profession2 = Number("{$refereeComment2.profession}");
-                var attitude2 = Number("{$refereeComment2.attitude}");
-                var score_avg2 = (fairness2 + punctuality2 + profession2 + attitude2) / 4;
-                $(".refereeScore2").text(score_avg2);
-            }
-            {/if}
-
-            // 
-            {if condition="!empty($refereeComment3)"}
-            if (refereeComment3 == 1) {
-                var fairness3 = Number("{$refereeComment3.fairness}");
-                var punctuality3 = Number("{$refereeComment3.punctuality}");
-                var profession3 = Number("{$refereeComment3.profession}");
-                var attitude3 = Number("{$refereeComment3.attitude}");
-                var score_avg3 = (fairness3 + punctuality3 + profession3 + attitude3) / 4;
-                $(".refereeScore3").text(score_avg3);
-            }
-            {/if}
 
             // 赋值评价星级分数
-            mui('.icons').on('tap', 'i', function () {
+            $(document).on("tap",".icons i",function(){
                 var index = parseInt(this.getAttribute("data-index")); //获取当前元素的索引值
                 $(this).parent().parent().parent().siblings().children().text(index);
-            });
-
+            })
 
             // 提交裁判星级评分和评价
             $(".confirmReferee").on("tap", function () {
@@ -977,7 +990,20 @@
                 });
             });
         })
-
+        
+        
+        // 还原结构
+        function reduction(){
+            $("#score").css("height","565px");
+            $(".operation").show();
+            $(".scoreStart").find(".mui-icon").addClass("mui-icon-star").removeClass("mui-icon-star-filled");
+            $(".scoreStart .domData").text(0);
+            $(".refereeComment").val('');
+            $(".refereeComment").attr('disabled',false);
+            $("input[name=anonymous]").val(0);
+            $("input[name=anonymous]").attr('disabled',false);
+            $(".icons").empty().append(starAllShow)
+        }
 
         // 点赞状态
         function isthumbsup() {

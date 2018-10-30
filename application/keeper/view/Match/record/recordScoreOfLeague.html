@@ -185,16 +185,7 @@
                 <div class="mui-input-row">
                     <label>工作人员</label>
                 </div>
-                <div class="box" id="inactiveWList">
-                    {volist name="matchScheduleInfo.scorers_list" id="vol"}
-                    <div class="mui-input-row mui-checkbox checkboxCont">
-                        <label style="width:20%;">{$vol.realname}</label>
-                        <font class="f14">{$vol.realname}</font>
-                        <input name="member" class="stdList" value="{$vol.member_id}" data-realname="{$vol.realname}"
-                            type="checkbox">
-                    </div>
-                    {/volist}
-                </div>
+                <div class="box" id="inactiveWList"></div>
 
                 <div class="operation-btn workerNum">
                     <span class="mui-badge">0</span>
@@ -389,7 +380,8 @@
             toRefereelist(); //裁判列表
             toScorelist(); //记录员列表
             toWorkerslist(); //工作人员列表
-            toScorersInital(); // 记录员赋值
+            changeIndexS(); // 记录员赋值
+            changeIndexW(); // 工作人员赋值
             // 常驻球场
             $(".courtList").on('tap', 'li', function () {
                 var court = $(this).find("font").text();
@@ -578,6 +570,7 @@
             //////////////////////////////////////////工作人员////////////////////////////////////////
             // 选择添加工作人员
             $("#workerConfirm").on('tap', function () {
+                $("#inactiveWList").empty();
                 $(".workersList input[type=checkbox]:checked").each(function () {
                     var str =
                         `<div class="mui-input-row mui-checkbox checkboxCont">
@@ -694,13 +687,6 @@
             $("#inactiveWList .checkboxCont").each(function () { //循环checkboxCont
                 $(this).find("label").text(i++); //更新序号
             });
-        }
-
-        // 工作人员赋值
-        function toScorersInital() {
-            totalNum = $("#inactiveList .checkboxCont").length;
-            $(".mui-badge").text(totalNum);
-            changeIndexS();
         }
 
         //场地列表接口获取数据并追加到页面 

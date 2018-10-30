@@ -26,11 +26,31 @@ function starShow(star) {
 }
 
 
-var star01 = '<i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star"></i><i class="mui-icon mui-icon-star"></i><i class="mui-icon mui-icon-star"></i><i class="mui-icon mui-icon-star"></i>';
-var star02 = '<i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star"></i><i class="mui-icon mui-icon-star"></i><i class="mui-icon mui-icon-star"></i>';
-var star03 = '<i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star"></i><i class="mui-icon mui-icon-star"></i>';
-var star04 = '<i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star"></i>';
-var star05 = '<i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i><i class="mui-icon mui-icon-star-filled"></i>';
+var star01 = `<span data-index="1" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="2" class="mui-icon mui-icon-star"></span>
+                <span data-index="3" class="mui-icon mui-icon-star"></span>
+                <span data-index="4" class="mui-icon mui-icon-star"></span>
+                <span data-index="5" class="mui-icon mui-icon-star"></span>`;
+var star02 = `<span data-index="1" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="2" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="3" class="mui-icon mui-icon-star"></span>
+                <span data-index="4" class="mui-icon mui-icon-star"></span>
+                <span data-index="5" class="mui-icon mui-icon-star"></span>`;
+var star03 = `<span data-index="1" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="2" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="3" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="4" class="mui-icon mui-icon-star"></span>
+                <span data-index="5" class="mui-icon mui-icon-star"></span>`;
+var star04 = `<span data-index="1" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="2" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="3" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="4"class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="5" class="mui-icon mui-icon-star"></span>`;
+var star05 = `<span data-index="1" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="2" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="3" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="4" class="mui-icon mui-icon-star-filled"></span>
+                <span data-index="5"class="mui-icon mui-icon-star-filled"></span>`;
 
 // 星级显示
 function fairnessStar(star) {
