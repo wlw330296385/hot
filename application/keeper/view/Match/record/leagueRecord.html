@@ -18,10 +18,6 @@
             width: 25%;
         }
 
-        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
-            font-size: 2.2em;
-        }
-
         .nav-list .nav-list-frame a {
             padding: 10px 0 !important;
         }
@@ -51,11 +47,11 @@
     <div class="mui-content">
         <div class="list mb44">
 
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <h4>{$leagueInfo.name}</h4>
-                    <div class="mui-media-body wd49" style="line-height:20px !important">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <img class="img60 mui-pull-left" src="{$leagueInfo.logo}" style="margin-top:5px">
+                    <h4 class="leagueName">{$leagueInfo.name}</h4>
+                    <div class="mui-media-body lineHeight20 wd49">
                         <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
                         <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p class="f12">
@@ -65,7 +61,7 @@
                         </p>
                     </div>
                     <div class="price-frame" style="padding:0">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                        <button type="button" class="mui-btn mui-btn-danger pd8x9 follow">关注</button>
                     </div>
                 </li>
             </ul>
@@ -156,12 +152,13 @@
                     <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-8 mui-col-xs-8 opli">
-                    <a href="">咨询</a>
+                    <a href="###">咨询</a>
                 </li>
             </ul>
 
         </div>
     </div>
+
     <!--分享-->
     <div id="shareGuide" class="mui-popover">
         <div class="shareGuideText">1、点击右上角的
@@ -170,6 +167,7 @@
         </div>
         <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
     </div>
+    
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -185,6 +183,10 @@
         followStatus(); //判断当前的关注状态
         rankList(); //淘汰赛列表
         groupList(); //小组循环赛列表
+
+        if ($(".leagueName").height() > 18) {
+            $(".leagueName").css("line-height", "24px")
+        }
 
         // 关注联赛
         $(".follow").on("tap", '', function () {
@@ -285,7 +287,7 @@
                                     newli +=
                                         `<li class="mui-table-view-cell">
                                             <ul class="mui-table-view mui-row">
-                                                <li class="mui-col-sm-1 mui-col-xs-1 lineHeight32 siteNum">${j + 1}</li>
+                                                <li class="mui-col-sm-1 mui-col-xs-1 lineHeight32">${j + 1}</li>
                                                 <li class="mui-col-sm-5 mui-col-xs-5 leagueGroup" style="width:59.666667%">
                                                     <img src="${data.data[i].teams[j].team_logo}" class="circleIcon" />
                                                     <span style="padding-top: 6px;">${data.data[i].teams[j].team}</span>
@@ -344,7 +346,7 @@
                                 for (var j = 0; j <= data.data[i].stage.records.length - 1; j++) {
                                     var recordsArr = data.data[i].stage.records[j]
                                     var urlRecord = "{:url('match/recordinfo')}" + '/league_id/' +
-                                    recordsArr.match_id + '/id/' + recordsArr.id;
+                                        recordsArr.match_id + '/id/' + recordsArr.id;
                                     newli +=
                                         ` <a href="${urlRecord}">
                                         <li class="mui-table-view-cell" style="padding: 0">
@@ -353,9 +355,9 @@
                                                     <div class="mui-col-sm-7 mui-col-xs-7 leagueColRecordLeft">
                                                         <p class="border-b pRecordContent">`;
                                     if (data.data[i].stage.records.length == 1) {
-                                        newli += `<span class="siteNum codeNum f16">T1</span>`;
+                                        newli += `<span class="codeNum ">T1</span>`;
                                     } else {
-                                        newli += `<span class="siteNum codeNum f16">T${j + 1}</span>`;
+                                        newli += `<span class="codeNum">T${j + 1}</span>`;
                                     }
                                     newli +=
                                         `<span>
@@ -365,10 +367,10 @@
                                             </p>
                                             <p class="pRecordContent">`;
                                     if (data.data[i].stage.records.length == 1) {
-                                        newli += `<span class="siteNum codeNum f16">T2</span>`;
+                                        newli += `<span class="codeNum">T2</span>`;
                                     } else {
                                         newli +=
-                                            `<span class="siteNum codeNum f16"">T${data.data[i].stage.records.length - j}</span>`
+                                            `<span class="codeNum"">T${data.data[i].stage.records.length - j}</span>`
                                     }
                                     newli +=
                                         `<span>
@@ -457,7 +459,6 @@
                 success: function () {},
                 cancel: function () {}
             });
-
         });
     </script>
 </body>

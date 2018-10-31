@@ -31,41 +31,6 @@
             padding: 10px 0 !important;
         }
 
-        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
-            font-size: 2.2em;
-        }
-
-        .coloricon {
-            width: 2.4em;
-            height: 2.4em;
-            vertical-align: -0.7em;
-            fill: currentColor;
-            overflow: hidden;
-        }
-
-        .leagueGroup {
-            vertical-align: middle;
-            display: inline-flex;
-        }
-
-        .leagueTypeSet {
-            color: #737373;
-            font-size: 14px;
-        }
-
-        .leagueTypeSet .circleIcon {
-            margin-right: 10px;
-            width: 32px !important;
-            height: 32px !important;
-            border-radius: 50%;
-        }
-
-        .leaguePadding {
-            padding: 11px 15px !important;
-            border-right: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-        }
-
         .colactive {
             color: #dd524d !important
         }
@@ -81,13 +46,13 @@
 
     <div class="mui-content">
 
-        <div class="list coach mt55 ">
+        <div class="list mt55 ">
 
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <h4>{$leagueInfo.name}</h4>
-                    <div class="mui-media-body wd49" style="line-height:20px !important">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <img class="img60 mui-pull-left" src="{$leagueInfo.logo}" style="margin-top:5px">
+                    <h4 class="leagueName">{$leagueInfo.name}</h4>
+                    <div class="mui-media-body lineHeight20 wd49">
                         <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
                         <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p class="f12">
@@ -97,7 +62,7 @@
                         </p>
                     </div>
                     <div class="price-frame" style="padding:0">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                        <button type="button" class="mui-btn mui-btn-danger pd8x9 follow">关注</button>
                     </div>
                 </li>
             </ul>
@@ -183,7 +148,7 @@
                     <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-8 mui-col-xs-8 opli">
-                    <a href="">咨询</a>
+                    <a href="###">咨询</a>
                 </li>
             </ul>
 
@@ -209,6 +174,10 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
+        if ($(".leagueName").height() > 18) {
+            $(".leagueName").css("line-height", "24px")
+        }
 
         followStatus(); //判断当前的关注状态
         getbattle(); //分组列表

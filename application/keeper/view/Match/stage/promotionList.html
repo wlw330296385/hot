@@ -17,6 +17,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <header class="mui-bar mui-bar-nav subheader">
@@ -33,10 +34,17 @@
             </li>
         </ul>
 
-        <ul class="mui-table-view list teamList"></ul>
+        <!-- 晋级列表 -->
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 90px">
+            <div class="mui-scroll">
+                <ul class="mui-table-view list teamList"></ul>
+            </div>
+        </div>
+
+        <!-- 底部按钮 -->
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{$homeurl}">
+                <a href="{:url('match/leagueManage',['league_id'=>$league_id])}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
@@ -64,33 +72,82 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        $(function () {
+        var onCount = 1;
+        var offCount = 1;
+        mui('#refreshContainer').pullRefresh({
+            down: {
+                //下拉刷新
+                height: 50, //可选.默认50.触发下拉刷新拖动距离
+                auto: true, //可选,默认false.自动下拉刷新一次
+                contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                callback: pulldownRefreshOn
+            },
+            up: {
+                //上拉加载
+                height: 150, //可选.默认50.触发上拉加载拖动距离
+                //auto:true,//可选,默认false.自动上拉加载一次
+                contentrefresh: '正在加载...',
+                contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+                callback: pullupRefreshOn
+            }
+        });
+
+        //下拉刷新具体业务实现
+        function pulldownRefreshOn() {
+            setTimeout(function () {
+                onCount = 1; //刷新并显示第一页
+                var page = onCount;
+                var gType = 1; //代表下拉刷新
+                toList(page, gType); //具体取数据的方法
+            }, 100);
+        }
+
+        //上拉加载具体业务实现
+        function pullupRefreshOn() {
+            setTimeout(function () {
+                onCount++; //翻下一页
+                var page = onCount;
+                var gType = 2; //代表上拉加载
+                toList(page, gType); //具体取数据的方法
+            }, 100);
+        }
+
+        //接口获取数据并追加到页面
+        var toList = function (page, gType) {
+            var url = "{:url('api/league/getmatchstageadvteams','','',true)}" + '/?page=' + 1;
             var match_stage = wooApi.GetQueryString('match_stage');
             $(".match_stage").text(match_stage)
-            let league_id = "{$league_id}"
-            mui.ajax("{:url('api/league/getmatchstageadvteams','','',true)}", {
+            var league_id = "{$league_id}"
+            mui.ajax({
+                url: url,
                 data: {
                     match_id: league_id,
                     match_stage: match_stage
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data);
                     var newli = '';
                     if (data.code == 200) {
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].match_group == '') {
-                                newli += `<li class="mui-table-view-cell listli ">
+                                newli +=
+                                    `<li class="mui-table-view-cell listli ">
                                             <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
                                                 <p class="f14" style="font-weight:bold;line-height:40px;">${data.data[i].team}</p>
                                             </div>
                                         </li>`;
                             } else {
-                                newli += `<li class="mui-table-view-cell listli ">
+                                newli +=
+                                    `<li class="mui-table-view-cell listli ">
                                             <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
                                                 <p class="f14" style="font-weight:bold">${data.data[i].team}</p>
@@ -99,17 +156,30 @@
                                         </li>`;
                             }
                         }
-                        $(".teamList").empty().append(newli)
-                    } else {
-                        $(".teamList").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+
+                        if (gType == 1) {
+                            //下拉刷新
+                            $("ul.teamList").empty().append(newli);
+                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                            mui('#refreshContainer').pullRefresh().refresh(true);
+                            if (newli == '') {
+                                $("ul.teamList").html(
+                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                                );
+                            }
+                        }
+                        if (newli != '') {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+                        } else {
+                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+                        }
                     }
                 },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
                 }
             });
-        })
+        };
     </script>
     <script>
         wx.config({
@@ -132,8 +202,8 @@
                 title: "{$leagueInfo.name}$('.match_stage').text()晋级球队",
                 link: "{$shareurl}/pid/{$mid}",
                 imgUrl: "{:request()->root(true)}{s}",
-                success: function () { },
-                cancel: function () { }
+                success: function () {},
+                cancel: function () {}
             });
             // 分享给朋友
             wx.onMenuShareAppMessage({
@@ -143,8 +213,8 @@
                 imgUrl: "{:request()->root(true)}{$leagueInfo.cover}",
                 type: "",
                 dataUrl: '',
-                success: function () { },
-                cancel: function () { }
+                success: function () {},
+                cancel: function () {}
             });
 
         });

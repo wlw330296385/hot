@@ -500,8 +500,8 @@
 
         <!-- 底部操作 -->
         <ul class="mui-table-view operation mt">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('match/leagueInfo', ['league_id' => $leagueInfo.id])}">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli goBack">
+                <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
@@ -644,7 +644,7 @@
         });
 
         // a标签跳转
-        mui(".refereeContent").on("tap", "a", function () {
+        mui(".goBack").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
@@ -1086,20 +1086,18 @@
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli +
-                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' +
                                 data.data[i].create_time +
-                                '</div><img class="mui-pull-left img32" src="' + data.data[i].member_avatar +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
                                 '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
+                    }else{
+                        $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
                     }
+
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
-                        if (newli == '') {
-                            $("ul.comment-list").html(
-                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
-                            );
-                        }
                     } else {
                         //下拉加载 gType==2
                         $("ul.comment-list").append(newli);

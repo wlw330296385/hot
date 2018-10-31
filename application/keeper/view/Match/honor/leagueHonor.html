@@ -30,45 +30,11 @@
             padding: 10px 0 !important;
         }
 
-        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
-            font-size: 2.2em;
-        }
-
-        .coloricon {
-            width: 2.4em;
-            height: 2.4em;
-            vertical-align: -0.7em;
-            fill: currentColor;
-            overflow: hidden;
-        }
-
-        .leagueGroup {
-            vertical-align: middle;
-            display: inline-flex;
-        }
-
-        .leagueTypeSet {
-            color: #737373;
-            font-size: 14px;
-        }
-
-        .leagueTypeSet .circleIcon {
-            margin-right: 10px;
-            width: 32px !important;
-            height: 32px !important;
-            border-radius: 50%;
-        }
-
-        .leaguePadding {
-            padding: 11px 15px !important;
-            border-right: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-        }
-
         .colactive {
             color: #dd524d !important
         }
-          .orderNum {
+
+        .orderNum {
             width: 7%;
             font-size: 20px;
             line-height: 55px;
@@ -90,11 +56,11 @@
 
         <div class="list coach mt55 ">
 
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <h4>{$leagueInfo.name}</h4>
-                    <div class="mui-media-body wd49" style="line-height:20px !important">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <img class="img60 mui-pull-left" src="{$leagueInfo.logo}" style="margin-top:5px">
+                    <h4 class="leagueName">{$leagueInfo.name}</h4>
+                    <div class="mui-media-body lineHeight20 wd49">
                         <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
                         <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p class="f12">
@@ -104,7 +70,7 @@
                         </p>
                     </div>
                     <div class="price-frame" style="padding:0">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                        <button type="button" class="mui-btn mui-btn-danger pd8x9 follow">关注</button>
                     </div>
                 </li>
             </ul>
@@ -221,8 +187,11 @@
             window.top.location.href = this.href;
         });
 
+        if ($(".leagueName").height() > 18) {
+            $(".leagueName").css("line-height", "24px")
+        }
+
         followStatus(); //判断当前的关注状态
-        // getbattle(); //分组列表
         toHonorList()
 
         // 关注联赛
@@ -363,62 +332,6 @@
                 }
             });
         };
-
-        // 小组列表
-        function getbattle() {
-            var url = "{:url('api/league/leaguegroupwithteamspage','','',true)}";
-            let league_id = "{$league_id}";
-            mui.ajax({
-                url: url,
-                data: {
-                    league_id: league_id
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    console.log(data);
-                    var newli = '';
-                    if (data.code == 200) {
-                        for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli +=
-                                `
-                                    <div class="page-header border-b">
-                                        <span class="course">参赛队分组表</span>
-                                        <span class="more">${data.data.data[i].name}</span>
-                                    </div>
-                                    <ul class="mui-table-view mui-text-center leagueTypeSet">`
-                            for (var j = 0; j <= data.data.data[i].group_teams.length - 1; j++) {
-                                newli +=
-                                    `<li class="mui-table-view-cell lineHeight32">
-                                            <ul class="mui-table-view mui-row">
-                                                <li class="mui-col-sm-2 mui-col-xs-2">
-                                                    <strong class="f18">${j + 1}</strong>
-                                                </li>
-                                                <li class="mui-col-sm-10 mui-col-xs-10 leagueGroup">
-                                                    <img src="${data.data.data[i].group_teams[j].team_logo}" class="circleIcon" />
-                                                    <span>${data.data.data[i].group_teams[j].team.team}</span>
-                                                </li>
-                                            </ul>
-                                        </li>`;
-                            }
-                            newli += `</ul>`;
-                        }
-                        if (newli != '') {
-                            $(".teamList").empty().append(newli);
-                        }
-                    } else {
-                        $(".teamList").html('<p class="nodata">没有相关数据哦</p>');
-                    }
-                },
-                error: function (xhr, type, errerThrown) {
-                    mui.toast('网络异常,请稍候再试');
-                }
-            });
-        }
     </script>
     <script>
         wx.config({
