@@ -5642,6 +5642,7 @@ class League extends Base
         // 点赞字段值
         $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
         // 点赞数统计
+        unset($map['member_id']);
         $thumbupCount = $leagueS->getCommentThumbsCount($map);
         return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup, 'thumbsup_count' => $thumbupCount]);
     }
