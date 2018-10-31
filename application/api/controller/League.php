@@ -5506,6 +5506,8 @@ class League extends Base
                 $map['commented_id'] = $data['match_record_id'];
             } else if (input('?post.match_honor_id')) {
                 $map['commented_id'] = $data['match_honor_id'];
+            } else if (input('?post.commented_id')) {
+                $map['commented_id'] = $data['commented_id'];
             }
             $hasCommented = $leagueS->getCommentInfo($map);
             if ($hasCommented) {
