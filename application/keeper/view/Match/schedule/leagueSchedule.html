@@ -22,10 +22,6 @@
             padding: 10px 0 !important;
         }
 
-        .mui-grid-view.mui-grid-9 .mui-media .mui-icon {
-            font-size: 2.2evm;
-        }
-
         .colactive {
             color: #dd524d !important
         }
@@ -41,13 +37,13 @@
 
     <div class="mui-content">
 
-        <div class="list mb44 coach">
+        <div class="list mb44">
 
-            <ul class="mui-table-view mb" style="margin-top: -4px">
-                <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                    <img class="img50 mui-pull-left" src="{$leagueInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
-                    <h4>{$leagueInfo.name}</h4>
-                    <div class="mui-media-body wd49" style="line-height:20px !important">
+            <ul class="mui-table-view mb">
+                <li class="mui-table-view-cell listli">
+                    <img class="img60 mui-pull-left" src="{$leagueInfo.logo}" style="margin-top:5px">
+                    <h4 class="leagueName">{$leagueInfo.name}</h4>
+                    <div class="mui-media-body lineHeight20 wd49">
                         <p class="mui-ellipsis">主办单位：{$leagueInfo.match_org.name}</p>
                         <p>{$leagueInfo.city} {$leagueInfo.area}</p>
                         <p class="f12">
@@ -57,7 +53,7 @@
                         </p>
                     </div>
                     <div class="price-frame" style="padding:0">
-                        <button type="button" class="mui-btn mui-btn-danger follow" style="padding: 8px 9px;">关注</button>
+                        <button type="button" class="mui-btn mui-btn-danger pd8x9 follow">关注</button>
                     </div>
                 </li>
             </ul>
@@ -148,12 +144,13 @@
                     <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-8 mui-col-xs-8 opli">
-                    <a href="">咨询</a>
+                    <a href="###">咨询</a>
                 </li>
             </ul>
 
         </div>
     </div>
+
     <!--分享-->
     <div id="shareGuide" class="mui-popover">
         <div class="shareGuideText">1、点击右上角的
@@ -162,6 +159,7 @@
         </div>
         <div class="shareGuideText">2、选择发送给朋友或分享到朋友圈</div>
     </div>
+
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="/static/frontend/js/getDate.js"></script>
@@ -174,6 +172,10 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+
+        if ($(".leagueName").height() > 18) {
+            $(".leagueName").css("line-height", "24px")
+        }
 
         rankList(); //赛程列表
         followStatus(); // 当前的关注状态
@@ -287,14 +289,10 @@
                                 newli += `<div class="page-header border-b">`
                                 if (data.data[i].date == '') {
                                     newli +=
-                                        `<span class="course">比赛日
-                                            <font class="colorred">待定</font> | 时间日期待定
-                                        </span>`
+                                        `<span class="course">比赛日<font class="colorred">待定</font> | 时间日期待定</span>`
                                 } else {
                                     newli +=
-                                        `<span class="course">比赛日
-                                            <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
-                                        </span>`
+                                        `<span class="course">比赛日<font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}</span>`
                                 }
                                 newli += `<span class="fr f12">${data.data[i].match_stage}</span></div>`
                                 newli += `<ul class="mui-table-view">`
@@ -311,8 +309,7 @@
                                     }
                                     newli += `<li class="mui-table-view-cell" style="padding:0">`
                                     newli +=
-                                        `<div class="mui-row leagueRow">
-                                            <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColLeftStyle">`;
+                                        `<div class="mui-row leagueRow"><div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColLeftStyle">`;
 
                                     if (scheduleArr.court_no == '' && scheduleArr.match_group == '') {
                                         newli +=
@@ -331,24 +328,30 @@
                                         }
                                         newli += `<p class="lineHeight29">${scheduleArr.court_no}</p>`
                                     }
-
                                     newli +=
-                                        `</div>
-                                            <div class="mui-col-sm-6 mui-col-xs-6 leagueColCenterStyle" >
+                                        `</div><div class="mui-col-sm-6 mui-col-xs-6 leagueColCenterStyle" >
                                                 <p class="mui-ellipsis pContent border-b">
                                                     <span>
                                                         <img src="${scheduleArr.home_team_logo}" class="img32">
-                                                    </span>
-                                                    <span>${scheduleArr.home_team}</span>
-                                                </p>
-                                                <p class="mui-ellipsis pContent border-b">
+                                                    </span>`
+                                    if (scheduleArr.home_score == 0 && scheduleArr.away_score == 20) {
+                                        newli += `<span>${scheduleArr.home_team}（弃权）</span>`
+                                    } else {
+                                        newli += `<span>${scheduleArr.home_team}</span>`
+                                    }
+                                    newli +=
+                                        `</p><p class="mui-ellipsis pContent border-b">
                                                     <span>
                                                         <img src="${scheduleArr.away_team_logo}" class="img32">
-                                                    </span>
-                                                    <span>${scheduleArr.away_team}</span>
-                                                </p>
-                                            </div>
-                                            <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColRightStyle">`;
+                                                    </span>`
+                                    if (scheduleArr.away_score == 0 && scheduleArr.home_score == 20) {
+                                        newli += `<span>${scheduleArr.away_team}（弃权）</span>`
+                                    } else {
+                                        newli += `<span>${scheduleArr.away_team}</span>`
+                                    }
+
+                                    newli +=
+                                        `</p></div><div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColRightStyle">`;
                                     if (scheduleArr.home_team_score == 0 && scheduleArr.away_team_score ==
                                         0) {
                                         if (scheduleArr.match_timestamp === 0) {

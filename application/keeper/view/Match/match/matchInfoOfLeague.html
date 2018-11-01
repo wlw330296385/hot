@@ -203,13 +203,15 @@
                 </div>
             </div>
 
-            <!-- 主队信息 -->
+
             <div id="onHomeTeam" class="mui-scroll-wrapper mui-control-content teamTap" data-team="" data-team_id="{$matchRecordInfo.home_team_id}">
                 <div class="mui-scroll">
                     <form action="" class="mui-input-group mb44">
+                        <!-- 主队信息 -->
                         <div class="page-header bggray2">
                             <span class="course wd45">
-                                <strong>{$matchRecordInfo.home_team}信息</strong>
+                                <strong>{$matchRecordInfo.home_team}信息</strong>{if
+                                $matchRecordInfo.home_score==0&&$matchRecordInfo.away_score==20}（弃权）{/if}
                             </span>
                         </div>
                         <div class="mui-input-row">
@@ -225,9 +227,12 @@
                         </div>
                         <ul class="mui-table-view list border-b dataList membersList homeList"></ul>
 
+
+                        <!-- 客队信息 -->
                         <div class="page-header bggray2">
                             <span class="course wd45">
-                                <strong>{$matchRecordInfo.away_team}信息</strong>
+                                <strong>{$matchRecordInfo.away_team}信息</strong>{if
+                                $matchRecordInfo.away_score==0&&$matchRecordInfo.home_score==20}（弃权）{/if}
                             </span>
                         </div>
                         <div class="mui-input-row">
@@ -277,6 +282,8 @@
     })(mui);
 
     var members = [];
+    var home_score = "{$matchRecordInfo.home_score}";
+    var away_score = "{$matchRecordInfo.away_score}";
     $(function () {
 
         // 是否首发
@@ -358,7 +365,7 @@
 
         homeTeam();
         awayTeam();
-        
+
     });
 
     // 主队球员数据
@@ -385,24 +392,48 @@
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i < data.data.length; i++) {
-                        newli +=
-                            `
-                        <li class="mui-table-view-cell mui-collapse">
-                                <a class="mui-navigate-right">
-                                    <div class="mui-row">`
-                        if (data.data[i].number == null) {
+                        if (home_score == 0 && away_score == 20) {
+
+                            // 主队弃权
                             newli +=
-                                ` <div class="mui-col-xs-3 mui-text-center colororange">
-                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" >
+                                `<li class="mui-table-view-cell"><div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 mui-text-center colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" disabled>
                                         </div>`
-                        } else {
-                            newli +=
-                                ` <div class="mui-col-xs-3 colororange">
+                            } else {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
                                             <input type="text" name="number" class="addInput  mui-text-center" value="${data.data[i].number}" >
                                         </div>`
-                        }
-                        newli +=
-                            `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center f14 colorgray">${data.data[i].name}</div>
+                                <div class="mui-col-xs-3 mui-text-center dataIcon">
+                                            <text class="bgcolor">
+                                                <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                            </text>
+                                        </div>
+                                    </div>`
+                        } else {
+                            newli +=
+                                `<li class="mui-table-view-cell mui-collapse">
+                                <a class="mui-navigate-right">
+                                    <div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 mui-text-center colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" >
+                                        </div>`
+                            } else {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                            <input type="text" name="number" class="addInput  mui-text-center" value="${data.data[i].number}" >
+                                        </div>`
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
                                         data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                             <div class="mui-col-xs-3 mui-text-center dataIcon">
                                             <text class="bgcolor">
@@ -492,6 +523,7 @@
                                     <input type="hidden" name="homeScoreCont" value="">
                                 </div>
                             </li>`
+                        }
                     }
                     $(".homeList").empty().append(newli);
                 } else {
@@ -528,24 +560,47 @@
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i < data.data.length; i++) {
-                        newli +=
-                            `
-                        <li class="mui-table-view-cell mui-collapse">
-                                <a class="mui-navigate-right">
-                                    <div class="mui-row">`
-                        if (data.data[i].number == null) {
+                        if (home_score == 20 && away_score == 0) {
                             newli +=
-                                ` <div class="mui-col-xs-3 colororange">
-                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" >
+                                `<li class="mui-table-view-cell">
+                                    <div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" diabled>
                                         </div>`
+                            } else {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="${data.data[i].number}">
+                                        </div>`
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center f14 colorgray">${data.data[i].name}</div>
+                                    <div class="mui-col-xs-3 mui-text-center dataIcon">
+                                            <text class="bgcolor">
+                                                <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                            </text>
+                                        </div>
+                                    </div>`
                         } else {
                             newli +=
-                                ` <div class="mui-col-xs-3 colororange">
+                                `<li class="mui-table-view-cell mui-collapse">
+                                <a class="mui-navigate-right">
+                                    <div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" >
+                                        </div>`
+                            } else {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
                                             <input type="text" name="number" class="addInput mui-text-center" value="${data.data[i].number}" >
                                         </div>`
-                        }
-                        newli +=
-                            `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
                                  data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                             <div class="mui-col-xs-3 mui-text-center dataIcon">
                                             <text class="bgcolor">
@@ -635,8 +690,10 @@
                                     <input type="hidden" name="awayScoreCont" value="">
                                 </div>
                             </li>`
+                        }
                     }
                     $(".awayList").empty().append(newli);
+
                 } else {
                     $(".awayList").html('<li class="nohave"><p>没有相关数据哦</p></li>');
                 }

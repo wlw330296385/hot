@@ -5506,6 +5506,8 @@ class League extends Base
                 $map['commented_id'] = $data['match_record_id'];
             } else if (input('?post.match_honor_id')) {
                 $map['commented_id'] = $data['match_honor_id'];
+            } else if (input('?post.commented_id')) {
+                $map['commented_id'] = $data['commented_id'];
             }
             $hasCommented = $leagueS->getCommentInfo($map);
             if ($hasCommented) {
@@ -5570,88 +5572,81 @@ class League extends Base
     // 联赛模块点赞
     public function dianzan()
     {
-        try {
-            // 检测会员登录
-            if ($this->memberInfo['id'] === 0) {
-                return json(['code' => 100, 'msg' => '请先登录或注册会员']);
-            }
-            // 将接收参数作提交数据
-            $data = input('post.');
-            // 判断必传参数
-            // 评论类型
-            $comment_type = input('post.comment_type');
-            if (!$comment_type) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-            }
-            $leagueS = new LeagueService();
-            // 查询会员有无评论记录
-            $map = [
-                'comment_type' => $comment_type,
-                'member_id' => $this->memberInfo['id'],
-                'match_id' => $data['match_id']
-            ];
-            // 如果是联赛下的某场比赛
-            if ($comment_type == 2) {
-                $map['match_record_id'] = $data['match_record_id'];
-            }
-            $hasCommented = $leagueS->getCommentInfo($map);
-            // 有评论记录就更新记录的thumbsup字段
-            if ($hasCommented) {
-                $data['id'] = $hasCommented['id'];
-            }
-            // 防止有传入comment参数 过滤掉
-            if (isset($data['comment'])) {
-                unset($data['comment']);
-            }
-            $data['member_id'] = $this->memberInfo['id'];
-            $data['member'] = $this->memberInfo['member'];
-            $data['member_avatar'] = $this->memberInfo['avatar'];
-            $data['thumbsup'] = ($hasCommented && ($hasCommented['thumbsup'] == 1)) ? 0 : 1;
-            $result = $leagueS->saveComment($data);
-            if ($result['code'] == 200) {
-                // 返回最新的点赞数统计
-                unset($map['member_id']);
-                $thumbsupCount = $leagueS->getCommentThumbsCount($map);
-                $result['thumbsup_count'] = $thumbsupCount;
-            }
-            return json($result);
-        } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        // 检测会员登录
+        if ($this->memberInfo['id'] === 0) {
+            return json(['code' => 100, 'msg' => '请先登录或注册会员']);
         }
+        // 将接收参数作提交数据
+        $data = input('post.');
+        // 判断必传参数
+        // 评论类型
+        $comment_type = input('post.comment_type');
+        if (!$comment_type) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+        }
+        $leagueS = new LeagueService();
+        // 查询会员有无评论记录
+        $map = [
+            'comment_type' => $comment_type,
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id']
+        ];
+        // 如果是联赛下的某场比赛
+        if ($comment_type == 2) {
+            $map['commented_id'] = $data['commented_id'];
+        }
+        $hasCommented = $leagueS->getCommentInfo($map);
+        // 有评论记录就更新记录的thumbsup字段
+        if ($hasCommented) {
+            $data['id'] = $hasCommented['id'];
+        }
+        // 防止有传入comment参数 过滤掉
+        if (isset($data['comment'])) {
+            unset($data['comment']);
+        }
+        $data['member_id'] = $this->memberInfo['id'];
+        $data['member'] = $this->memberInfo['member'];
+        $data['member_avatar'] = $this->memberInfo['avatar'];
+        $data['thumbsup'] = ($hasCommented && ($hasCommented['thumbsup'] == 1)) ? 0 : 1;
+        $result = $leagueS->saveComment($data);
+        if ($result['code'] == 200) {
+            // 返回最新的点赞数统计
+            unset($map['member_id']);
+            $thumbsupCount = $leagueS->getCommentThumbsCount($map);
+            $result['thumbsup_count'] = $thumbsupCount;
+        }
+        return json($result);
     }
 
     // 获取会员在联赛模块当前点赞信息
     public function isthumbup()
     {
-        try {
-            // 将接收参数作提交数据
-            $data = input('post.');
-            // 判断必传参数
-            // 评论类型
-            $comment_type = input('post.comment_type');
-            if (!$comment_type) {
-                return json(['code' => 100, 'msg' => __lang('MSG_402')]);
-            }
-            $leagueS = new LeagueService();
-            // 查询会员有无评论记录
-            $map = [
-                'comment_type' => $comment_type,
-                'member_id' => $this->memberInfo['id'],
-                'match_id' => $data['match_id']
-            ];
-            // 如果是联赛下的某场比赛
-            if ($comment_type == 2) {
-                $map['match_record_id'] = $data['match_record_id'];
-            }
-            $commentInfo = $leagueS->getCommentInfo($map);
-            // 点赞字段值
-            $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
-            // 点赞数统计
-            $thumbupCount = $leagueS->getCommentThumbsCount($map);
-            return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup, 'thumbsup_count' => $thumbupCount]);
-        } catch (Exception $e) {
-            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        // 将接收参数作提交数据
+        $data = input('post.');
+        // 判断必传参数
+        // 评论类型
+        $comment_type = input('post.comment_type');
+        if (!$comment_type) {
+            return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
+        $leagueS = new LeagueService();
+        // 查询会员有无评论记录
+        $map = [
+            'comment_type' => $comment_type,
+            'member_id' => $this->memberInfo['id'],
+            'match_id' => $data['match_id']
+        ];
+        // 如果是联赛下的某场比赛
+        if ($comment_type == 2) {
+            $map['commented_id'] = $data['commented_id'];
+        }
+        $commentInfo = $leagueS->getCommentInfo($map);
+        // 点赞字段值
+        $thumbsup = ($commentInfo) ? $commentInfo['thumbsup'] : 0;
+        // 点赞数统计
+        unset($map['member_id']);
+        $thumbupCount = $leagueS->getCommentThumbsCount($map);
+        return json(['code' => 200, 'msg' => __lang('MSG_200'), 'thumbsup' => $thumbsup, 'thumbsup_count' => $thumbupCount]);
     }
 
     // 保存比赛阶段晋级球队数据

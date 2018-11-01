@@ -500,8 +500,8 @@
 
         <!-- 底部操作 -->
         <ul class="mui-table-view operation mt">
-            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
-                <a href="{:url('match/leagueInfo', ['league_id' => $leagueInfo.id])}">
+            <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli goBack">
+                <a href="{:url('match/leagueSchedule', ['league_id' => $leagueInfo.id])}">
                     <span class="mui-icon icon iconfont icon-nav-Home"></span>
                 </a>
             </li>
@@ -644,7 +644,7 @@
         });
 
         // a标签跳转
-        mui(".refereeContent").on("tap", "a", function () {
+        mui(".goBack").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
 
@@ -667,7 +667,7 @@
         toHomeMembersList(); //主队有数据的球员列表
         toAwayMembersList(); //客队有数据的球员列表
         toCommentList();
-        // isthumbsup() //点赞状态
+        isthumbsup() //点赞状态
         var commentStatus = "";
         var starAllShow = `<i data-index="1" class="mui-icon mui-icon-star"></i><i data-index="2" class="mui-icon mui-icon-star"></i><i data-index="3" class="mui-icon mui-icon-star"></i><i data-index="4" class="mui-icon mui-icon-star"></i><i data-index="5" class="mui-icon mui-icon-star"></i>`
         $(function () {
@@ -964,12 +964,14 @@
             });
 
             //点赞功能
-            $(".thumbsup1111").on('tap', function () {
-                var commented_id = "";
-                mui.ajax("{:url('api/team/dianzan')}", {
+            //点赞功能
+            $(".thumbsup").on('tap', function () {
+                var commented_id = match_record_id;
+                mui.ajax("{:url('api/league/dianzan')}", {
                     data: {
+                        match_id: match_id,
                         commented_id: commented_id,
-                        comment_type: 3,
+                        comment_type: 2,
                     },
                     dataType: 'json', //服务器返回json格式数据
                     type: 'post', //HTTP请求类型
@@ -1010,11 +1012,11 @@
 
         // 点赞状态
         function isthumbsup() {
-            var commented_id = "";
-            mui.ajax("{:url('api/team/isthumbup')}", {
+            mui.ajax("{:url('api/league/isthumbup')}", {
                 data: {
-                    commented_id: commented_id,
-                    comment_type: 3,
+                    match_id: match_id,
+                    comment_type: 2,
+                    commented_id: match_record_id
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -1084,20 +1086,18 @@
                         $(".comment_count").text(data.data.length);
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             newli = newli +
-                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
+                                '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' +
                                 data.data[i].create_time +
-                                '</div><img class="mui-pull-left img32" src="' + data.data[i].member_avatar +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data[i].member_avatar +
                                 '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
                         }
+                    }else{
+                        $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
                     }
+
                     if (gType == 1) {
                         //上拉刷新
                         $("ul.comment-list").empty().append(newli);
-                        if (newli == '') {
-                            $("ul.comment-list").html(
-                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
-                            );
-                        }
                     } else {
                         //下拉加载 gType==2
                         $("ul.comment-list").append(newli);
