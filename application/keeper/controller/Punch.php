@@ -158,7 +158,7 @@ class Punch extends Base{
         $this->assign('userInfo',$userInfo);
 
         $month_str = date('Ym',time());
-        $puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$member_id])->where('delete_time',null)->select();
+        $puchList = db('punch')->where(['member_id'=>$member_id])->whereTime('punch_time','month')->where('delete_time',null)->select();
         //本月打卡总数
         $monthPunch = count($puchList);
         $this->assign('monthPunch',$monthPunch);
