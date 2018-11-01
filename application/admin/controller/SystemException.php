@@ -30,7 +30,7 @@ class SystemException extends Backend
                 break;
         }
         $list = Db::table('log_exception')
-            ->field('max(id) as id, line, file, message, count(id) as count, min(create_time) as min, max(create_time) as max')
+            ->field('max(id) as id, line, file, message, count(id) as count, min(create_time) as min, max(create_time) as max,request_url')
             ->where(['status' => $status])
             ->group('line, message, file')
             ->order('max desc')

@@ -146,7 +146,7 @@ class BillService {
         
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>1]);
+            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>1]);
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
             //学生表的总课程和总课量+n;   
@@ -258,7 +258,7 @@ class BillService {
             }
             
         }elseif ($data['goods_type'] == '活动') {
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>2]);
+            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>2]);
             // camp_member操作
             $CampMember = new CampMember;
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
@@ -303,7 +303,7 @@ class BillService {
         $schedule_rebate = $campInfo['schedule_rebate'];
         $campBlance = $data['balance_pay'];
         if($campInfo['rebate_type'] == 2){
-            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
+            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('total_member',1)->update();
         }else{
             $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('total_member',1)->update();
         }
@@ -312,7 +312,44 @@ class BillService {
 
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>1]);
+            db('income')->insert([
+                        'lesson_id'=>$data['goods_id'],
+                        'lesson'=>$data['goods'],
+                        'goods_id'=>$data['goods_id'],
+                        'goods'=>$data['goods'],
+                        'camp_id'=>$data['camp_id'],
+                        'camp'=>$data['camp_id'],
+                        'income'=>$data['balance_pay'],
+                        'balance_pay'=>$data['balance_pay'],
+                        'schedule_rebate'=>$schedule_rebate,
+                        'member_id'=>$data['member_id'],
+                        'member'=>$data['member'],
+                        'create_time'=>time(),
+                        'total'=>$data['total'],
+                        'price'=>$data['price'],
+                        'f_id'=>$data['id'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'date_str' =>date('Ymd',time()),
+                        'type'=>1]);
+            db('income')->insert([
+                        'lesson_id'=>$data['goods_id'],
+                        'lesson'=>$data['goods'],
+                        'goods_id'=>$data['goods_id'],
+                        'goods'=>$data['goods'],
+                        'camp_id'=>$data['camp_id'],
+                        'camp'=>$data['camp_id'],
+                        'income'=>-$data['balance_pay'],
+                        'balance_pay'=>-$data['balance_pay'],
+                        'schedule_rebate'=>$schedule_rebate,
+                        'member_id'=>$data['member_id'],
+                        'member'=>$data['member'],
+                        'create_time'=>time(),
+                        'total'=>$data['total'],
+                        'price'=>$data['price'],
+                        'f_id'=>$data['id'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'date_str' =>date('Ymd',time()),
+                        'type'=>1]);
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
             //学生表的总课程和总课量+n;   
@@ -380,7 +417,7 @@ class BillService {
             // 记录训练营课程营业额
             if($data['balance_pay']>0 && $data['status'] == 1 && $campInfo['rebate_type'] == 2){
                 $daytime = $data['pay_time'];
-                $dataCampFinance = [
+                $dataCampFinance1 = [
                     'money' => $data['balance_pay'],
                     'camp_id' => $data['camp_id'],
                     'camp' => $data['camp'],
@@ -389,15 +426,66 @@ class BillService {
                     'rebate_type'=>$campInfo['rebate_type'],
                     'schedule_rebate'=>$campInfo['schedule_rebate'],
                     's_balance'=>$campInfo['balance'],
-                    'e_balance'=>$campInfo['balance']+$data['balance_pay'],
+                    'e_balance'=>$campInfo['balance'],
                     'date_str' => date('Ymd', $daytime),
                     'datetime' => $daytime
                 ];
-                CampFinance::create($dataCampFinance);
+                $dataCampFinance2 = [
+                    'money' => -$data['balance_pay'],
+                    'camp_id' => $data['camp_id'],
+                    'camp' => $data['camp'],
+                    'type'=>1,
+                    'f_id' => $data['id'],
+                    'rebate_type'=>$campInfo['rebate_type'],
+                    'schedule_rebate'=>$campInfo['schedule_rebate'],
+                    's_balance'=>$campInfo['balance'],
+                    'e_balance'=>$campInfo['balance'],
+                    'date_str' => date('Ymd', $daytime),
+                    'datetime' => $daytime
+                ];
+                CampFinance::create($dataCampFinance1);
+                CampFinance::create($dataCampFinance2);
             }
             
         }elseif ($data['goods_type'] == '活动') {
-            db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'balance_pay'=>$data['balance_pay'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>2]);
+            db('income')->insert([
+                        'lesson_id'=>$data['goods_id'],
+                        'lesson'=>$data['goods'],
+                        'goods_id'=>$data['goods_id'],
+                        'goods'=>$data['goods'],
+                        'camp_id'=>$data['camp_id'],
+                        'camp'=>$data['camp_id'],
+                        'income'=>$data['balance_pay'],
+                        'balance_pay'=>$data['balance_pay'],
+                        'schedule_rebate'=>$schedule_rebate,
+                        'member_id'=>$data['member_id'],
+                        'member'=>$data['member'],
+                        'create_time'=>time(),
+                        'total'=>$data['total'],
+                        'price'=>$data['price'],
+                        'f_id'=>$data['id'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'date_str' =>date('Ymd',time()),
+                        'type'=>2]);
+            db('income')->insert([
+                        'lesson_id'=>$data['goods_id'],
+                        'lesson'=>$data['goods'],
+                        'goods_id'=>$data['goods_id'],
+                        'goods'=>$data['goods'],
+                        'camp_id'=>$data['camp_id'],
+                        'camp'=>$data['camp_id'],
+                        'income'=>-$data['balance_pay'],
+                        'balance_pay'=>-$data['balance_pay'],
+                        'schedule_rebate'=>$schedule_rebate,
+                        'member_id'=>$data['member_id'],
+                        'member'=>$data['member'],
+                        'create_time'=>time(),
+                        'total'=>$data['total'],
+                        'price'=>$data['price'],
+                        'f_id'=>$data['id'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'date_str' =>date('Ymd',time()),
+                        'type'=>2]);
             // camp_member操作
             $CampMember = new CampMember;
             $is_campMember = $CampMember->where(['camp_id'=>$data['camp_id'],'member_id'=>$data['member_id']])->find();
@@ -407,7 +495,7 @@ class BillService {
             }
             if($data['balance_pay']>0 && $data['status'] == 1){
                 $daytime = $data['pay_time'];
-                $dataCampFinance = [
+                $dataCampFinance1 = [
                     'money' => $data['balance_pay'],
                     'camp_id' => $data['camp_id'],
                     'camp' => $data['camp'],
@@ -419,10 +507,25 @@ class BillService {
                     'e_balance'=>$campInfo['balance']+$data['balance_pay'],
                     'date_str' => date('Ymd', $daytime),
                     'datetime' => $daytime
-                ];
+                ]; 
+                CampFinance::create($dataCampFinance1);
+                $dataCampFinance2 = [
+                    'money' => -$data['balance_pay'],
+                    'camp_id' => $data['camp_id'],
+                    'camp' => $data['camp'],
+                    'type'=>2,
+                    'f_id' => $data['id'],
+                    'rebate_type'=>$campInfo['rebate_type'],
+                    'schedule_rebate'=>$campInfo['schedule_rebate'],
+                    's_balance'=>$campInfo['balance'],
+                    'e_balance'=>$campInfo['balance']+$data['balance_pay'],
+                    'date_str' => date('Ymd', $daytime),
+                    'datetime' => $daytime
+                ]; 
+                CampFinance::create($dataCampFinance2);
             }
             
-            CampFinance::create($dataCampFinance);
+           
         }   
                 
         return 1;

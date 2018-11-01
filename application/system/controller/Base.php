@@ -4,9 +4,12 @@ use think\Controller;
 use think\Exception;
 class Base extends Controller{
 	public function _initialize() {
-		// if(request()->ip()!="127.0.0.1" || request()->ip()!="14.215.112.29"){
-            // echo "非法操作";exit(1);
-        // }
+    $fff = request()->instance()->header('fff');
+		if(!$fff|| $fff!='woo'){
+            echo "非法操作";
+            
+            exit(1);
+        }
     }
 
 
