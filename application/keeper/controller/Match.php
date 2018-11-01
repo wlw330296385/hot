@@ -337,7 +337,30 @@ class Match extends Base {
          if (!$matchmember || $matchmember['status'] != 1) {
              $btnApplyWorkerShow = 1;
          }
-         
+
+         // 联赛可报名状态标识：
+        // 1 当前时间在报名开始时间与报名结束时间
+        // 2 联赛报名状态字段apply_status：1可报名|2结束报名
+        // 3 联赛无赛程记录
+        $cansignup = 1;
+        $nowtime = time();
+        if ( $nowtime < $this->leagueInfo['reg_start_timestamp'] ) {
+            // 等待报名（未到联赛报名时间）
+            $cansignup = -1;
+        } else if ($nowtime >= $this->leagueInfo['reg_start_timestamp'] && 
+            $nowtime <= $this->leagueInfo['reg_end_timestamp']) {
+            // 可报名
+            $cansignup = 0;
+        } else if ( $nowtime > $this->leagueInfo['start_timestamp'] && 
+            $nowtime <= $this->leagueInfo['end_timestamp']) {
+            // 正在进行
+            $cansignup = 1;
+        } else if ( $nowtime > $this->leagueInfo['end_timestamp']) {
+            // 结束报名
+            $cansignup = 2;
+        }
+
+        $this->assign('cansignup', $cansignup);
          $this->assign('types', $types);
          $this->assign('btnApplyWorkerShow', $btnApplyWorkerShow);
          //////////////////////////end//////////////////////////
