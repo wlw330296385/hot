@@ -214,7 +214,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span class="hoemTeamScore">{$matchRecordInfo.home_score}</span>
+                            <span class="hoemTeamScore colororange">{$matchRecordInfo.home_score}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>球衣颜色</label>
@@ -233,7 +233,7 @@
                         </div>
                         <div class="mui-input-row">
                             <label>得分</label>
-                            <span class="awayTeamScore">{$matchRecordInfo.away_score}</span>
+                            <span class="awayTeamScore colororange">{$matchRecordInfo.away_score}</span>
                         </div>
                         <div class="mui-input-row">
                             <label>球衣颜色</label>
@@ -278,6 +278,8 @@
     })(mui);
 
     var members = [];
+    var home_score = "{$matchRecordInfo.home_score}";
+    var away_score = "{$matchRecordInfo.away_score}";
     $(function () {
 
         // 是否首发
@@ -386,24 +388,48 @@
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i < data.data.length; i++) {
-                        newli +=
-                            `
-                        <li class="mui-table-view-cell mui-collapse ">
-                                <a class="mui-navigate-right">
-                                    <div class="mui-row">`
-                        if (data.data[i].number == null) {
+                        if (home_score == 0 && away_score == 20) {
+
+                            // 主队弃权
                             newli +=
-                                `<div class="mui-col-xs-2 colororange">
-                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球号">
+                                `<li class="mui-table-view-cell"><div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 mui-text-center colororange">
+                                        <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" disabled>
                                         </div>`
+                            } else {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                        <input type="text" name="number" class="addInput  mui-text-center" value="${data.data[i].number}" >
+                                    </div>`
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center f14 colorgray">${data.data[i].name}</div>
+                                    <div class="mui-col-xs-3 mui-text-center dataIcon">
+                                            <text class="bgcolor">
+                                            <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                        </text>
+                                    </div>
+                                /div>`
                         } else {
                             newli +=
-                                `<div class="mui-col-xs-2 colororange">
+                                `<li class="mui-table-view-cell mui-collapse ">
+                                <a class="mui-navigate-right">
+                                    <div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    `<div class="mui-col-xs-2 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球号">
+                                        </div>`
+                            } else {
+                                newli +=
+                                    `<div class="mui-col-xs-2 colororange">
                                             <input type="text" name="number" class="addInput mui-text-center" value="${data.data[i].number}" >
                                         </div>`
-                        }
-                        newli +=
-                            `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
                                         data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                     <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
@@ -480,26 +506,26 @@
                                     </div>
                                     <div class="mui-row tapCont">
                                         <div class="mui-col-xs-6 mui-text-left">`
-                        if (data.data[i].lineup == 1) {
-                            newli +=
-                                `<span class="tapBtn tapLineUp tapGreen">首发</span>
+                            if (data.data[i].lineup == 1) {
+                                newli +=
+                                    `<span class="tapBtn tapLineUp tapGreen">首发</span>
                                 <input type="hidden" name="lineup" value="1">`
-                        } else {
-                            newli +=
-                                `<span class="tapBtn tapLineUp">首发</span>
+                            } else {
+                                newli +=
+                                    `<span class="tapBtn tapLineUp">首发</span>
                                 <input type="hidden" name="lineup" value="0">`
-                        }
-                        if (data.data[i].is_attend == 1) {
-                            newli +=
-                                ` <span class="tapBtn tapAttend tapGreen">出席</span>
+                            }
+                            if (data.data[i].is_attend == 1) {
+                                newli +=
+                                    ` <span class="tapBtn tapAttend tapGreen">出席</span>
                                 <input type="hidden" name="is_attend" value="1">`
-                        } else {
-                            newli +=
-                                ` <span class="tapBtn tapAttend">出席</span>
+                            } else {
+                                newli +=
+                                    ` <span class="tapBtn tapAttend">出席</span>
                                 <input type="hidden" name="is_attend" value="-1">`
-                        }
-                        newli +=
-                            `</div>
+                            }
+                            newli +=
+                                `</div>
                                         <div class="mui-col-xs-6 mui-text-right">
                                             <span class="tapBtn tapCancle tapRed">清空</span>
                                             <span class="tapBtn tapConfirm tapGreen">确认</span>
@@ -508,6 +534,7 @@
                                     <input type="hidden" name="homeScoreCont" value="">
                                 </div>
                             </li>`
+                        }
                     }
                     $(".homeList").empty().append(newli);
                     // 遍历查找如果数据为0，清除数据
@@ -552,24 +579,47 @@
                 if (data.code == 200) {
                     var newli = '';
                     for (var i = 0; i < data.data.length; i++) {
-                        newli +=
-                            `
-                        <li class="mui-table-view-cell mui-collapse">
-                                <a class="mui-navigate-right">
-                                    <div class="mui-row">`
-                        if (data.data[i].number == null) {
+                        if (home_score == 20 && away_score == 0) {
                             newli +=
-                                `<div class="mui-col-xs-4 colororange">
-                                            <input type="text" name="number" class="addInput" value="" placeholder="球号">
+                                `<li class="mui-table-view-cell">
+                                    <div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="" placeholder="球衣号(可填)" diabled>
                                         </div>`
+                            } else {
+                                newli +=
+                                    ` <div class="mui-col-xs-3 colororange">
+                                            <input type="text" name="number" class="addInput mui-text-center" value="${data.data[i].number}">
+                                        </div>`
+                            }
+                            newli +=
+                                `<div class="mui-col-xs-6 mui-text-center f14 colorgray">${data.data[i].name}</div>
+                                    <div class="mui-col-xs-3 mui-text-center dataIcon">
+                                            <text class="bgcolor">
+                                                <i class="mui-icon mui-icon-checkmarkempty"></i>
+                                            </text>
+                                        </div>
+                                    </div>`
                         } else {
                             newli +=
-                                `<div class="mui-col-xs-4 colororange">
+                                `<li class="mui-table-view-cell mui-collapse">
+                                <a class="mui-navigate-right">
+                                    <div class="mui-row">`
+                            if (data.data[i].number == null) {
+                                newli +=
+                                    `<div class="mui-col-xs-4 colororange">
+                                            <input type="text" name="number" class="addInput" value="" placeholder="球号">
+                                        </div>`
+                            } else {
+                                newli +=
+                                    `<div class="mui-col-xs-4 colororange">
                                             <input type="text" name="number" class="addInput" value="${data.data[i].number}" >
                                         </div>`
-                        }
-                        newli +=
-                            ` <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
+                            }
+                            newli +=
+                                ` <div class="mui-col-xs-4 member" data-member="${data.data[i].member}" data-member_id="${data.data[i].member_id}" 
                                         data-team_member_id="${data.data[i].team_member_id}">${data.data[i].name}</div>
                                         <div class="mui-col-xs-4 mui-text-center dataIcon">
                                             <text class="bgcolor">
@@ -646,26 +696,26 @@
                                     </div>
                                     <div class="mui-row tapCont">
                                         <div class="mui-col-xs-6 mui-text-left">`
-                        if (data.data[i].lineup == 1) {
-                            newli +=
-                                `<span class="tapBtn tapLineUp tapGreen">首发</span>
+                            if (data.data[i].lineup == 1) {
+                                newli +=
+                                    `<span class="tapBtn tapLineUp tapGreen">首发</span>
                                 <input type="hidden" name="lineup" value="1">`
-                        } else {
-                            newli +=
-                                `<span class="tapBtn tapLineUp">首发</span>
+                            } else {
+                                newli +=
+                                    `<span class="tapBtn tapLineUp">首发</span>
                                 <input type="hidden" name="lineup" value="0">`
-                        }
-                        if (data.data[i].is_attend == 1) {
-                            newli +=
-                                ` <span class="tapBtn tapAttend tapGreen">出席</span>
+                            }
+                            if (data.data[i].is_attend == 1) {
+                                newli +=
+                                    ` <span class="tapBtn tapAttend tapGreen">出席</span>
                                 <input type="hidden" name="is_attend" value="1">`
-                        } else {
-                            newli +=
-                                ` <span class="tapBtn tapAttend">出席</span>
+                            } else {
+                                newli +=
+                                    ` <span class="tapBtn tapAttend">出席</span>
                                 <input type="hidden" name="is_attend" value="-1">`
-                        }
-                        newli +=
-                            `</div>
+                            }
+                            newli +=
+                                `</div>
                                         <div class="mui-col-xs-6 mui-text-right">
                                             <span class="tapBtn tapCancle tapRed">清空</span>
                                             <span class="tapBtn tapConfirm tapGreen">确认</span>
@@ -674,6 +724,7 @@
                                     <input type="hidden" name="homeScoreCont" value="">
                                 </div>
                             </li>`
+                        }
                     }
                     $(".awayList").empty().append(newli);
                     // 遍历查找如果数据为0，清除数据

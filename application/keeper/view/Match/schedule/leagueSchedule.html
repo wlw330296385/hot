@@ -289,14 +289,10 @@
                                 newli += `<div class="page-header border-b">`
                                 if (data.data[i].date == '') {
                                     newli +=
-                                        `<span class="course">比赛日
-                                            <font class="colorred">待定</font> | 时间日期待定
-                                        </span>`
+                                        `<span class="course">比赛日<font class="colorred">待定</font> | 时间日期待定</span>`
                                 } else {
                                     newli +=
-                                        `<span class="course">比赛日
-                                            <font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}
-                                        </span>`
+                                        `<span class="course">比赛日<font class="colorred">${i + 1}</font> | ${data.data[i].date}日 ${data.data[i].day}</span>`
                                 }
                                 newli += `<span class="fr f12">${data.data[i].match_stage}</span></div>`
                                 newli += `<ul class="mui-table-view">`
@@ -313,8 +309,7 @@
                                     }
                                     newli += `<li class="mui-table-view-cell" style="padding:0">`
                                     newli +=
-                                        `<div class="mui-row leagueRow">
-                                            <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColLeftStyle">`;
+                                        `<div class="mui-row leagueRow"><div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColLeftStyle">`;
 
                                     if (scheduleArr.court_no == '' && scheduleArr.match_group == '') {
                                         newli +=
@@ -333,24 +328,30 @@
                                         }
                                         newli += `<p class="lineHeight29">${scheduleArr.court_no}</p>`
                                     }
-
                                     newli +=
-                                        `</div>
-                                            <div class="mui-col-sm-6 mui-col-xs-6 leagueColCenterStyle" >
+                                        `</div><div class="mui-col-sm-6 mui-col-xs-6 leagueColCenterStyle" >
                                                 <p class="mui-ellipsis pContent border-b">
                                                     <span>
                                                         <img src="${scheduleArr.home_team_logo}" class="img32">
-                                                    </span>
-                                                    <span>${scheduleArr.home_team}</span>
-                                                </p>
-                                                <p class="mui-ellipsis pContent border-b">
+                                                    </span>`
+                                    if (scheduleArr.home_score == 0 && scheduleArr.away_score == 20) {
+                                        newli += `<span>${scheduleArr.home_team}（弃权）</span>`
+                                    } else {
+                                        newli += `<span>${scheduleArr.home_team}</span>`
+                                    }
+                                    newli +=
+                                        `</p><p class="mui-ellipsis pContent border-b">
                                                     <span>
                                                         <img src="${scheduleArr.away_team_logo}" class="img32">
-                                                    </span>
-                                                    <span>${scheduleArr.away_team}</span>
-                                                </p>
-                                            </div>
-                                            <div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColRightStyle">`;
+                                                    </span>`
+                                    if (scheduleArr.away_score == 0 && scheduleArr.home_score == 20) {
+                                        newli += `<span>${scheduleArr.away_team}（弃权）</span>`
+                                    } else {
+                                        newli += `<span>${scheduleArr.away_team}</span>`
+                                    }
+
+                                    newli +=
+                                        `</p></div><div class="mui-col-sm-3 mui-col-xs-3 mui-text-center leagueColRightStyle">`;
                                     if (scheduleArr.home_team_score == 0 && scheduleArr.away_team_score ==
                                         0) {
                                         if (scheduleArr.match_timestamp === 0) {
