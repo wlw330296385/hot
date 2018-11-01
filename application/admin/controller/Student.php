@@ -99,7 +99,14 @@ class Student extends Backend{
         if($keyword){
             $map['lesson_member.lesson|lesson_member.student'] = ['like',"%$keyword%"];
         }
-        $studentList = db('lesson_member')->field('lesson_member.*,sum(bill.balance_pay) as s_balance_pay')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
+        $studentList = db('lesson_member')->field('lesson_member.*,sum(bill.balance_pay) as s_balance_pay, sum(gift_schedule) as s_gift')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->join('schedule_gift_student','schedule_gift_student.student_id = bill.student_id and schedule_gift_student.camp_id = bill.camp_id')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
+        // 学生ids
+        $ids = [];
+        foreach ($studentList as $key => $value) {
+            $ids[] = $value['student_id'];
+        }
+        // 赠送课时
+        $giftList =
         $campList = db('camp')->select();
         $this->assign('campList',$campList);
         $this->assign('studentList',$studentList);

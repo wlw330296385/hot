@@ -14,7 +14,7 @@ class Punch extends Base{
     public function index() {
     	$month_str = date('Ym',time());
     	$member_id = $this->memberInfo['id'];
-    	$puchList = db('punch')->where(['month_str'=>$month_str,'member_id'=>$this->memberInfo['id']])->where('delete_time',null)->select();
+    	$puchList = db('punch')->where(['member_id'=>$this->memberInfo['id']])->whereTime('punch_time','month')->where('delete_time',null)->select();
     	//本月打卡总数
     	$monthPunch = count($puchList);
         // 本月打卡积分总数
