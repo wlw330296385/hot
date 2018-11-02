@@ -268,8 +268,14 @@ class League extends Base
         $league = $matchS->getMatch(['id' => $data['id']]);
         if (!$league) {
             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
-        } else if ($league["member_id"] != $this->memberInfo['id']) {
-            // 若不是创建人不能修改
+        } 
+        $leagueS = new leagueService();
+        $power = $leagueS->getMatchMemberType([
+            'match_id' => $league['id'],
+            'member_id' => $this->memberInfo['id'],
+            'status' => 1
+        ]);
+        if ($power < 9) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
         // 时间格式转换
