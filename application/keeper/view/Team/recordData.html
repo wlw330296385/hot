@@ -88,6 +88,36 @@
         .dataCollapse .delBtn {
             padding: 5px;
         }
+        .mui-collapse {
+            font-size: 14px;
+            color: #737373;
+        }
+        /* 操作按钮 */
+        .tapCont {
+            padding: 10px;
+        }
+
+        .tapCont .tapBtn {
+            border-radius: 50%;
+            background: #ddd;
+            height: 40px;
+            width: 40px;
+            line-height: 40px;
+            display: -webkit-inline-box;
+            text-align: center;
+            color: #fff;
+            padding: 0 6px;
+        }
+
+        .tapCont .tapGreen {
+            color: #fff;
+            background-color: #59b200;
+        }
+
+        .tapCont .tapRed {
+            color: #fff;
+            background-color: #dd524d;
+        }
     </style>
 </head>
 
@@ -274,13 +304,14 @@
                 mui(".mui-popover.mui-active").popover("toggle");
             });
         })(mui);
-        
+
         var flagNumber = true;
 
         $(function () {
 
             // 公共数据
-            var dataPublic = `<div class="mui-collapse-content dataCollapse">
+            var dataPublic =
+                `<div class="mui-collapse-content dataCollapse">
                         <div class="mui-row dataTitle">
                             <div class="mui-col-xs-6">出手次数</div>
                             <div class="mui-col-xs-6">命中次数</div>
@@ -346,19 +377,16 @@
                                 <input type="text" name="foul" class="checkNum" value="" placeholder="0">
                             </div>
                         </div>
-                        <div class="mui-row ">
-                            <div class="mui-col-xs-2 sfText">首发</div>
-                            <div class="mui-col-xs-4 sfButton">
-                                <div class="mui-switch isLineup mui-switch-mini mui-switch-mini">
-                                    <div class="mui-switch-handle"></div>
-                                </div>
-                                <input type="hidden" name="lineup" value="0">
+                        <div class="mui-row tapCont">
+                            <div class="mui-col-xs-6 mui-text-left">
+                                <span class="tapBtn tapLineUp">首发</span>
+                                <input type="hidden" name="lineup" value="0"> 
+                                <span class="tapBtn tapAttend">出席</span>
+                                <input type="hidden" name="is_attend" value="-1">
                             </div>
-                            <div class="mui-col-xs-3 mui-text-right delBtn">
-                                <button type="button" class="mui-btn">删除</button>
-                            </div>
-                            <div class="mui-col-xs-3 mui-text-right confirmBtn">
-                                <button type="button" class="mui-btn bggreen">计算得分</button>
+                            <div class="mui-col-xs-6 mui-text-right">
+                                <span class="tapBtn tapCancle tapRed">清空</span>
+                                <span class="tapBtn tapConfirm tapGreen">确认</span>
                             </div>
                         </div>
                         <input type="hidden" name="personalScoreCont" value="">
@@ -381,14 +409,17 @@
                         return isOk = false;
                     }
                 });
-                if (!isOk) { return isOk }
+                if (!isOk) {
+                    return isOk
+                }
 
                 var checkdisabled = 'disabled';
                 if (addtmNumber == 'null') {
                     addtmNumber = '';
                     var checkdisabled = '';
                 }
-                var tmFormal = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
+                var tmFormal =
+                    `<li class="mui-table-view-cell mui-collapse"  data-team_member_id="${addtmId}" data-member_id="${addtmember_Id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="${addtmNumber}"   placeholder="球号" ></div>
@@ -421,9 +452,12 @@
                         return isOk = false;
                     }
                 });
-                if (!isOk) { return isOk }
+                if (!isOk) {
+                    return isOk
+                }
 
-                var ptMember = `<li class="mui-table-view-cell mui-collapse listli" data-member_id="${member_id}">
+                var ptMember =
+                    `<li class="mui-table-view-cell mui-collapse" data-member_id="${member_id}">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="" placeholder="球号"></div>
@@ -444,7 +478,8 @@
 
             //添加临时队员操作
             $(document).on("tap", ".addTp", function () {
-                var tmTemporary = `<li class="mui-table-view-cell mui-collapse listli">
+                var tmTemporary =
+                    `<li class="mui-table-view-cell mui-collapse">
                     <a class="mui-navigate-right">
                         <div class="mui-row">
                             <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center" value="" placeholder="球号"></div>
@@ -463,15 +498,6 @@
                 mui("#member").popover("toggle");
             });
 
-            // 是否首发
-            $(document).on("tap", ".isLineup", function () {
-                var lineUp = $(this).siblings("input[name=lineup]");
-                if (lineUp.val() == "0") {
-                    lineUp.val("1");
-                } else {
-                    lineUp.val("0");
-                }
-            });
 
             var matchKeyword = '';
             var memberKeyword = '';
@@ -522,7 +548,8 @@
                     //     tmNumber = '';
                     //     var checkdisabled = '';
                     // }
-                    var tmMatch = `<li class="mui-table-view-cell mui-collapse listli"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
+                    var tmMatch =
+                        `<li class="mui-table-view-cell mui-collapse"  data-team_member_id="${tmId}" data-member_id="${tmemberId}" data-match_record_member_id="${match_record_member_id}">
                             <a class="mui-navigate-right">
                                 <div class="mui-row">
                                     <div class="mui-col-xs-2 colororange"><input type="text" name="number" class="addInput checkNum mui-text-center"  value="${tmNumber}" placeholder="球号" ></div>
@@ -625,29 +652,61 @@
             })
             //////////////////////会员//////////////////////////////////
 
+            // 删除球员
+            $(document).on("tap", ".delBtn button", function () {
+                $(this).parents(".mui-collapse").remove();
+            });
+
+
+            // 是否首发
+            $(document).on("tap", ".tapLineUp", function () {
+                var thisStatus = $(this).hasClass("tapGreen");
+                if (thisStatus == false) {
+                    $(this).addClass("tapGreen");
+                    $(this).siblings("input[name=lineup]").val(1);
+                } else {
+                    $(this).removeClass("tapGreen");
+                    $(this).siblings("input[name=lineup]").val(0);
+                }
+            })
+
+            // 是否出席
+            $(document).on("tap", ".tapAttend", function () {
+                var thisStatus = $(this).hasClass("tapGreen");
+                if (thisStatus == false) {
+                    $(this).addClass("tapGreen");
+                    $(this).siblings("input[name=is_attend]").val(1);
+                } else {
+                    $(this).removeClass("tapGreen");
+                    $(this).siblings("input[name=is_attend]").val(-1);
+                }
+            })
+
             // 确认标志完成
-            $(document).on("tap", ".confirmBtn button", function () {
+            $(document).on("tap", ".tapConfirm", function () {
                 var confirmText = $(this).text();
                 console.log(confirmText)
-                if (confirmText == "计算得分") {
-                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#59b200");
+                if (confirmText == "确认") {
+                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color",
+                        "#59b200");
                     $(this).text("取消");
                     $(this).parents(".mui-collapse").removeClass("mui-active");
-                    //点击确认操作计算得分
+                    //点击确认操作确认得分
                     var fgNum = $(this).parents(".dataCollapse").find("input[name=fg]").val();
                     var threepfgNum = $(this).parents(".dataCollapse").find("input[name=threepfg]").val();
                     var ftNum = $(this).parents(".dataCollapse").find("input[name=ft]").val();
                     var totalNum = Number(fgNum) * 2 + Number(threepfgNum) * 3 + Number(ftNum);
                     $(this).parents(".mui-collapse").find("input[name=personScore]").val(totalNum);
                 } else {
-                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color", "#ddd");
-                    $(this).text("计算得分");
+                    $(this).parents(".dataCollapse").siblings().find("text").css("background-color",
+                        "#ddd");
+                    $(this).text("确认");
                 }
             });
 
-            // 删除球员
-            $(document).on("tap", ".delBtn button", function () {
-                $(this).parents(".mui-collapse").remove();
+            // 清空技术统计数据
+            $(document).on("tap", ".tapCancle", function () {
+                $(this).parents(".mui-row").siblings().find("input").val('');
             });
 
             // 输入数字判断
@@ -680,15 +739,15 @@
 
             $(document).on("blur", "input[name=fg]", function () {
                 var fga = $(this).parents().siblings().children("input[name=fga]").val(); //二分出手数
-                if (parseInt($(this).val()) > parseInt(fga)) {
+                if (Number($(this).val()) > Number(fga)) {
                     mui.toast("二分命中次数不能大于出手次数");
                     $(this).val('').focus();
                     return false;
                 }
             });
             $(document).on("blur", "input[name=threepfg]", function () {
-                var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val();//三分出手数
-                if (parseInt($(this).val()) > parseInt(threepfga)) {
+                var threepfga = $(this).parents().siblings().children("input[name=threepfga]").val(); //三分出手数
+                if (Number($(this).val()) > Number(threepfga)) {
                     mui.toast("三分命中次数不能大于出手次数");
                     $(this).val('').focus();
                     return false;
@@ -696,7 +755,7 @@
             });
             $(document).on("blur", "input[name=ft]", function () {
                 var fta = $(this).parents().siblings().children("input[name=fta]").val(); //罚球出手数
-                if (parseInt($(this).val()) > parseInt(fta)) {
+                if (Number($(this).val()) > Number(fta)) {
                     mui.toast("罚球命中次数不能大于罚球数");
                     $(this).val('').focus();
                     return false;
@@ -720,7 +779,18 @@
             var members = [];
             var personalScoreAll = 0;
             $(".dataCollapse").each(function () {
-                var match_record_member_id = $(this).parents(".mui-collapse").attr("data-match_record_member_id");
+
+                // 遍历查找判断球员有任何一个数据，则默认选中出席
+                $(this).find(".checkNum").each(function () {
+                    var thisInput = $(this).val()
+                    if (thisInput != '' || thisInput != 0) {
+                        $(this).parents(".dataCollapse").find(".tapAttend").addClass("tapGreen");
+                        $(this).parents(".dataCollapse").find("input[name=is_attend]").val("1");
+                    }
+                })
+
+                var match_record_member_id = $(this).parents(".mui-collapse").attr(
+                    "data-match_record_member_id");
                 if (match_record_member_id == undefined) {
                     match_record_member_id = 0;
                 }
@@ -750,7 +820,27 @@
                 personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
                 $(this).find("input[name=personalScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
                 personalScoreCont = $(this).find("input[name=personalScoreCont]").val();
-                members.push({ match_record_member_id, member, member_id, name, team_member_id, number, lineup, fga, fg, threepfga, threepfg, fta, ft, reb, ast, stl, blk, turnover, foul });
+                members.push({
+                    match_record_member_id,
+                    member,
+                    member_id,
+                    name,
+                    team_member_id,
+                    number,
+                    lineup,
+                    fga,
+                    fg,
+                    threepfga,
+                    threepfg,
+                    fta,
+                    ft,
+                    reb,
+                    ast,
+                    stl,
+                    blk,
+                    turnover,
+                    foul
+                });
             });
             var teamScore = $(".home_score").text(); // 球队总得分
             // 遍历求和球员总得分
@@ -809,25 +899,42 @@
                     is_finished: 1,
                     team_id: team_id
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli" data-match_record_id="' + data.data.data[i].record.id + '"  data-id="' + data.data.data[i].id + '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' + data.data.data[i].record.away_team + '" data-home_team="' + data.data.data[i].record.home_team + '" data-home_team_id="' + data.data.data[i].record.home_team_id + '" data-home_score="' + data.data.data[i].record.home_score + '" data-away_score="' + data.data.data[i].record.away_score + '" data-away_score="' + data.data.data[i].record.away_score + '"><font class="court">' + data.data.data[i].name + '</font>';
+                            newli += '<li class="mui-table-view-cell listli" data-match_record_id="' + data
+                                .data.data[i].record.id + '"  data-id="' + data.data.data[i].id +
+                                '" data-match_time="' + data.data.data[i].match_time + '" data-away_team="' +
+                                data.data.data[i].record.away_team + '" data-home_team="' + data.data.data[
+                                    i].record.home_team + '" data-home_team_id="' + data.data.data[i].record
+                                .home_team_id + '" data-home_score="' + data.data.data[i].record.home_score +
+                                '" data-away_score="' + data.data.data[i].record.away_score +
+                                '" data-away_score="' + data.data.data[i].record.away_score +
+                                '"><font class="court">' + data.data.data[i].name + '</font>';
                             newli += '<div class="hide">';
                             for (var j = 0; j <= data.data.data[i].record_members.length - 1; j++) {
-                                newli += '<input type="hidden" class="tmInfo" data-member="' + data.data.data[i].record_members[j].member + '" data-name="' + data.data.data[i].record_members[j].name + '" data-number="' + data.data.data[i].record_members[j].number + '" data-team_member_id="' + data.data.data[i].record_members[j].team_member_id + '" data-member_id="' + data.data.data[i].record_members[j].member_id + '" data-match_record_member_id="' + data.data.data[i].record_members[j].id + '">'
+                                newli += '<input type="hidden" class="tmInfo" data-member="' + data.data.data[
+                                        i].record_members[j].member + '" data-name="' + data.data.data[i].record_members[
+                                        j].name + '" data-number="' + data.data.data[i].record_members[j].number +
+                                    '" data-team_member_id="' + data.data.data[i].record_members[j].team_member_id +
+                                    '" data-member_id="' + data.data.data[i].record_members[j].member_id +
+                                    '" data-match_record_member_id="' + data.data.data[i].record_members[j]
+                                    .id + '">'
                             }
                             newli += '</div></li>'
                         }
                         if (newli == '') {
                             var matchUrl = "{:url('keeper/team/createMatch')}/" + 'team_id/' + "{$team_id}"
-                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据，<a href="' + matchUrl + '" class="colororange">前往创建比赛</a></p></div>'
+                            newli = '<div class="mui-text-center"><p class="nohave">没有查找到数据，<a href="' +
+                                matchUrl + '" class="colororange">前往创建比赛</a></p></div>'
                         }
                         $(wMatchList).empty().append(newli);
                         $(currPage).text(data.data.current_page);
@@ -852,16 +959,22 @@
                     team_id: team_id,
                     status: 1
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli" data-number="' + data.data[i].number + '" data-name="' + data.data[i].name + '" data-tmid="' + data.data[i].id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '">' + data.data[i].name + '</li>'
+                            newli = newli + '<li class="mui-table-view-cell listli" data-number="' +
+                                data.data[i].number + '" data-name="' + data.data[i].name +
+                                '" data-tmid="' + data.data[i].id + '" data-member="' + data.data[i].member +
+                                '" data-member_id="' + data.data[i].member_id + '">' + data.data[i].name +
+                                '</li>'
                         }
                         $("ul.teamMemberList").empty();
                         if (newli == '') {
@@ -896,16 +1009,20 @@
                     page: page,
                     keyword: keywordMB,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     if (data.code == 200) {
                         var newli = '';
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli += '<li class="mui-table-view-cell listli"  data-member_id="' + data.data.data[i].id + '" data-member="' + data.data.data[i].member + '" ><font class="court">' + data.data.data[i].member + '</font>';
+                            newli += '<li class="mui-table-view-cell listli"  data-member_id="' + data.data
+                                .data[i].id + '" data-member="' + data.data.data[i].member +
+                                '" ><font class="court">' + data.data.data[i].member + '</font>';
                             newli += '</div></li>'
                         }
                         if (newli == '') {
@@ -923,7 +1040,6 @@
                 }
             });
         };
-
     </script>
 </body>
 

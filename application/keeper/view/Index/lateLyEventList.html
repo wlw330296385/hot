@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
+    <style>
+        .orderNum {
+            width: 8%;
+            font-size: 14px;
+            line-height: 35px;
+            text-align: center;
+            margin-right: 12px;
+            margin-top: 0;
+            padding: 8px 10px 8px 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,13 +32,13 @@
 
     <div class="mui-content list">
 
-        <ul class="mui-table-view mb headStatus  border-b" style="margin-top: 0">
-            <li class="mui-table-view-cell mui-media listli" style="padding:11px 15px;">
-                <img class="img50 mui-pull-left" src="{$teamInfo.logo}" style="width:60px !important;height:60px !important;margin-top:5px">
+        <ul class="mui-table-view mb headStatus border-b" style="margin-top: 0">
+            <li class="mui-table-view-cell listli">
+                <img class="img60 mui-pull-left" src="{$teamInfo.logo}" style="margin-top:5px">
                 <div class="mui-media-body wdBody">
                     <strong class="f16">{$teamInfo.name}</strong>
-                    <p class="mui-ellipsis" style="line-height:20px;">{$teamInfo.city} {$teamInfo.area}</p>
-                    <p class="mui-ellipsis" style="line-height:20px;">粉丝数：
+                    <p class="mui-ellipsis lineHeight20">{$teamInfo.city} {$teamInfo.area}</p>
+                    <p class="mui-ellipsis lineHeight20">粉丝数：
                         <strong class="colororange">{$teamInfo.fans_num}</strong>
                     </p>
                 </div>
@@ -38,10 +49,9 @@
             </li>
         </ul>
 
-        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top: 44px;">
+        <div id="refreshContainer" class="mui-scroll-wrapper" style="margin-top:44px;">
             <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b event">
-                </ul>
+                <ul class="mui-table-view list border-b event"></ul>
             </div>
         </div>
     </div>
@@ -67,10 +77,10 @@
             }
             //搜索、下拉刷选后触发
             function searchToList() {
-                count = 1;//显示第一页
+                count = 1; //显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toList(page, gType); //具体取数据的方法
             }
 
             mui.init({
@@ -80,19 +90,19 @@
                     container: "#refreshContainer",
                     down: {
                         //下拉刷新
-                        height: 50,//可选.默认50.触发下拉刷新拖动距离
-                        auto: true,//可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                        height: 50, //可选.默认50.触发下拉刷新拖动距离
+                        auto: true, //可选,默认false.自动下拉刷新一次
+                        contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                        contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
                         callback: pulldownRefresh
                     },
                     up: {
                         //上拉加载
-                        height: 150,//可选.默认50.触发上拉加载拖动距离
+                        height: 150, //可选.默认50.触发上拉加载拖动距离
                         //auto:true,//可选,默认false.自动上拉加载一次
                         contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+                        contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
                         callback: pullupRefresh
                     }
                 }
@@ -100,26 +110,25 @@
             //下拉刷新具体业务实现
             function pulldownRefresh() {
                 setTimeout(function () {
-                    count = 1;//刷新并显示第一页
+                    count = 1; //刷新并显示第一页
                     var page = count;
-                    var gType = 1;//代表下拉刷新
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 1; //代表下拉刷新
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
             //上拉加载具体业务实现
             function pullupRefresh() {
                 setTimeout(function () {
-                    count++;//翻下一页
+                    count++; //翻下一页
                     var page = count;
-                    var gType = 2;//代表上拉加载
-                    toList(page, gType);//具体取数据的方法
+                    var gType = 2; //代表上拉加载
+                    toList(page, gType); //具体取数据的方法
                 }, 100);
             }
 
 
             //接口获取数据并追加到页面
             var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
                 var url = "{:url('api/team/lasteventlist','','',true)}";
                 var member_id = "{$memberInfo.id}";
                 var team_id = "{$team_id}";
@@ -137,28 +146,39 @@
                 mui.ajax({
                     url: url,
                     data: data,
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data)
                         var newli = '';
                         if (data.code == 200) {
                             for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('team/eventinfo')}" + '/event_id/' + data.data[i].id + '/team_id/' + data.data[i].team_id;
-                                newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                                newli += '<div class="fl orderNum" style="padding:8px 5px 8px 0;">' + data.data[i].s_num + '</div>'
-                                newli += '<div class="mui-slider-handle"><a href="' + urls + '"><div class="mui-media-body wd66">' + data.data[i].event + '';
+                                var urls = "{:url('team/eventinfo')}" + '/event_id/' + data.data[
+                                    i].id + '/team_id/' + data.data[i].team_id;
+                                newli +=
+                                    '<li class="mui-table-view-cell listli">'
+                                newli +=
+                                    '<div class="fl orderNum">' +
+                                    data.data[i].s_num + '</div>'
+                                newli += '<div class="mui-slider-handle"><a href="' + urls +
+                                    '"><div class="mui-media-body wd66">' + data.data[i].event +
+                                    '';
                                 if (data.data[i].is_finished_num == 1) {
                                     newli += '<font class="tipCorner bgorange">完成</font>';
                                 }
                                 if (data.data[i].start_time == 0) {
                                     newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                                 } else {
-                                    newli += '<p class="mui-ellipsis">' + data.data[i].start_time + '</p>'
+                                    newli += '<p class="mui-ellipsis">' + data.data[i].start_time +
+                                        '</p>'
                                 }
-                                newli += '</div><div class="price-frame rightLocation" style="padding-right:0">' + data.data[i].event_type + '</a></div>'
+                                newli +=
+                                    '</div><div class="price-frame rightLocation" style="padding-right:0">' +
+                                    data.data[i].event_type + '</a></div>'
                                 newli += '</li>';
                             }
                         }
@@ -168,7 +188,9 @@
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
                             if (newli == '') {
-                                $("ul.event").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>');
+                                $("ul.event").html(
+                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
+                                );
                             }
                         } else {
                             //下拉加载 gType==2
@@ -188,7 +210,6 @@
                 });
             };
         });
-
     </script>
 </body>
 
