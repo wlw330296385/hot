@@ -11,11 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-    <style>
-        .mui-input-group .mui-input-row label {
-            line-height: 1.5;
-        }
-    </style>
 </head>
 
 <body>
@@ -162,17 +157,13 @@
                             $("ul.teamList").empty().append(newli);
                             mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
                             mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.teamList").html(
-                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
-                                );
-                            }
                         }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
+                    } else {
+                        $("ul.teamList").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>'
+                        );
+                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+                        mui('#refreshContainer').pullRefresh().refresh(true);
                     }
                 },
                 error: function (xhr, type, errerThrown) {

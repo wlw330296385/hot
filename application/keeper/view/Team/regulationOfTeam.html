@@ -12,6 +12,46 @@
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <link rel="stylesheet" href="/static/frontend/css/webuploader.css">
+    <style>
+        .imgLogo{
+        width: 50px !important;
+        height: 50px !important;
+        vertical-align: middle;
+        border-radius: 50%;
+        margin-right: 0 !important;
+    }
+    .imgCover{
+        width: 68px !important;
+        height: 51px !important;
+        margin-right: 0 !important;
+    }
+    .img24{
+        width: 24px !important;
+        height: 24px !important;
+        float: none !important;
+        margin-right: 0 !important;
+    }
+    
+    .tmlContent .tmlContentLeft {
+        float: left;
+        width: 40%;
+    }
+    .tmlContent .tmlContentRight {
+        float: right;
+        width: 60%;
+        white-space: nowrap !important;
+        overflow-x: scroll;
+    }
+    .tmlContentRight span{
+        padding: 0 10px;
+        width: 55px;
+        display: inline-block;
+        text-align: center;
+    }
+    .tmlContent .mui-row {
+        padding: 8px 0;
+    }
+    </style>
 </head>
 
 <body>
@@ -25,6 +65,90 @@
         <input type="hidden" name="__token__" class="data" value="{$Request.token}" />
         <input type="hidden" name="id" class="data" value="{$teamInfo.id}">
         <form action="" class="mui-input-group">
+            <div class="mui-input-row">
+                <label>主标题</label>
+                <input type="text" name="" value="" class="data" placeholder="请填写主标题">
+            </div>
+
+            <div class="mui-input-row">
+                <label>副标题</label>
+                <input type="text" name="" value="" class="data" placeholder="请填写副标题">
+            </div>
+
+            <div class="page-header bggray2">
+                <span class="course">第一章：总则（简介）</span>
+            </div>
+            <textarea rows="4" name="" class="data" placeholder="总则内容"></textarea>
+
+            <div class="page-header bggray2">
+                <span class="course">第二章：球队信息</span>
+            </div>
+            <div class="mui-input-row">
+                <label>球队名称</label>
+                <span>{$teamInfo.name}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>球队类型</label>
+                <span>{$teamInfo.type}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>所属地区</label>
+                <span>{$teamInfo.province} {$teamInfo.city} {$teamInfo.area}</span>
+            </div>
+            <div class="mui-input-row">
+                <label>球队宣言</label>
+                <span>{$teamInfo.descri}</span>
+            </div>
+
+            <div class="page-header bggray2">
+                <span class="course">第三章：球队形象</span>
+            </div>
+            <div class="mui-input-row h-auto">
+                <label class="lineHeight29">球队徽标</label>
+                <span><img src="{$teamInfo.logo}" class="imgLogo"></span>
+            </div>
+
+            <div class="mui-input-row h-auto">
+                <label class="lineHeight29">球队封面</label>
+                <span><img src="{$teamInfo.cover}" class="imgCover"></span>
+            </div>
+
+            <div class="page-header bggray2">
+                <span class="course">第四章：组织结构</span>
+            </div>
+
+            <div class="tmlContent mui-row">
+                <div class="tmlContentLeft mui-text-center f14">
+                    <div class="mui-row colorgray tmName">
+                        <div class="mui-col-xs-4">号码</div>
+                        <div class="mui-col-xs-8">球员</div>
+                    </div>
+                </div>
+                <div class="tmlContentRight mui-text-center f14">
+                    <div class="mui-row colorgray tmContent">
+                        <span>职位</span>
+                        <span>身高</span>
+                        <span>体重</span>
+                        <span>位置</span>
+                        <span>球龄</span>
+                    </div>
+                </div>
+            </div>
+            <p class="pline"></p>
+            <textarea rows="3" name="" class="data" placeholder="组织结构附加内容"></textarea>
+
+            <div class="page-header bggray2">
+                <span class="course">第五章：球队管理</span>
+            </div>
+            <textarea rows="4" name="" class="data" placeholder="球队管理内容"></textarea>
+
+            <div class="page-header bggray2">
+                <span class="course">第六章：队费管理</span>
+            </div>
+            <textarea rows="4" name="" class="data" placeholder="队费管理内容"></textarea>
+
+
+            <p class="pline"></p>
             <textarea name="regulation" class="data regulation" style="display: none"></textarea>
             <div id="articleEditor" class="tuwenIntro">{$teamInfo.regulation}</div>
         </form>
@@ -55,6 +179,52 @@
         });
     </script>
     <script>
+        $(function () {
+
+            var url = "{:url('api/team/teammembers','','',true)}";
+            var team_id = "{$teamInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    team_id: team_id,
+                    status: 1
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    var newli0 = '';
+                    var newli1 = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            newli0 +=
+                                `<div class="mui-row">
+                                    <div class="mui-col-xs-4">${data.data[i].number}</div>
+                                    <div class="mui-col-xs-8">${data.data[i].name}</div>
+                                </div>`
+                            newli1 +=
+                                ` <div class="mui-row">
+                                    <span>${data.data[i].name}</span>
+                                    <span>${data.data[i].height}</span>
+                                    <span>${data.data[i].weight}</span>
+                                    <span>${data.data[i].position}</span>
+                                    <span>${data.data[i].yearsexp}</span>
+                                </div>`
+                        }
+                        $(".tmName").after(newli0);
+                        $(".tmContent").after(newli1);
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
+        })
+
         // 获取数据并进行提交
         function submitAction() {
 

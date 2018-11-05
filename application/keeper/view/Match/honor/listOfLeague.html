@@ -13,12 +13,13 @@
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
     <style>
         .orderNum {
-            width: 7%;
-            font-size: 20px;
+            width: 8%;
+            font-size: 14px;
             line-height: 55px;
             text-align: center;
             margin-right: 12px;
-            margin-top:0;
+            margin-top: 0;
+            padding: 8px 10px 8px 0;
         }
     </style>
 </head>
@@ -30,11 +31,24 @@
     </header>
 
     <div class="mui-content">
-        <div id="refreshContainer" class="mui-scroll-wrapper mt44">
-            <div class="mui-scroll">
-                <ul class="mui-table-view detalis-list list border-b honor OA_task_honor"></ul>
-            </div>
+
+        <div class="page-header border-b">
+            <span class="course">联赛奖项（团体）</span>
         </div>
+        <ul class="mui-table-view list honorTeamList OA_task_honor">
+            <li class="nodata"><i class="icon iconfont icon-logo-Big"></i>
+                <p>暂无数据</p>
+            </li>
+        </ul>
+        <div class="page-header border-b">
+            <span class="course">联赛奖项（个人）</span>
+        </div>
+        <ul class="mui-table-view list  mb44 honorPersonList OA_task_honor">
+            <li class="nodata"><i class="icon iconfont icon-logo-Big"></i>
+                <p>暂无数据</p>
+            </li>
+        </ul>
+
 
         <ul class="mui-table-view operation mt">
             <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli">
@@ -57,146 +71,114 @@
 
         $(function () {
 
-            //初始化全局变量
-            var count = 1;
-
-            //搜索、下拉刷选后触发
-            function searchToList() {
-                count = 1; //显示第一页
-                var page = count;
-                var gType = 1; //代表下拉刷新
-                toList(page, gType); //具体取数据的方法
-            }
-
-            mui.init({
-                swipeBack: true, //启用右滑关闭功能
-                pullRefresh: {
-                    //下拉刷新上拉加载教练列表
-                    container: "#refreshContainer",
-                    down: {
-                        //下拉刷新
-                        height: 50, //可选.默认50.触发下拉刷新拖动距离
-                        auto: true, //可选,默认false.自动下拉刷新一次
-                        contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                        contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                        callback: pulldownRefresh
-                    },
-                    up: {
-                        //上拉加载
-                        height: 150, //可选.默认50.触发上拉加载拖动距离
-                        //auto:true,//可选,默认false.自动上拉加载一次
-                        contentrefresh: '正在加载...',
-                        contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
-                        callback: pullupRefresh
-                    }
-                }
-            });
-            //下拉刷新具体业务实现
-            function pulldownRefresh() {
-                setTimeout(function () {
-                    count = 1; //刷新并显示第一页
-                    var page = count;
-                    var gType = 1; //代表下拉刷新
-                    toList(page, gType); //具体取数据的方法
-                }, 100);
-            }
-            //上拉加载具体业务实现
-            function pullupRefresh() {
-                setTimeout(function () {
-                    count++; //翻下一页
-                    var page = count;
-                    var gType = 2; //代表上拉加载
-                    toList(page, gType); //具体取数据的方法
-                }, 100);
-            }
-
-
-            //接口获取数据并追加到页面
-            var toList = function (page, gType) {
-                //搜索关键字不能完全为空，否则查询为空
-                var url = "{:url('api/league/getMatchHonorList','','',true)}" + '?page=' + page;
-                var league_id = "{$leagueInfo.id}";
-                mui.ajax({
-                    url: url,
-                    data: {
-                        league_id: league_id,
-                        status: 1
-                    },
-                    dataType: 'json', //服务器返回json格式数据
-                    type: 'post', //HTTP请求类型
-                    timeout: 10000, //超时时间设置为10秒；
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    success: function (data) {
-                        console.log(data)
-                        var newli = '';
-                        if (data.code == 200) {
-                            for (var i = 0; i <= data.data.length - 1; i++) {
-                                var urls = "{:url('match/honorinfoOfLeague')}" + '/honor_id/' + data.data[
-                                    i].id + '/league_id/' + data.data[i].match_id;
-                                newli +=
+            // 荣誉列表
+            var url = "{:url('api/league/getMatchHonorList','','',true)}";
+            var league_id = "{$leagueInfo.id}";
+            mui.ajax({
+                url: url,
+                data: {
+                    league_id: league_id,
+                    status: 1
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data)
+                    var newli0 = '';
+                    var newli1 = '';
+                    if (data.code == 200) {
+                        for (var i = 0; i <= data.data.length - 1; i++) {
+                            var urls = "{:url('match/honorinfo')}" + '/honor_id/' + data.data[
+                                    i].id +
+                                '/league_id/' + data.data[i].match_id;
+                            if (data.data[i].type == 2) {
+                                newli0 +=
                                     `<li class="mui-table-view-cell listli">
-                                        <div class="mui-slider-right mui-disabled" data-id="${data.data[i].id}">
-                                            <span class="mui-btn mui-btn-red" data-action="del">删除</span>
-                                        </div>
-                                        <div class="mui-slider-handle">
-                                            <a href="${urls}">
+                                             <div class="mui-slider-right mui-disabled">
+                                                <span class="mui-btn mui-btn-red delHonor" data-id="${data.data[i].id}">删除</span>
+                                            </div>
+                                            <div class="mui-slider-handle">
+                                                    <a href="${urls}">
                                                 <div class="fl orderNum">${(i + 1)}</div>
-                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
-                                                    <p class="mui-ellipsis lineHeight20" >授奖单位：{$leagueInfo.name}</p>`
-                                if (data.data[i].honor_time == '') {
-                                    newli +=
-                                        `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>`
+                                if (data.data[i].awardee_str == '') {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖团队：待定</p>`
                                 } else {
-                                    newli +=
-                                        `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖团队：${data.data[i].awardee_str}</p>`
                                 }
 
-                                newli += `</div></a></div></li>`;
+                                if (data.data[i].honor_time == '') {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                } else {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                }
+                                newli0 += `</div></div></a></li>`;
+                            } else {
+                                newli1 +=
+                                    `<li class="mui-table-view-cell listli">
+                                           <div class="mui-slider-right mui-disabled">
+                                                <span class="mui-btn mui-btn-red delHonor" data-id="${data.data[i].id}">删除</span>
+                                            </div>
+                                            <div class="mui-slider-handle">
+                                                    <a href="${urls}">
+                                                <div class="fl orderNum" style="font-size:30px">·</div>
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>`
+                                if (data.data[i].awardee_str == '') {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖者：：待定</p>`
+                                } else {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖者：${data.data[i].awardee_str}</p>`
+                                }
+                                if (data.data[i].honor_time == '') {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
+                                } else {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20">授奖日期：${data.data[i].honor_time}</p>`
+                                }
+                                newli1 += `</div></div></a></li>`;
                             }
                         }
-                        if (gType == 1) {
-                            //上拉刷新
-                            $("ul.honor").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                            if (newli == '') {
-                                $("ul.honor").html(
-                                    '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
-                                );
-                            }
-                        } else {
-                            //下拉加载 gType==2
-                            $("ul.honor").append(newli);
-                        }
-                        if (newli != '') {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                        } else {
-                            mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                        }
-
-                    },
-                    error: function (xhr, type, errerThrown) {
-                        mui.toast('网络异常,请稍候再试');
-                        mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                     }
-                });
-            };
+                    //上拉刷新
+                    $(".honorTeamList").empty().append(newli0);
+                    $(".honorPersonList").empty().append(newli1);
+                    if (newli0 == '') {
+                        $(".honorTeamList").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>'
+                        );
+                    }
+                    if (newli1 == '') {
+                        $(".honorPersonList").html(
+                            '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>'
+                        );
+                    }
+                },
+                error: function (xhr, type, errerThrown) {
+                    mui.toast('网络异常,请稍候再试');
+                }
+            });
         });
 
         //拖拽后显示操作图标，点击操作图标删除元素；
-        $('.OA_task_honor').on('tap', '.mui-btn', function () {
+        $('.OA_task_honor').on('tap', '.delHonor', function () {
             var elem = this;
             var li = elem.parentNode.parentNode;
-            var btnArray = ['确认', '取消'];
+            var btnArray = ['取消', '确认'];
             var txt = elem.innerHTML;
-            var id = elem.parentNode.getAttribute('data-id');
-            var action = elem.getAttribute('data-action');
+            var id = elem.getAttribute('data-id');
             mui.confirm('确认删除该荣誉', '提示', btnArray, function (e) {
-                if (e.index == 0) {
-                    var apiurl = "{:url('api/team/delteamhonor')}";
+                if (e.index == 1) {
+                    var apiurl = "{:url('api/league/delhonor')}";
                     mui.ajax(apiurl, {
                         data: {
                             honor_id: id,

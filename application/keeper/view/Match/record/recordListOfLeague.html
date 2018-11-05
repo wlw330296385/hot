@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/static/frontend/css/mui.min.css">
     <!--自定义style.css-->
     <link rel="stylesheet" type="text/css" href="/static/frontend/css/style.css" />
-
 </head>
 
 <body>
@@ -23,8 +22,6 @@
 
     <div class="mui-content">
 
-        <!-- <div id="refreshContainer" class="mui-scroll-wrapper mt44">
-            <div class="mui-scroll"> -->
         <ul class="mui-table-view mui-text-center" style="margin-top:0">
             <li class="mui-table-view-cell border-b">
                 <ul class="mui-row" style="padding:0">
@@ -47,8 +44,6 @@
             </li>
         </ul>
         <div class="rankList"></div>
-        <!-- </div>
-        </div> -->
 
     </div>
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -76,57 +71,11 @@
         })(mui);
 
         $(function () {
-            //初始化全局变量
-            // var onCount = 1;
-            // var offCount = 1;
-
-            // mui('#refreshContainer').pullRefresh({
-            //     down: {
-            //         //下拉刷新
-            //         height: 50, //可选.默认50.触发下拉刷新拖动距离
-            //         auto: true, //可选,默认false.自动下拉刷新一次
-            //         contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-            //         contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-            //         contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-            //         callback: pulldownRefreshOn
-            //     },
-            //     up: {
-            //         //上拉加载
-            //         height: 150, //可选.默认50.触发上拉加载拖动距离
-            //         //auto:true,//可选,默认false.自动上拉加载一次
-            //         contentrefresh: '正在加载...',
-            //         contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
-            //         callback: pullupRefreshOn
-            //     }
-            // });
-
-            // //下拉刷新具体业务实现
-            // function pulldownRefreshOn() {
-            //     setTimeout(function () {
-            //         onCount = 1; //刷新并显示第一页
-            //         var page = onCount;
-            //         var gType = 1; //代表下拉刷新
-            //         toList(page, gType); //具体取数据的方法
-            //     }, 100);
-            // }
-
-            // //上拉加载具体业务实现
-            // function pullupRefreshOn() {
-            //     setTimeout(function () {
-            //         onCount++; //翻下一页
-            //         var page = onCount;
-            //         var gType = 2; //代表上拉加载
-            //         toList(page, gType); //具体取数据的方法
-            //     }, 100);
-            // }
             toList()
         });
 
-
-
         // 接口获取数据并追加到页面
         var toList = function (page, gType) {
-            //搜索关键字不能完全为空，否则查询为空
             var url = "{:url('api/league/getmatchranklist','','',true)}" + '/?page=' + page;
             var league_id = "{$league_id}"
             mui.ajax({
@@ -162,9 +111,7 @@
                                     `<li class="mui-table-view-cell">
                                     <ul class="mui-row" style="padding:0">
                                         <li class="mui-col-xs-1 mui-col-sm-1" style="line-height: 36px;">
-                                            <p class="colororange">
-                                                <strong>${j + 1}</strong>
-                                            </p>
+                                            <p>${j + 1}</p>
                                         </li>
                                         <li class="mui-col-xs-6 mui-col-sm-6" style="line-height: 36px;">
                                             <p>${data.data[i].teams[j].team}</p>
@@ -186,37 +133,19 @@
                             newli += `</ul>`
                         }
                     }
-                    // if (gType == 1) {
-                    //上拉刷新
                     $(".rankList").empty().append(newli);
-                    // mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                    // mui('#refreshContainer').pullRefresh().refresh(true);
                     if (newli == '') {
                         $(".rankList").append(
                             '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
                         );
                     }
-                    // } else {
-                    //下拉加载 gType==2
-                    // $(".rankList").append(newli);
-                    // }
-
-                    // if (newli != '') {
-                    //     mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
-                    // } else {
-                    //     mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
-                    // }
-
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
-                    // mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
                 }
             });
         };
     </script>
-
-
 </body>
 
 </html>

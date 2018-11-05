@@ -35,12 +35,13 @@
         }
 
         .orderNum {
-            width: 7%;
-            font-size: 20px;
+            width: 8%;
+            font-size: 14px;
             line-height: 55px;
             text-align: center;
             margin-right: 12px;
             margin-top: 0;
+            padding: 8px 10px 8px 0;
         }
     </style>
 </head>
@@ -75,7 +76,7 @@
                 </li>
             </ul>
 
-            <div class="nav-list record mb">
+            <div class="nav-list mb">
                 <ul class="mui-table-view mui-grid-view mui-grid-9 nav-list-frame">
                     <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
                         <a href="{:url('match/leagueregulation', ['league_id' => $leagueInfo.id])}">
@@ -159,7 +160,7 @@
                     <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-8 mui-col-xs-8 opli">
-                    <a href="">咨询</a>
+                    <a href="###">咨询</a>
                 </li>
             </ul>
 
@@ -286,8 +287,15 @@
                                     `<li class="mui-table-view-cell listli">
                                             <a href="${urls}">
                                                 <div class="fl orderNum">${(i + 1)}</div>
-                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
-                                                    <p class="mui-ellipsis lineHeight20" >获奖团队：${data.data[i].awardee_str}</p>`
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>`
+                                if (data.data[i].awardee_str == '') {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖团队：待定</p>`
+                                } else {
+                                    newli0 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖团队：${data.data[i].awardee_str}</p>`
+                                }
+
                                 if (data.data[i].honor_time == '') {
                                     newli0 +=
                                         `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
@@ -301,8 +309,14 @@
                                     `<li class="mui-table-view-cell listli">
                                             <a href="${urls}">
                                                 <div class="fl orderNum" style="font-size:30px">·</div>
-                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>
-                                                    <p class="mui-ellipsis lineHeight20" >获取者：${data.data[i].awardee_str}</p>`
+                                                <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>`
+                                if (data.data[i].awardee_str == '') {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖者：：待定</p>`
+                                } else {
+                                    newli1 +=
+                                        `<p class="mui-ellipsis lineHeight20" >获奖者：：${data.data[i].awardee_str}</p>`
+                                }
                                 if (data.data[i].honor_time == '') {
                                     newli1 +=
                                         `<p class="mui-ellipsis lineHeight20">授奖日期：待定</p>`
