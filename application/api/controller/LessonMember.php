@@ -169,7 +169,6 @@ class LessonMember extends Base{
                     ->view('lesson_member','*','lesson_member.lesson_id = lesson.id')
                     ->where($map)
                     ->where("lesson.cost={$lessonInfo['cost']} and lesson.camp_id={$lessonInfo['camp_id']}")
-                    // ->having("lesson.cost=$cost and lesson.camp_id=$camp_id")
                     ->order('lesson_member.id desc')
                     ->paginate(30);
             if($result){

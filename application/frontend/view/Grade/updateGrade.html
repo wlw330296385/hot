@@ -129,7 +129,7 @@
                             {volist name="students" id="vol"}
                             <input type="hidden" class="stdList" data-id="{$vol.id}" data-student="{$vol.student}" data-student_id="{$vol.student_id}"
                                 data-camp="{$vol.camp}" data-camp_id="{$vol.camp_id}" data-lesson_id="{$vol.lesson_id}" data-lesson="{$vol.lesson}"
-                                data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-student_typenum="{$vol.type}"> {/volist}
+                                data-member_id="{$vol.member_id}" data-member="{$vol.member}" data-student_type="{$vol.type}"> {/volist}
                         </div>
                         <input type="hidden" name="students" class="students data" value="{$gradeInfo.students}">
                         <!--考虑去除-->
@@ -722,7 +722,7 @@
                 var id = $(this).attr("data-id");
                 var student_id = $(this).attr("data-student_id");
                 var student = $(this).attr("data-student");
-                var student_typenum = $(this).attr("data-student_typenum");
+                var student_type = $(this).attr("data-student_type");
                 var camp = $(this).attr("data-camp");
                 var camp_id = $(this).attr("data-camp_id");
                 var lesson = $(this).attr("data-lesson");
@@ -731,7 +731,7 @@
                 var member_id = $(this).attr("data-member_id");
                 var grade = "{$gradeInfo.grade}";
                 var grade_id = "{$gradeInfo.id}";
-                studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
+                studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_type, status: 1 };
             });
 
             //学员列表复选框赋值
@@ -793,7 +793,7 @@
                     var id = $(this).attr("data-id");
                     var student_id = $(this).attr("data-student_id");
                     var student = $(this).val();
-                    var student_typenum = $(this).attr("data-student_typenum");
+                    var student_type = $(this).attr("data-student_type");
                     var camp = $(this).attr("data-camp");
                     var camp_id = $(this).attr("data-camp_id");
                     var lesson = $(this).attr("data-lesson");
@@ -803,8 +803,8 @@
                     var grade = "{$gradeInfo.grade}";
                     var grade_id = "{$gradeInfo.id}";
 
-                    studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_typenum, status: 1 };
-                    inputList += '<input type="hidden" class="stdList"  data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" data-student_typenum="' + student_typenum + '" >';
+                    studentList[i] = { grade: grade, grade_id: grade_id, student: student, student_id: student_id, camp: camp, camp_id: camp_id, lesson: lesson, lesson_id: lesson_id, member: member, member_id: member_id, type: student_type, status: 1 };
+                    inputList += '<input type="hidden" class="stdList"  data-student="' + student + '" data-student_id="' + student_id + '" data-camp="' + camp + '" data-camp_id="' + camp_id + '" data-lesson="' + lesson + '" data-lesson_id="' + lesson_id + '" data-member="' + member + '" data-member_id="' + member_id + '" data-student_type="' + student_type + '" >';
                     studentNames += student + ','
                 });
                 $("#hideStList").empty();
@@ -1293,8 +1293,8 @@
                         var tys = '';
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             tys = '';
-                            if (data.data[i].type == "体验生") { tys = '<span class="tips">体验生</span>' }
-                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-camp="' + data.data[i].camp + '" data-camp_id="' + data.data[i].camp_id + '" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].lesson_id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-student_typenum="' + data.data[i].type_num + '" ></div>'
+                            if (data.data[i].type == "2") { tys = '<span class="tips">体验生</span>' }
+                            newli = newli + '<div class="mui-input-row mui-checkbox mui-left"><label>' + data.data[i].student + tys + '</label><input name="checkbox-student" class="student" value="' + data.data[i].student + '" type="checkbox" data-id="' + data.data[i].id + '"  data-student_id="' + data.data[i].student_id + '" data-student="' + data.data[i].student + '" data-camp="' + data.data[i].camp + '" data-camp_id="' + data.data[i].camp_id + '" data-lesson="' + data.data[i].lesson + '" data-lesson_id="' + data.data[i].lesson_id + '" data-member="' + data.data[i].member + '" data-member_id="' + data.data[i].member_id + '" data-student_type="' + data.data[i].type + '" ></div>'
                         }
 
                         $(classNameList).empty();

@@ -99,18 +99,120 @@ class Student extends Backend{
         if($keyword){
             $map['lesson_member.lesson|lesson_member.student'] = ['like',"%$keyword%"];
         }
-        $studentList = db('lesson_member')->field('lesson_member.*,sum(bill.balance_pay) as s_balance_pay, sum(gift_schedule) as s_gift')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->join('schedule_gift_student','schedule_gift_student.student_id = bill.student_id and schedule_gift_student.camp_id = bill.camp_id')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
-        // 学生ids
-        $ids = [];
+
+        $studentList = db('lesson_member')->field('lesson_member.lesson,lesson_member.member_id,lesson_member.student,lesson_member.status,lesson_member.type,lesson_member.student_id,lesson_member.lesson,sum(lesson_member.total_schedule) as s_total_schedule,sum(lesson_member.rest_schedule) as s_rest_schedule,sum(bill.balance_pay) as s_balance_pay, sum(gift_schedule) as s_gift')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->join('schedule_gift_student','schedule_gift_student.student_id = bill.student_id and schedule_gift_student.camp_id = bill.camp_id','left')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
+
+        // 初始化
         foreach ($studentList as $key => $value) {
-            $ids[] = $value['student_id'];
+            $studentList[$key]['s_school'] = 0;
+            $studentList[$key]['s_unsettle'] = 0;
         }
-        // 赠送课时
-        $giftList =
+        // 未结算课时
+        $unsettleList = db('schedule_member')->field('count(id) as c_id,user_id as student_id')->where(['camp_id'=>$camp_id,'status'=>-1,'is_school'=>-1,'type'=>1])->group('user_id')->select();
+        // 校园课时
+        $schoolList = db('schedule_member')->field('count(id) as c_id,user_id as student_id')->where(['camp_id'=>$camp_id,'status'=>-1,'is_school'=>1,'type'=>1])->group('user_id')->select();
+        foreach ($studentList as $key => $value) {
+            foreach ($unsettleList as $k => $v) {
+                if($value['student_id'] == $v['student_id']){
+                    $studentList[$key]['s_unsettle'] = $v['c_id'];
+                }
+            }
+            foreach ($schoolList as $kk => $vv) {
+                if($value['student_id'] == $vv['student_id']){
+                    $studentList[$key]['s_school'] = $vv['c_id'];
+                }
+            }   
+        }
+        if(request()->isPost()){
+            if(empty($studentList)){
+                $this->error("数据为空,不生成excel") ;
+            }else{
+                $xlsName  = "学生课时统计表";
+                $xlsCell = [
+                    ['student_id','学生ID'],
+                    ['student','姓名'],
+                    ['lesson','课程名称'],
+                    ['s_balance_pay','总交费'],
+                    ['s_gift','总赠送课时'],
+                    ['s_total_schedule','总课时'],
+                    ['s_rest_schedule','已上课时'],
+                    ['s_school','已上公益课时'],
+                    ['s_unsettle','未结算课时'],
+                    ['s_rest_schedule','剩余课时'],
+                    ['type','类型(仅供参考)'],
+                ];
+                $xlsData  = $studentList;
+                exportExcel($xlsName,$xlsCell,$xlsData);
+            }
+        }    
         $campList = db('camp')->select();
         $this->assign('campList',$campList);
         $this->assign('studentList',$studentList);
         return view('Student/studentList');
     }
     
+
+
+
+
+    public function exportExcel(){
+        $camp_id = $this->campInfo['id'];
+        $map['lesson_member.camp_id'] = $camp_id;
+        $map['bill.is_pay'] = 1;
+        $map['bill.goods_type'] = 1;
+        $studentList = db('lesson_member')->field('lesson_member.lesson,lesson_member.member_id,lesson_member.student,lesson_member.status,lesson_member.type,lesson_member.student_id,lesson_member.lesson,sum(lesson_member.total_schedule) as s_total_schedule,sum(lesson_member.rest_schedule) as s_rest_schedule,sum(bill.balance_pay) as s_balance_pay, sum(gift_schedule) as s_gift')->join('bill','bill.student_id = lesson_member.student_id and lesson_member.lesson_id = bill.goods_id','left')->join('schedule_gift_student','schedule_gift_student.student_id = bill.student_id and schedule_gift_student.camp_id = bill.camp_id','left')->where($map)->order('lesson_member.id desc')->group('bill.student_id')->select();
+
+        // 初始化
+        foreach ($studentList as $key => $value) {
+            $studentList[$key]['s_school'] = 0;
+            $studentList[$key]['s_unsettle'] = 0;
+        }
+        // 未结算课时
+        $unsettleList = db('schedule_member')->field('count(id) as c_id,user_id as student_id')->where(['camp_id'=>$camp_id,'status'=>-1,'is_school'=>-1,'type'=>1])->group('user_id')->select();
+        // 校园课时
+        $schoolList = db('schedule_member')->field('count(id) as c_id,user_id as student_id')->where(['camp_id'=>$camp_id,'status'=>-1,'is_school'=>1,'type'=>1])->group('user_id')->select();
+        foreach ($studentList as $key => $value) {
+            foreach ($unsettleList as $k => $v) {
+                if($value['student_id'] == $v['student_id']){
+                    $studentList[$key]['s_unsettle'] = $v['c_id'];
+                }
+            }
+            foreach ($schoolList as $kk => $vv) {
+                if($value['student_id'] == $vv['student_id']){
+                    $studentList[$key]['s_school'] = $vv['c_id'];
+                }
+            }   
+        }
+        if(empty($studentList)){
+            echo "数据为空,不生成excel";
+        }else{
+            $xlsName  = "学生课时统计表";
+            $xlsCell = [
+                ['student_id','学生ID'],
+                ['stduent','姓名'],
+                ['lesson','课程名称'],
+                ['s_balance_pay','总交费'],
+                ['s_gift','总赠送课时'],
+                ['s_total_schedule','总课时'],
+                ['s_rest_schedule','已上课时'],
+                ['s_school','已上公益课时'],
+                ['s_unsettle','未结算课时'],
+                ['s_rest_schedule','剩余课时'],
+                ['type','类型(仅供参考)'],
+            ];
+            $xlsData  = $studentList;
+            exportExcel($xlsName,$xlsCell,$xlsData);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

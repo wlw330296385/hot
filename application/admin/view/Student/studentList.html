@@ -22,8 +22,8 @@
 			<div class="box-body">
 				<div class="dataTables_wrapper form-inline dt-bootstrap">
 					<div class="row hotTbHeader">
-						<form method="post">
-						<div class="col-sm-12">
+						<form method="get">
+						<div class="col-sm-8">
 							<div class="form-group">
 								<!-- /.input group -->
 								<label>所属训练营</label>
@@ -67,14 +67,22 @@
 							</div>
 							<div class="form-group">
 								<!-- /.input group -->
-								<button type="submit" class="btn btn-default" id="goSearch">确认查询</button>
+								<button type="submit" class="btn btn-success" >确认筛选</button>
+								
 							</div>
 						</form>
+						<form method="post">
+							<div class="form-group">
 							<h3 class="totalRight">
 								<span><small>学员总数：</small><strong class="text-yellow sAllCount"></strong></span>
 								<span><small>学员报课总数：</small><strong class="text-yellow sLessonCount"></strong></span>
-								<span id="exportExcel"><small><i class="fa fa-file-excel-o"></i> &nbsp;导出 Excel</small></span>
+								<!-- <a  class="btn btn-default" id="exportExcel" href="{:('exportExcel')}" target="_balank" ><i class="fa fa-file-excel-o"></i>&nbsp;导出 Excel</a> -->
+								
+									<button type="submit" class="btn btn-default" ><i class="fa fa-file-excel-o"></i>&nbsp;导出 Excel</button>
+								
 							</h3>
+						</div>
+						</form>
 						</div>
 					</div>
 					<div class="row">
@@ -86,11 +94,13 @@
 									<tr>
 										<th>学生ID</th>
 										<th>姓名</th>
-										<th>课程名称</th>
+										<th>课程名称(仅供参考)</th>
 										<th>总交费</th>
 										<th>总赠送课时</th>
 										<th>总课时</th>
 										<th>已上课时</th>
+										<th>已上公益课时</th>
+										<th>未结算课时</th>
 										<th>剩余课时</th>
 										<th>类型(仅供参考)</th>
 										<th>状态(仅供参考)</th>
@@ -106,9 +116,11 @@
 										<td>{$vol.lesson}</td>
 										<td>{$vol.s_balance_pay}</td>
 										<td>{$vol.s_gift}</td>
-										<td>{$vol.total_schedule}</td>
-										<td>{$vol.total_schedule - $vol.rest_schedule}</td>
-										<td>{$vol.rest_schedule}</td>
+										<td>{$vol.s_total_schedule}</td>
+										<td>{$vol.s_total_schedule - $vol.s_rest_schedule}</td>
+										<td>{$vol.s_school}</td>
+										<td>{$vol.s_unsettle}</td>
+										<td>{$vol.s_rest_schedule}</td>
 										<td>
 											{if $vol.type ==1}
 												正式生
@@ -125,7 +137,7 @@
 											{/switch}
 										</td>
 										<td><a class="btn btn-xs btn-info sInfo" data-student_id="{$vol['student_id']}"><i class="fa fa-inbox"></i> 查看详情</a></td>
-										<td><button  class="btn btn-xs btn-default sendTip" data-lesson="{$vol.lesson}" data-member_id = "{$vol['member_id']}" data-total_schedule = "{$vol.total_schedule}" data-rest_schedule = "{$vol.rest_schedule}"><i class="fa fa-inbox"></i> 发送续费提醒</a></button>
+										<td><button  class="btn btn-xs btn-default sendTip" data-lesson="{$vol.lesson}" data-member_id = "{$vol['member_id']}" data-total_schedule = "{$vol.s_total_schedule}" data-rest_schedule = "{$vol.s_rest_schedule}"><i class="fa fa-inbox"></i> 发送续费提醒</a></button>
 									</tr>
 									{/volist}
 									</tbody>
@@ -198,19 +210,6 @@
 
         //隔行变色
         $(".hotTable tbody td ul").find("li:even").addClass("even");
-
-
-        //判断是否有指定训练营和教练员的本地存储
-        $("input[name=keyword]").val(currKeyword);
-        if(currType!=''&&currType!=null){
-            $('select[name="type"]').find('option[value="'+currType+'"]').prop("selected", true);
-        }
-        if(currStatus!=''&&currStatus!=null){
-            $('select[name="status"]').find('option[value="'+currStatus+'"]').prop("selected", true);
-        }
-
-        //=========================== 初始化数据 ==============================//
-
 
 
         $(".sInfo").click(function(){

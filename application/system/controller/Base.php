@@ -7,7 +7,18 @@ class Base extends Controller{
     $fff = request()->instance()->header('fff');
 		if(!$fff|| $fff!='woo'){
             echo "非法操作";
-            
+            db('log_exception')->insert(
+                [
+                    'message'=>"定时任务非正常运行",
+                    'file'=>"base.php",
+                    'line'=>'0',
+                    'data_json'=>$fff,
+                    'request_url'=>"fff",
+                    'member_id'=>0,
+                    'member'=>'woo',
+                    'trace'=>json_encode(request()->instance()->header()),
+                ]
+            );
             exit(1);
         }
     }

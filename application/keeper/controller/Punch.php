@@ -40,7 +40,6 @@ class Punch extends Base{
     	$totalPunch = db('punch')->where(['member_id'=>$punchInfo['member_id']])->where('delete_time',null)->count();
     	//本月打卡
     	$monthPunch = db('punch')->where(['member_id'=>$punchInfo['member_id']])->whereTime('punch_time','month')->where('delete_time',null)->count();
-
         // 是否已点赞
         $likesInfo = $this->PunchService->getLikesInfo(['punch_id'=>$punch_id,'member_id'=>$this->memberInfo['id']]);
         if($likesInfo){

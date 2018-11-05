@@ -106,6 +106,7 @@ var uploader3 = WebUploader.create({
     pick : "#filePicker3", //选择文件按钮
     resize: false, //压缩
 });
+
 // 上传进度
 uploader3.on( 'uploadProgress', function( file, percentage ) {
     var $li = $( '#uploader-preview3' ),

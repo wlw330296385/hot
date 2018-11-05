@@ -1,0 +1,147 @@
+{extend name="layout/common"/}
+{block name="page-content"}
+    <!--<div class="wrapper">-->
+        <div class="row">
+                <div class="box no-border">
+                  <div class="box-body">
+                    <form action="" method="get">
+                    <div class="form-group">
+                          <label for="">商品类型</label>
+                          <select  name="goods_type">
+                            {volist name="goodsCategoryListTree" id="vol"}
+                            <optgroup label="{$vol.category}">
+                              {volist name="$vol.daughter" id="v"}
+                              <option value="{$v.id}">{$v.category}</option>
+                              {/volist}
+                            </optgroup>
+                            {/volist}
+                          </select>
+                      </div><button type="submit" class="btn btn-success">更换商品类型</button>
+                    </form>
+                  </div>
+                </div>
+
+                  <div class="box no-border">
+                    <form role="form" action="" method="post">
+                        <input type="hidden" class="form-control" name="shop_id" value="1" >
+                        <input type="hidden" class="form-control"  name="shop" value="大热优品" >
+                        <div class="box-body">
+                            
+                            <div class="form-group">
+                                <label for="">商品名</label>
+                                <input type="text" class="form-control" placeholder="商品名" name="goods" required="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="">副标题</label>
+                                <input type="number" class="form-control" placeholder="0" name="subtitle"  required="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="">初始价</label>
+                                <input type="text" class="form-control" placeholder="999" name="price"  required="required">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label >商品主图片</label>
+                                <a class="btn-banner" href="#" title="点击替换图片">
+                                    <img class="img-thumbnail" id="uploader-preview1" src="">
+                                    <div id="filePicker1">选择上传</div>
+                                    <input id="uploader-input1" type="hidden" name="main_image" value=""  required="required">
+                                </a>
+                            </div>
+
+                            <div class="form-group">
+                                <label >商品副图片(最多5张)</label>
+                                <a class="btn-banner" href="#" title="点击替换图片">
+                                    <img class="img-thumbnail" id="uploader-preview2" src="">
+                                    <div id="filePicker2">选择上传</div>
+                                    <input id="uploader-input2" type="hidden" name="sub_image" value="">
+                                </a>
+                            </div>
+
+                            <section class="content-header">
+                              <h1>
+                                <small></small>
+                              </h1>
+                            </section>
+                            <div class="form-group">
+                                <label for="">商品描述</label>
+                                <!-- Main content -->
+                                <section class="content">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="box box-info">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">CK Editor
+                                                    <small>Advanced and full of features</small>
+                                                </h3>
+                                                <!-- tools box -->
+                                                <div class="pull-right box-tools">
+                                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                                      <i class="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <!-- /. tools -->
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body pad">
+                                                    <textarea id="editor1" name="des" rows="10" cols="80"  required="required">
+                                                       
+                                                    </textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="form-group">
+                                <label for="">总库存</label>
+                                <input type="number" class="form-control" placeholder="电话号码" name="stock"  required="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="">单位</label>
+                                <input type="text" class="form-control" placeholder="" name="unit_str" required="required">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="">排序(越大越靠前)</label>
+                                <input type="number" class="form-control" placeholder="" name="sort">
+                            </div>
+                            <div class="form-group">
+                                <label for="">状态</label>
+                                <select name="status">
+                                    <option value="1">上架</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success">提  交</button>
+                    </div>
+                    </form>
+                </div>
+        </div>
+    <!--</div>-->
+</body>
+{/block}
+{block name='js'}
+<script src="/static/backend/plugins/webuploader/webuploader.min.js"></script>
+<script>
+    var serverUrl = "{:url('Upload/uploadImg',['dir'=>'goods'])}";
+</script>
+
+<script src="/static/backend/adminlte/js/upload/banner.js"></script>
+<!-- CK Editor -->
+<script src="/static/plugins/ckeditor/ckeditor.js"></script>
+<script>
+  $(function () {
+
+  })
+
+</script>
+{/block}
+
+
