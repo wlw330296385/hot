@@ -1382,7 +1382,7 @@ class League extends Base
                     }
                 }
                 $leagueS->delMatchSchedule(['match_id' => $match['id'], 'home_team_id|away_team_id' => ['in', $finalTeamIdArr]], true);
-                foreach ($dataGroupsCopy as $k => $group) {
+                foreach ($dataGroups as $k => $group) {
                     $groupData = [
                         'id' => $group["groupId"],
                         'name' => $group['groupName']
