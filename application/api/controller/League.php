@@ -1366,7 +1366,7 @@ class League extends Base
                             'win_num' => 0,
                             'lost_num' => 0,
                             'points' => 0,
-                            'is_seededteam' => isset($groupTeamItem['is_seedTeam']) ? $groupTeamItem['is_seedTeam'] : 0
+                            'is_seededteam' => isset($groupTeamItem['is_seededteam']) ? $groupTeamItem['is_seededteam'] : 0
                         ];
                         $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
                     }
@@ -1396,7 +1396,7 @@ class League extends Base
                             'group_id' => $group["groupId"],
                             'group_name' => $group['groupName'],
                             'status' => 1,
-                            'is_seededteam' => isset($groupTeamItem['is_seedTeam']) ? $groupTeamItem['is_seedTeam'] : 0
+                            'is_seededteam' => isset($groupTeamItem['is_seededteam']) ? $groupTeamItem['is_seededteam'] : 0
                         ];
                         $groupTeamId = $leagueS->saveMatchGroupTeam($groupTeamData);
                     }
