@@ -214,6 +214,7 @@
 
     <script src="/static/frontend/js/mui.min.js"></script>
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/frontend/js/wooApi.js"></script>
     <!-- 二维码生成js -->
     <script src="/static/frontend/js/qrcode.js"></script>
     <!-- 将canvas图片保存成图片 -->
@@ -226,13 +227,25 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        var shareFrom = wooApi.GetQueryString('shareFrom');
+        if(shareFrom=="leagueInfo"){
+            $("title").text("联赛主页二维码");
+            $(".mui-title").text("联赛主页二维码");
+            $(".tipAfter").text("联赛主页二维码");
+        }
+
         // 生成二维码
         window.onload = function () {
             var qrcode = new QRCode(document.getElementById("qrcode"), {
                 height: 400, //设置二维码高
                 width: 400 //设置二维码高
             });
-            qrcode.makeCode("https://m.hot-basketball.com/keeper/match/quickSignUp?league_id=" + "{$league_id}");
+            if(shareFrom=="leagueInfo"){
+                qrcode.makeCode("https://m.hot-basketball.com/keeper/match/leagueInfo?league_id={$league_id}");
+            }else{
+                qrcode.makeCode("https://m.hot-basketball.com/keeper/match/quickSignUp?league_id=" + "{$league_id}");
+            }
+           
         }
 
         // 获取按钮id
@@ -257,8 +270,7 @@
                         document.getElementById('canvasPic').appendChild(canvas);
                         var oCanvas = document.getElementById("thecanvas");
 
-                        var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true).getAttribute(
-                            'src');
+                        var img_data2 = Canvas2Image.saveAsJPEG(oCanvas, true).getAttribute('src');
                         var element = document.getElementById('sharePic');
                         element.src = img_data2;
                         $(".img50").css("border-radius", "50px")

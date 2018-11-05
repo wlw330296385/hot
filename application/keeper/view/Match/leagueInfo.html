@@ -242,7 +242,7 @@
                     </a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli col5Class">
-                    <a href="#shareGuide"><span class="mui-icon mui-icon-redo"></span></a>
+                    <a href="" class="shaerEwm"><span class="mui-icon mui-icon-redo"></span></a>
                 </li>
                 <li class="mui-table-view-cell mui-col-sm-2 mui-col-xs-2 opli col5Class">
                     <a href="#fbcomment">评价 </a>
@@ -328,7 +328,12 @@
         });
 
         $(function () {
+            
             var count = 1;
+            
+            // 赋值分享链接
+            $(".shaerEwm").attr("href","{:url('match/quickSignUpEWM')}"+"/league_id"+"/{$league_id}"+"?shareFrom=leagueInfo")
+
             // 判断是否登陆
             if ("{$memberInfo.id}" <= 0) {
                 $(".col5Class").removeClass("mui-col-xs-3").addClass("mui-col-xs-5");
@@ -340,6 +345,7 @@
                 });
                 return false;
             }
+
             // 联赛比赛地点提示
             if ($(".court").html() == '') {
                 $(".court").append("暂无")
