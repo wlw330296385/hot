@@ -47,16 +47,9 @@ class GradeMember extends Base{
             if( isset($map['keyword']) ){
                 unset($map['keyword']);
             }
-            $GradeMember = new \app\model\GradeMember;
-            $res = $GradeMember->where($map)->select();
+            $res = db('grade_member')->where($map)->select();
             if($res){
-                $result = $res->toArray();
-                foreach ($result as $k => $val) {
-                    $temp = $GradeMember->where(['id' => $val['id']])->find()->getData();
-                    $result[$k]['status_num'] = $temp['status'];
-                    $result[$k]['type_num'] = $temp['type'];
-                }
-                return json(['code'=>200,'msg'=>'ok','data'=>$result]);
+                return json(['code'=>200,'msg'=>'ok','data'=>$res]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
             }
@@ -72,10 +65,7 @@ class GradeMember extends Base{
             $keyword = input('param.keyword');
             $GradeMember = new \app\model\GradeMember;
             $res = $GradeMember->with('grade')->where(['grade_member.member_id'=>$map['member_id']])->select();
-
             if($res){
-                $result = $res->toArray();
-                // dump($result);die;
                 return json(['code'=>200,'msg'=>'ok','data'=>$result]);
             }else{
                 return json(['code'=>100,'msg'=>'检查你的参数']);
