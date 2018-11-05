@@ -286,7 +286,7 @@
                                 newli0 +=
                                     `<li class="mui-table-view-cell listli">
                                             <a href="${urls}">
-                                                <div class="fl orderNum">${(i + 1)}</div>
+                                                <div class="fl orderNum">1</div>
                                                 <div class="mui-media-body wd83">奖项名称：<strong class="colororange f16">${data.data[i].name}</strong>`
                                 if (data.data[i].awardee_str == '') {
                                     newli0 +=
@@ -330,6 +330,13 @@
                     }
                     $(".honorTeamList").empty().append(newli0);
                     $(".honorPersonList").empty().append(newli1);
+                    
+                    // 更新团队奖列表序号
+                    var j = 1;
+                    $(".honorTeamList li").each(function () { //循环checkboxCont
+                        $(this).find(".orderNum").text(j++); //更新序号
+                    });
+
                     if (newli0 == '') {
                         $(".honorTeamList").html(
                             '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据哦</p></li>'
