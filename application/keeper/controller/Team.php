@@ -351,7 +351,6 @@ class Team extends Base
         $applyId = input('id');
         $teamS = new TeamService();
         $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_id' => $this->team_id]);
-
         $this->assign('applyInfo', $apply);
         return view('Team/teamApplyInfo');
     }
