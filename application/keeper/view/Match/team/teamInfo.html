@@ -111,7 +111,7 @@
                         {/if}
                         {else/}
                         <div class="mui-col-xs-3 mui-text-right">
-                            <a href="#sendApply"><button type="button" class="bgblue sendApply" data-team_member_id="{$vo.id}">申请</button></a>
+                            <a href="#sendApply" class="sendId"><button type="button" class="bgblue sendApply" data-team_member_id="{$vo.id}">申请</button></a>
                         </div>
                         {/if}
                     </div>
@@ -146,7 +146,7 @@
                     <a href="#sendApply" class="mui-icon mui-icon-closeempty"></a>
                 </h5>
                 <li class="listli">
-                    <textarea rows="4" class="remark" placeholder="请填写能证明你身份的内容"></textarea>
+                    <textarea rows="4" class="remarks" placeholder="请填写能证明你身份的内容"></textarea>
                 </li>
                 <li class="mui-col-xs-12 opli sendApplyBtn">提交申请</li>
             </ul>
@@ -193,15 +193,23 @@
                 }
             });
         });
+        
+        $(".sendId").on("tap",function(){
+            var thisId = $(this).children().attr("data-team_member_id");
+            $("#sendApply").find(".sendApplyBtn").attr("data-team_member_id",thisId)
+        })
 
         // 向领队发送申请认领数据
         $(document).on("tap", ".sendApplyBtn", function () {
-            var member_id = "{$memberInfo.id}";
             var team_member_id = $(this).attr("data-team_member_id");
             var remarks = $(".remarks").val();
-            mui.ajax("{:url('api/claim/')}", {
+            if (remarks == '') {
+                mui.toast("请填写能证明你身份的内容");
+                return false;
+            }
+            mui.ajax("{:url('api/Claim/apply')}", {
                 data: {
-                    member_id: member_id,
+                    remarks: remarks,
                     team_member_id: team_member_id
                 },
                 dataType: 'json', //服务器返回json格式数据
@@ -214,6 +222,7 @@
                     console.log(data);
                     if (data.code == 200) {
                         mui.toast("已经向领队发送申请，请耐心等待回复！");
+                        mui('#sendApply').popover('toggle');
                         $(".sendApply").text("申请中").removeClass("bgblue").addClass("bggray");
                     } else {
                         mui.toast(data.msg);
