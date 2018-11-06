@@ -303,9 +303,10 @@ class Schedule extends Base
 	    if (!$id) {
 	        $this->error(__lang('MSG_402'));
         }
-        $scheduleS = new ScheduleService();
-        $giftbuyinfo = $scheduleS->getbuygift(['id' => $id]);
+        $giftbuyinfo = $this->ScheduleService->getbuygift(['id' => $id]);
+        $lessonInfo = db('lesson')->where(['id'=>$giftbuyinfo['lesson_id']])->find();
         
+        $this->assign('lessonInfo', $lessonInfo);
         $this->assign('giftbuyInfo', $giftbuyinfo);
         return view("Schedule/giftbuyInfo");
     }
