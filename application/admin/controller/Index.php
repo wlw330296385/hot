@@ -26,9 +26,9 @@ class Index extends Backend {
         // 每日定时任务列表
         // $sql = db('crontab_record')->order('create_time desc')->select(false);//不支持mariaDB
         // $crontabList = Db::query("select * from ($sql) as a group by crontab");//不支持mariaDB
-        // $sql = "select * from crontab_record where id in(select max(id) from crontab_record group by crontab) order by create_time";
-        // $crontabList =  Db::query($sql);//在mysql上效率太差,但是mariaDB就还好
-        $crontabList = [];
+        $sql = "select * from crontab_record where id in(select max(id) from crontab_record group by crontab) order by create_time";
+        $crontabList =  Db::query($sql);//在mysql上效率太差,但是mariaDB就还好
+        // $crontabList = [];
         // 未处理异常数
         $exceptionCount = db('log_exception')->where(['status'=>0])->where('delete_time',null)->count();
 

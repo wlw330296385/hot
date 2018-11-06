@@ -18,7 +18,10 @@ class Index extends Controller
 
     // 用户提现补录
     public function sw(){
-     
+        $list = db('schedule_giftbuy')->field('schedule_giftbuy.id,lesson.cost')->join('lesson','lesson.id=schedule_giftbuy.lesson_id')->select();
+        foreach ($list as $key => $value) {
+            db('schedule_giftbuy')->where(['id'=>$value['id']])->update(['cost'=>$value['cost']]);
+        }
        
     }
 

@@ -526,6 +526,7 @@ class Schedule extends Base
             }
             $request['member_id'] = $this->memberInfo['id'];
             $request['member'] = $this->memberInfo['member'];
+            $request['cost'] = $lessonInfo['cost'];
             $res = $this->ScheduleService->buygift($request);
             if ($res['code'] == 200) {
                 // 更新课程赠送课时字段

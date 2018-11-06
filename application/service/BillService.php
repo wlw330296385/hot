@@ -853,8 +853,6 @@ class BillService {
                 $MessageService = new \app\service\MessageService;
                 $MessageService->sendMessageMember($billInfo['member_id'],$MessageData,$saveData); 
             }
-
-
             if($result){
                 return ['code'=>200,'msg'=>'操作成功'];
             }else{
