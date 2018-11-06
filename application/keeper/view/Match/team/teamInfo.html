@@ -111,7 +111,7 @@
                         {/if}
                         {else/}
                         <div class="mui-col-xs-3 mui-text-right">
-                            <button type="button" class="bgblue sendApply" data-team_member_id="{$vo.id}">发送申请</button>
+                            <a href="#sendApply"><button type="button" class="bgblue sendApply" data-team_member_id="{$vo.id}">申请</button></a>
                         </div>
                         {/if}
                     </div>
@@ -134,6 +134,23 @@
             </ul>
         </div>
 
+    </div>
+
+    <!-- 发送申请 -->
+    <div id="sendApply" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list">
+            <ul class="mui-table-view operation">
+                <h5 class="mui-text-left" style="padding-bottom: 5px !important;">
+                    <i class="mui-icon mui-icon-compose"></i>
+                    <span class="type ">申请内容</span>
+                    <a href="#sendApply" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="listli">
+                    <textarea rows="4" class="remark" placeholder="请填写能证明你身份的内容"></textarea>
+                </li>
+                <li class="mui-col-xs-12 opli sendApplyBtn">提交申请</li>
+            </ul>
+        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -177,13 +194,14 @@
             });
         });
 
-
         // 向领队发送申请认领数据
-        $(document).on("tap", ".sendApply", function () {
+        $(document).on("tap", ".sendApplyBtn", function () {
+            var member_id = "{$memberInfo.id}";
             var team_member_id = $(this).attr("data-team_member_id");
-            console.log(team_member_id)
+            var remarks = $(".remarks").val();
             mui.ajax("{:url('api/claim/')}", {
                 data: {
+                    member_id: member_id,
                     team_member_id: team_member_id
                 },
                 dataType: 'json', //服务器返回json格式数据
@@ -194,13 +212,9 @@
                 },
                 success: function (data) {
                     console.log(data);
-
                     if (data.code == 200) {
-                        mui.toast("已经向领队发送邀请，请耐心等待回复！");
+                        mui.toast("已经向领队发送申请，请耐心等待回复！");
                         $(".sendApply").text("申请中").removeClass("bgblue").addClass("bggray");
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 1500)
                     } else {
                         mui.toast(data.msg);
                         window.location.reload();
