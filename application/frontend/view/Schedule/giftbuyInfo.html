@@ -87,16 +87,16 @@
 
             <div class="mui-input-row">
                 <label>课程名称</label>
-                <span>{$giftbuyInfo.lesson.lesson}</span>
+                <span>{$giftbuyInfo.lesson}</span>
             </div>
 
             <div class="mui-input-row">
                 <label>课时单价</label>
-                <span>{$giftbuyInfo.lesson.cost}元</span>
+                <span>{$giftbuyInfo.cost}元</span>
             </div>
 
             <div class="mui-input-row">
-                <label>课量数量</label>
+                <label>本次购买赠课数量</label>
                 <span>{$giftbuyInfo.quantity}</span>
             </div>
 
@@ -104,9 +104,17 @@
                 <label>购买时间</label>
                 <span>{$giftbuyInfo.create_time}</span>
             </div>
-
+            <div class="mui-input-row">
+                <label>该课程剩余未赠送数量</label>
+                <span>{$lessonInfo.resi_giftschedule}</span>
+            </div>
         </form>
-
+        <br>
+        <ul class="mui-table-view" style="text-align: center">
+            <li class="mui-table-view-cell mui-btn bggreen" onclick="submitAction()" data-id="{$giftbuyInfo.id}">
+                退掉{$lessonInfo.resi_giftschedule}节赠课
+            </li>
+        </ul>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -116,6 +124,36 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
+
+        function submitAction(){
+            mui.confirm('此操作将推掉该课程下的所有未赠送的{$lessonInfo.resi_giftschedule}节赠课数量,是否确定退掉赠课?',function(index){
+                if(index.index ==1){
+                    mui.ajax({
+                        url: "{:url('api/schedule/refundGift')}",
+                        data: {
+                            lesson_id:{$giftbuyInfo.lesson_id}
+                        },
+                        async:false,
+                        dataType: 'json',//服务器返回json格式数据
+                        type: 'post',//HTTP请求类型
+                        timeout: 10000,//超时时间设置为10秒；
+                        headers: { 'Content-Type': 'application/json' },
+                        //processData:false,
+                        success: function (data) {
+                            if (data.code == 200) {
+                               alert(data.msg);
+                            } else {
+                                mui.toast(data.msg);
+                            }
+                        },
+                        error: function (xhr, type, errerThrown) {
+                            mui.toast('网络异常,请稍候再试');
+                        }
+                    });
+                }
+            });
+        }
+
     </script>
 </body>
 

@@ -688,7 +688,7 @@ class ScheduleService
     public function getbuygift($map)
     {
         $model = new ScheduleGiftbuy;
-        $result = $model->with('lesson')->where($map)->find()->toArray();
+        $result = $model->where($map)->find();
         return $result;
     }
 

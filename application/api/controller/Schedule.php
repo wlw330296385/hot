@@ -661,7 +661,6 @@ class Schedule extends Base
                     $updateLesson = $lessonDb->where('id', $request['lesson_id'])
                         ->inc('total_giftschedule', $numChangegiftschedule)
                         ->dec('resi_giftschedule', $numChangegiftschedule)
-                        // ->inc('unbalanced_giftschedule', $numChangegiftschedule)
                         ->update();
                     if (!$updateLesson) {
                         return json(['code' => 100, 'msg' => '更新课时信息' . __lang('MSG_400')]);
@@ -782,6 +781,65 @@ class Schedule extends Base
                 $response = ['code' => 200, 'msg' => __lang('MSG_201'), 'data' => $res, 'sum' => $sum];
             }
             return json($response);
+        } catch (Exception $e) {
+            return json(['code' => 100, 'msg' => $e->getMessage()]);
+        }
+    }
+
+
+
+    // 退掉赠课
+    public function refundGift(){
+        try {
+            $lesson_id = input('param.lesson_id');
+            $lessonInfo = db('lesson')->where(['id'=>$lesson_id])->find();
+            $rest_schedule_gift = $lessonInfo['resi_giftschedule'];
+            if($rest_schedule_gift==0 || !$rest_schedule_gift){
+                return json(['code' => 100, 'msg' => '无剩余课时不可退掉赠课']);
+            }    
+            $result = db('lesson')->where(['id'=>$lesson_id])->update(['resi_giftschedule'=>0]);
+            if($result){
+                $campInfo = db('camp')->where(['id'=>$lessonInfo['camp_id']])->find();
+                // 课时版增加训练营的余额
+                if($campInfo['rebate_type'] == 1){
+                    $cost = $lessonInfo['cost'];
+                    $totalCost = $rest_schedule_gift*$cost;
+                    db('camp')->where(['id'=>$lessonInfo['camp_id']])->inc('balance',$totalCost)->update();
+                    db('output')->insert([
+                        'camp'=>$campInfo['camp'],
+                        'camp_id'=>$campInfo['id'],
+                        'member_id'=>$this->memberInfo['id'],
+                        'member'=>$this->memberInfo['member'],
+                        'f_id'=>$lesson_id,
+                        'type'=>1,
+                        'create_time'=>time(),
+                        'e_balance'=>($campInfo['balance']+$totalCost),
+                        's_balance'=>$campInfo['balance'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'schedule_rebate'=>$campInfo['schedule_rebate'],
+                        'output'=>-$totalCost,
+                        'date_str'=>date('Ymd',time()),
+                        'system_remarks'=>'退回赠课操作'
+                    ]);
+                    db('camp_finance')->insert([
+                        'camp'=>$campInfo['camp'],
+                        'camp_id'=>$campInfo['id'],
+                        'f_id'=>$lesson_id,
+                        'type'=>1,
+                        'create_time'=>time(),
+                        'e_balance'=>($campInfo['balance']+$totalCost),
+                        's_balance'=>$campInfo['balance'],
+                        'rebate_type'=>$campInfo['rebate_type'],
+                        'schedule_rebate'=>$campInfo['schedule_rebate'],
+                        'money'=>$totalCost,
+                        'date_str'=>date('Ymd',time()),
+                        'system_remarks'=>'赠课操作'
+                    ]);
+                }
+                return json(['code' => 200, 'msg' => "操作成功,您已退掉{$rest_schedule_gift}节赠课"]);
+            }else{
+                return json(['code' => 100, 'msg' => '操作失败']);
+            }
         } catch (Exception $e) {
             return json(['code' => 100, 'msg' => $e->getMessage()]);
         }
