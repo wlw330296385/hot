@@ -67,51 +67,19 @@
         mui.init({
             swipeBack: true //启用右滑关闭功能
         });
-        var onCount = 1;
-        var offCount = 1;
-        mui('#refreshContainer').pullRefresh({
-            down: {
-                //下拉刷新
-                height: 50, //可选.默认50.触发下拉刷新拖动距离
-                auto: true, //可选,默认false.自动下拉刷新一次
-                contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-                contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-                contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-                callback: pulldownRefreshOn
-            },
-            up: {
-                //上拉加载
-                height: 150, //可选.默认50.触发上拉加载拖动距离
-                //auto:true,//可选,默认false.自动上拉加载一次
-                contentrefresh: '正在加载...',
-                contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
-                callback: pullupRefreshOn
-            }
-        });
+        (function ($) {
+            $('.mui-scroll-wrapper').scroll({
+                indicators: true //是否显示滚动条
+            });
+            // 关闭弹出菜单
+            $("body").on('tap', '.mui-backdrop', function () {
+                mui(".mui-popover.mui-active").popover("toggle");
+            })
+        })(mui);
 
-        //下拉刷新具体业务实现
-        function pulldownRefreshOn() {
-            setTimeout(function () {
-                onCount = 1; //刷新并显示第一页
-                var page = onCount;
-                var gType = 1; //代表下拉刷新
-                toList(page, gType); //具体取数据的方法
-            }, 100);
-        }
+        $(function () {
 
-        //上拉加载具体业务实现
-        function pullupRefreshOn() {
-            setTimeout(function () {
-                onCount++; //翻下一页
-                var page = onCount;
-                var gType = 2; //代表上拉加载
-                toList(page, gType); //具体取数据的方法
-            }, 100);
-        }
-
-        //接口获取数据并追加到页面
-        var toList = function (page, gType) {
-            var url = "{:url('api/league/getmatchstageadvteams','','',true)}" + '/?page=' + 1;
+            var url = "{:url('api/league/getmatchstageadvteams','','',true)}";
             var match_stage = wooApi.GetQueryString('match_stage');
             $(".match_stage").text(match_stage)
             var league_id = "{$league_id}"
@@ -134,43 +102,35 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             if (data.data[i].match_group == '') {
                                 newli +=
-                                    `<li class="mui-table-view-cell listli ">
-                                            <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
+                                    `<li class="mui-table-view-cell listli2">
+                                            <img class="img40 mui-pull-left" src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
-                                                <p class="f14" style="font-weight:bold;line-height:40px;">${data.data[i].team}</p>
+                                                <p class="f14 mui-ellipsis" style="line-height:40px;padding-left:10px;">${data.data[i].team}</p>
                                             </div>
                                         </li>`;
                             } else {
                                 newli +=
-                                    `<li class="mui-table-view-cell listli ">
-                                            <img class="img40 mui-pull-left " src="${data.data[i].team_logo}">
+                                    `<li class="mui-table-view-cell listli2">
+                                            <img class="img40 mui-pull-left" src="${data.data[i].team_logo}">
                                             <div class="mui-media-body lineHeight20">
-                                                <p class="f14" style="font-weight:bold">${data.data[i].team}</p>
+                                                <p class="f14 mui-ellipsis" style="padding-left:10px;">${data.data[i].team}</p>
                                                 <p>${data.data[i].match_group}</p>
                                             </div>
                                         </li>`;
                             }
                         }
-
-                        if (gType == 1) {
-                            //下拉刷新
-                            $("ul.teamList").empty().append(newli);
-                            mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                            mui('#refreshContainer').pullRefresh().refresh(true);
-                        }
+                        $("ul.teamList").empty().append(newli);
                     } else {
                         $("ul.teamList").html(
                             '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>没有相关数据</p></li>'
                         );
-                        mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
-                        mui('#refreshContainer').pullRefresh().refresh(true);
                     }
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');
                 }
             });
-        };
+        })
     </script>
     <script>
         wx.config({

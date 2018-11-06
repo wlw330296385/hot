@@ -29,7 +29,7 @@
         .teamMemberName {
             padding-left: 10px;
         }
-        .claim {
+        .claim,.sendApply {
             padding: 3px 9px !important;
         }
     </style>
@@ -56,10 +56,19 @@
                 <li class="mui-table-view-cell listli">
                     <div class="mui-row" style="line-height: 27px;">
                         <div class="mui-col-xs-1 mui-text-center">1</div>
-                        <div class="mui-col-xs-9 teamMemberName">{$leaderInfo.name}</div>
+                        <div class="mui-col-xs-8 teamMemberName">{$leaderInfo.name}</div>
                         {if $leaderInfo.telephone == $myTelephone && $leaderInfo.member_id ==-1}
-                        <div class="mui-col-xs-2 mui-text-right">
+                        <div class="mui-col-xs-3 mui-text-right">
                             <button type="button" class="mui-btn-danger claim" data-team_member_id="{$leaderInfo.id}">认领</button>
+                        </div>
+                        {/if}
+                        {if $leaderInfo.member_id ==-1}
+                        <div class="mui-col-xs-3 mui-text-right">
+                            未认领
+                        </div>
+                        {else/}
+                        <div class="mui-col-xs-3 mui-text-right colorred">
+                            已认领
                         </div>
                         {/if}
                     </div>
@@ -70,7 +79,7 @@
             <div class="page-header bggray2">
                 <span class="f14">参赛队员</span>
             </div>
-            <ul class="mui-table-view">
+            <ul class="mui-table-view" style="margin-bottom: 66px;">
                 {if condition="empty($teamMembers)"}
                 <p class="nohave">暂无球员数据</p>
                 {else/}
@@ -78,10 +87,31 @@
                 <li class="mui-table-view-cell listli">
                     <div class="mui-row" style="line-height: 27px;">
                         <div class="mui-col-xs-1 mui-text-center">{$key+1}</div>
-                        <div class="mui-col-xs-9 teamMemberName">{$vo.name}</div>
+                        <div class="mui-col-xs-8 teamMemberName">{$vo.name}</div>
+                        {if $vo.telephone !=0 || $myTelephone !=0}
                         {if $vo.telephone == $myTelephone && $vo.member_id ==-1}
-                        <div class="mui-col-xs-2 mui-text-right">
+                        <div class="mui-col-xs-3 mui-text-right">
                             <button type="button" class="mui-btn-danger claim" data-team_member_id="{$vo.id}">认领</button>
+                        </div>
+                        {/if}
+                        {if $vo.telephone == $myTelephone && $vo.member_id !=-1}
+                        <div class="mui-col-xs-3 mui-text-right colorred">
+                            已认领
+                        </div>
+                        {/if}
+                        {if $vo.telephone != $myTelephone && $vo.member_id !=-1}
+                        <div class="mui-col-xs-3 mui-text-right colorred">
+                            已认领
+                        </div>
+                        {/if}
+                        {if $vo.telephone != $myTelephone && $vo.member_id ==-1}
+                        <div class="mui-col-xs-3 mui-text-right">
+                            未认领
+                        </div>
+                        {/if}
+                        {else/}
+                        <div class="mui-col-xs-3 mui-text-right">
+                            <a href="#sendApply"><button type="button" class="bgblue sendApply" data-team_member_id="{$vo.id}">申请</button></a>
                         </div>
                         {/if}
                     </div>
@@ -89,8 +119,38 @@
                 {/volist}
                 {/if}
             </ul>
+
+            <!-- 底部操作 -->
+            <ul class="mui-table-view operation mt">
+                {if $leaderInfo.member_id==-1}
+                <li class="mui-table-view-cell mui-col-xs-12 opli bgblue" style="height: 66px;">
+                    注：领队未认领球队，待认领后,未在平台记录手机号者可向领队申请认领数据
+                </li>
+                {else/}
+                <li class="mui-table-view-cell mui-col-xs-12 opli bgblue">
+                    注：向领队发送申请，认领数据
+                </li>
+                {/if}
+            </ul>
         </div>
 
+    </div>
+
+    <!-- 发送申请 -->
+    <div id="sendApply" class="mui-popover mui-popover-action mui-popover-bottom actionsheet">
+        <div class="list">
+            <ul class="mui-table-view operation">
+                <h5 class="mui-text-left" style="padding-bottom: 5px !important;">
+                    <i class="mui-icon mui-icon-compose"></i>
+                    <span class="type ">申请内容</span>
+                    <a href="#sendApply" class="mui-icon mui-icon-closeempty"></a>
+                </h5>
+                <li class="listli">
+                    <textarea rows="4" class="remark" placeholder="请填写能证明你身份的内容"></textarea>
+                </li>
+                <li class="mui-col-xs-12 opli sendApplyBtn">提交申请</li>
+            </ul>
+        </div>
     </div>
 
     <script src="/static/frontend/js/mui.min.js"></script>
@@ -101,6 +161,7 @@
             swipeBack: true //启用右滑关闭功能
         });
 
+        // 认领数据操作
         $(document).on("tap", ".claim", function () {
             var team_member_id = $(this).attr("data-team_member_id");
             console.log(team_member_id)
@@ -121,6 +182,39 @@
                         setTimeout(function () {
                             window.location.reload();
                         }, 1500)
+                    } else {
+                        mui.toast(data.msg);
+                        window.location.reload();
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    console.log(type);
+                }
+            });
+        });
+
+        // 向领队发送申请认领数据
+        $(document).on("tap", ".sendApplyBtn", function () {
+            var member_id = "{$memberInfo.id}";
+            var team_member_id = $(this).attr("data-team_member_id");
+            var remarks = $(".remarks").val();
+            mui.ajax("{:url('api/claim/')}", {
+                data: {
+                    member_id: member_id,
+                    team_member_id: team_member_id
+                },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.code == 200) {
+                        mui.toast("已经向领队发送申请，请耐心等待回复！");
+                        $(".sendApply").text("申请中").removeClass("bgblue").addClass("bggray");
                     } else {
                         mui.toast(data.msg);
                         window.location.reload();

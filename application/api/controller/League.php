@@ -4872,21 +4872,39 @@ class League extends Base
             }
             // 比赛阶段为淘汰赛或决赛 组合比赛阶段晋级保存信息
             if ($matchStageInfo['type'] == 4 || $matchStageInfo['type'] == 5) {
-                $stageAdvteamInfo = $leagueS->findMatchStageAdvteam([
+
+                $stageAdvteamInfo1 = $leagueS->findMatchStageAdvteam([
                     'match_id' => $data['match_id'],
-                    'match_stage_id' => $data['match_stage_id']
-                ]);
-                // 晋级序号s
-                $advNum = ($stageAdvteamInfo) ? $stageAdvteamInfo['adv_num'] + 1 : 1;
-                $dataAdvteam = [
-                    'match_id' => $data['match_id'],
-                    'match' => $data['match'],
-                    'team_id' => $data['win_team_id'],
-                    'team' => $winTeamName,
                     'match_stage_id' => $data['match_stage_id'],
-                    'match_stage' => $data['match_stage'],
-                    'adv_num' => $advNum
-                ];
+                    'team_id' => $data['win_team_id']
+                ]);
+                if ($stageAdvteamInfo1) {
+                    $dataAdvteam = [
+                        'id'    => $stageAdvteamInfo1['id'],
+                        'match_id' => $data['match_id'],
+                        'match' => $data['match'],
+                        'team_id' => $data['win_team_id'],
+                        'team' => $winTeamName,
+                        'match_stage_id' => $data['match_stage_id'],
+                        'match_stage' => $data['match_stage'],
+                    ];
+                } else {
+                    $stageAdvteamInfo2 = $leagueS->findMatchStageAdvteam([
+                        'match_id' => $data['match_id'],
+                        'match_stage_id' => $data['match_stage_id']
+                    ]);
+                    // 晋级序号s
+                    $advNum = ($stageAdvteamInfo2) ? $stageAdvteamInfo2['adv_num'] + 1 : 1;
+                    $dataAdvteam = [
+                        'match_id' => $data['match_id'],
+                        'match' => $data['match'],
+                        'team_id' => $data['win_team_id'],
+                        'team' => $winTeamName,
+                        'match_stage_id' => $data['match_stage_id'],
+                        'match_stage' => $data['match_stage'],
+                        'adv_num' => $advNum
+                    ];
+                }
             }
         }
 
