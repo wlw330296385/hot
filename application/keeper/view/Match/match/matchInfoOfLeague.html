@@ -809,45 +809,52 @@
         });
         console.log(members)
 
-        var home_team_id = "{$matchRecordInfo.home_team_id}";
-        var away_team_id = "{$matchRecordInfo.away_team_id}";
-        var match = "{$matchRecordInfo.match}";
-        var match_id = "{$matchRecordInfo.match_id}";
-        var match_time = $(".match_time").text();
-        var match_record_id = "{$matchRecordInfo.id}";
-        var memberList = JSON.stringify(members)
-        mui.ajax("{:url('api/Matchdata/saveMatchStatistics')}", {
-            data: {
-                match_record_id: match_record_id,
-                home_team_id: home_team_id,
-                away_team_id: away_team_id,
-                match: match,
-                match_id: match_id,
-                match_time: match_time,
-                members: memberList
-            },
-            dataType: 'json', //服务器返回json格式数据
-            type: 'post', //HTTP请求类型
-            timeout: 10000, //超时时间设置为10秒；
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            success: function (data) {
-                console.log(data);
-                if (data.code == 200) {
-                    mui.alert('提交成功', '确定', function () {
-                        var goUrl = "{:url('match/matchlistofleague')}" + '/league_id/' +
-                            "{$league_id}";
-                        window.top.location.href = goUrl;
-                    })
-                } else {
-                    mui.toast(data.msg)
-                }
-            },
-            error: function (xhr, type, errorThrown) {
-                console.log(type);
+        var btnArray = ["取消", "确认"];
+        mui.confirm("请确保队员已在球队中，一旦提交，不可添加或删除队员！", "提示", btnArray, function (e) {
+            if (e.index == 1) {
+                var home_team_id = "{$matchRecordInfo.home_team_id}";
+                var away_team_id = "{$matchRecordInfo.away_team_id}";
+                var match = "{$matchRecordInfo.match}";
+                var match_id = "{$matchRecordInfo.match_id}";
+                var match_time = $(".match_time").text();
+                var match_record_id = "{$matchRecordInfo.id}";
+                var memberList = JSON.stringify(members)
+                mui.ajax("{:url('api/Matchdata/saveMatchStatistics')}", {
+                    data: {
+                        match_record_id: match_record_id,
+                        home_team_id: home_team_id,
+                        away_team_id: away_team_id,
+                        match: match,
+                        match_id: match_id,
+                        match_time: match_time,
+                        members: memberList
+                    },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.alert('提交成功', '确定', function () {
+                                var goUrl = "{:url('match/matchlistofleague')}" +
+                                    '/league_id/' +
+                                    "{$league_id}";
+                                window.top.location.href = goUrl;
+                            })
+                        } else {
+                            mui.toast(data.msg)
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
             }
-        });
+        })
+
     })
 </script>
 
