@@ -360,10 +360,9 @@ class Team extends Base
      {
          $applyId = input('id');
          $teamS = new TeamService();
-         $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_id' => $this->team_id]);
- 
+         $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_type' => 6, 'type' => 9]);
          $this->assign('applyInfo', $apply);
-         return view('match/matchMemberClaimApplyinfo');
+         return view('team/matchMemberClaimApplyinfo');
      }
 
     // 粉丝列表

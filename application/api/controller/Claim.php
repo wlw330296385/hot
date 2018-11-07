@@ -10,6 +10,8 @@ use app\model\TeamMemberRole;
 use app\model\MatchTeamMember;
 use app\model\MatchStatistics;
 use app\model\MatchRecordMember;
+use app\model\Apply;
+
 use app\service\MessageService;
 use think\Db;
 use think\Exception;
@@ -177,6 +179,10 @@ class Claim extends Base
             return json(['code' => 100, 'msg' => __lang('MSG_001')]);
         }
 
+        // 如果是拒绝
+        if (input('post.status') == 3) {
+        }
+
         // 1.判断操作人是不是 队长/ 领队
         $teamMemberRole = TeamMemberRole::where(["member_id" => $this->memberInfo['id'], "type" => ['in', '3,6']])->order('type desc')->find();
         if (!$teamMemberRole) {
@@ -277,7 +283,7 @@ class Claim extends Base
 
             Db::table('log_claim')->insert($logData);
 
-            Db::table('member_claim_apply')->where(["member_id" => $member_id, "team_member_id" => $team_member_id])->update(['status' => 1]);
+            Db::table('apply')->where(["member_id" => $member_id, "organization_type" => 6, "organization_id" => $team_member_id])->update(['status' => 2]);
 
             Db::commit();
         } catch (\Exception $e) {
@@ -292,7 +298,7 @@ class Claim extends Base
 
     public function apply() {
         $team_member_id = input("post.team_member_id");
-        $remarks = input("post.remarks");
+        $remarks = input("post.remarks", "");
         if (!$team_member_id) {
             return json(['code' => 100, 'msg' => __lang('MSG_402')]);
         }
@@ -305,23 +311,37 @@ class Claim extends Base
             return json(['code' => 100, 'msg' => "队员名字与您不匹配"]);
         }
 
-        $model = new MemberClaimApply();
+        $model = new Apply();
 
-        $memberClaimApply = $model->get([
+        $apply = $model->get([
             "member_id" => $this->memberInfo['id'],
-            "team_member_id" => $team_member_id
+            "organization_type" => 6,
+            "organization" => $teamMember['name'],
+            "organization_id" => $teamMember['id']
         ]);
-        if ($memberClaimApply) {
+        if ($apply && $apply["status"] < 3) {
             return json(['code' => 100, 'msg' => "请勿重复申请"]);
         }
 
         $data = [
+            "member" => $this->memberInfo['member'],
             "member_id" => $this->memberInfo['id'],
-            "team_member_id" => $team_member_id,
+            "member_avatar" => $this->memberInfo['avatar'],
+            "organization_type" => 6,
+            "organization" => $teamMember['name'],
+            "organization_id" => $teamMember['id'],
+            "type" => 9,
+            "apply_type" => 1,
             "remarks" => $remarks,
-            "status" => 0
+            "status" => 1
         ];
-        $result = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($apply) {
+            $data['id'] = $apply['id'];
+            $result = $model->allowField(true)->isUpdate(true)->save($data);
+        } else {
+            $result = $model->allowField(true)->isUpdate(false)->save($data);
+        }
+        
         if (!$result) {
             return json(['code' => 100, 'msg' => "申请失败"]);
         }
