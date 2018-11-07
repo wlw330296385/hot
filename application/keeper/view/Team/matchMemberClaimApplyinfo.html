@@ -33,7 +33,6 @@
 
     <div class="mui-content list ">
 
-
         <form action="" class="mui-input-group mb">
             <input id="applyid" type="hidden" value="{$applyInfo.id}">
             <div class="mui-input-row h-auto">
@@ -53,7 +52,7 @@
 
             <div class="mui-input-row h-auto">
                 <label>头像</label>
-                <img src="{$applyInfo.member.avatar}" alt="头像" style="margin-right: 18px;width:42px !important;">
+                <img src="{$applyInfo.member.avatar}" alt="头像" class="img50" style="margin-right: 15px;width: 50px !important;height: 50px !important;">
             </div>
             <div class="mui-input-row">
                 <label>姓名</label>
@@ -91,7 +90,7 @@
 
         $(function () {
             var sex = "{$applyInfo.member.sex}";
-            if (sex == 1) {
+            if (sex == 1 || sex == 0) {
                 $(".sex").text("男");
             } else {
                 $(".sex").text("女");
@@ -101,26 +100,31 @@
         // 审核操作
         function check_status(value) {
             var member = "{$applyInfo.member.member}";
-            var team = "{$teamInfo.name}";
+            var member_id = "{$applyInfo.member_id}";
+            var team_member_id = "{$applyInfo.organization_id}";
             var apply_id = document.getElementById('applyid').value;
             var reply = $(".reply").val();
-            mui.ajax("{:url('api/team/applyreply')}", {
+            mui.ajax("{:url('api/claim/otherTeamMember')}", {
                 data: {
-                    apply_id: apply_id,
+                    team_member_id: team_member_id,
+                    member_id: member_id,
                     status: value,
-                    reply: reply
+                    reply: reply,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (res) {
                     if (res.code == 200) {
                         var btnArray = ['返回首页', '球队主页'];
                         var urlToTeam = "{:url('team/teamInfo')}/team_id/{$teamInfo.id}";
                         var urlToIndex = "{:url('/keeper')}";
                         if (value == 2) {
-                            mui.confirm('欢迎“' + member + '”成为“' + team + '”球队的一员', '', btnArray, function (e) {
+                            mui.confirm('欢迎“' + member + '”正式成为“' + team + '”球队的一员', '', btnArray, function (
+                                e) {
                                 if (e.index == 1) {
                                     window.location.href = urlToTeam;
                                 } else {
@@ -147,7 +151,6 @@
                 }
             });
         }
-
     </script>
 
 </body>
