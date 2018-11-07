@@ -351,10 +351,19 @@ class Team extends Base
         $applyId = input('id');
         $teamS = new TeamService();
         $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_id' => $this->team_id]);
-
         $this->assign('applyInfo', $apply);
         return view('Team/teamApplyInfo');
     }
+
+     // 未记录手机号球员申请认领球员数据
+     public function matchMemberClaimApplyinfo()
+     {
+         $applyId = input('id');
+         $teamS = new TeamService();
+         $apply = $teamS->getApplyInfo(['id' => $applyId, 'organization_type' => 6, 'type' => 9]);
+         $this->assign('applyInfo', $apply);
+         return view('team/matchMemberClaimApplyinfo');
+     }
 
     // 粉丝列表
     public function fans()
