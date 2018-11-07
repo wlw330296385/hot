@@ -65,11 +65,19 @@ class Index extends Backend {
         //平台总支出
         $totalOutput = db('sys_output')->sum('output');
 
+
+        //平台总订单
+        $totalBill = db('bill')->where(['is_pay'=>1])->sum('balance_pay');
+
         //总课时
         $totalSchedule = db('schedule')->where('delete_time',null)->count();
 
         //总上课人次
         $totalScheduleStudent = db('schedule')->where('delete_time',null)->sum('students');
+
+        //总提现
+        $totalWithdraw1 = db('camp_withdraw')->where(['status'=>['egt',2]])->sum('withdraw');
+        $totalWithdraw2 = db('salary_out')->where(['status'=>['egt',1]])->sum('salary');
 
     	$this->assign('memberCount',$memberCount);
     	$this->assign('campCount',$campCount);
@@ -95,6 +103,8 @@ class Index extends Backend {
         $this->assign('totalOutput',$totalOutput);
         $this->assign('totalSchedule',$totalSchedule);
         $this->assign('totalScheduleStudent',$totalScheduleStudent);
+        $this->assign('totalBill',$totalBill);
+        $this->assign('totalWithdraw',$totalWithdraw1+$totalWithdraw2);
 
 
         return view();
