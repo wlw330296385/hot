@@ -3180,7 +3180,7 @@ class Team extends Base
             'match_id' => $match_id,
             'status' => 1
         ]);
-        if ($power < 9) {
+        if ($power < 8) {
             return json(['code' => 100, 'msg' => __lang('MSG_403')]);
         }
 
