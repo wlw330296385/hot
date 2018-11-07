@@ -205,18 +205,22 @@ class Lesson extends Base{
             // 封面图 base64转存
             $data['cover'] = base64_image_content($data['cover'], 'lesson');
             if($lesson_id){
-                $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
-                $campInfo = db('camp')->where(['id'=>$lessonInfo['camp_id']])->find();
-                if($campInfo['rebate_type'] ==1){
-                    //课时版有购买记录或者赠课记录不允许改价
-                    if($lesson['resi_giftschedule']>0){
-                        return json(['code' => 100, 'msg' => '还剩余未赠送的赠课,不允许修改课程单价']);
-                    }
-                    $is_bill = db('bill')->where(['goods_type'=>1,'goods_id'=>$lesson_id,'status'=>['lt',0]])->find();
-                    if($is_bill){
-                        return json(['code' => 100, 'msg' => '已有订单不允许修改课程单价']);
-                    }
-                }                    
+                
+                if($data['cost']<>$lessonInfo['cost']){
+                    $lessonInfo = $this->LessonService->getLessonInfo(['id'=>$lesson_id]);
+                    $campInfo = db('camp')->where(['id'=>$lessonInfo['camp_id']])->find();
+                    if($campInfo['rebate_type'] ==1){
+                        //课时版有购买记录或者赠课记录不允许改价
+                        if($lesson['resi_giftschedule']>0){
+                            return json(['code' => 100, 'msg' => '还剩余未赠送的赠课,不允许修改课程单价']);
+                        }
+                        $is_bill = db('bill')->where(['goods_type'=>1,'goods_id'=>$lesson_id,'status'=>['lt',0]])->find();
+                        if($is_bill){
+                            return json(['code' => 100, 'msg' => '已有订单不允许修改课程单价']);
+                        }
+                    }    
+                }
+                                
 
                 $result = $this->LessonService->updateLesson($data,$lesson_id);
                 if ($result['code'] == 200 && $data['isprivate'] == 1) {
