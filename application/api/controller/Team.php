@@ -3207,6 +3207,7 @@ class Team extends Base
 
         // 有无修改参赛人，有则检测match_record_member表
         $resetFlag = 0;
+        $addFlag = 0;
         if ( !empty($data['team_member_list']) ) {
             $team_member_list = json_decode($data['team_member_list'], true);
 
@@ -3229,7 +3230,7 @@ class Team extends Base
                 // 2.如果球员数相同，但有个手机号不在里面,重置
                 // 3.如果球员数相同，但有个名字不在里面，重置
                 // 4.如果球员数相同，但有个权限不在里面，重置
-                if (count($team_member_list) != (count($teamMemberRoleList) + count($matchTeamMemberList))) {
+                if (count($team_member_list) < (count($teamMemberRoleList) + count($matchTeamMemberList))) {
                     $resetFlag = 1;
                 } else {
                     if (!empty($teamMemberList)) {
@@ -3242,7 +3243,7 @@ class Team extends Base
                         $roleArray = [];
                         if (!empty($teamMemberRoleList)) {
                             foreach ($teamMemberRoleList as $col) {
-                                $roleArray[$col['name']] = $col['type'];
+                                $roleArray[$col['type']][] = $col['name'];
                             }
                         }
 
@@ -3250,14 +3251,10 @@ class Team extends Base
                             if (!empty($telephoneArray)) {
                                 if (!empty($telephoneArray[$row['name']]) && $telephoneArray[$row['name']] != $row['telephone']) {
                                     $resetFlag = 1;
-                                } else if (empty($telephoneArray[$row['name']]) && !empty($row['telephone'])) {
-                                    $resetFlag = 1;
-                                }
+                                } 
                             }
                             if (!empty($roleArray)) {
-                                if (!empty($roleArray[$row['name']]) && $roleArray[$row['name']] != $row['role']) {
-                                    $resetFlag = 1;
-                                } else if (empty($roleArray[$row['name']]) && !empty($row['role'])) {
+                                if (!empty($row['role']) && !empty($roleArray[$row['role']]) && !in_array($row['name'], $roleArray[$row['role']])) {
                                     $resetFlag = 1;
                                 }
                             }
@@ -3265,7 +3262,11 @@ class Team extends Base
                     }
                 }
 
-                // 1.如果 match_record_member 有一个条记录就不允许修改队员
+                if (!$resetFlag && count($team_member_list) > (count($teamMemberRoleList) + count($matchTeamMemberList))) {
+                    $addFlag = 1;
+                }
+
+                // 1.如果 match_record_member 有一个条记录就不允许重置队员
                 if ($resetFlag) {
                     $recordMemberCount = $matchS->getMatchRecordMemberCount([
                         'match_id' => $match_id,
@@ -3334,13 +3335,22 @@ class Team extends Base
                 }
             }
         }
-        
-        if ($resetFlag) {
-            // 删除旧队员
-            $teamS->delTeamMembers(['team_id' => $matchTeamData["team_id"]], true);
-            $teamS->delTeamMemberRoles(['team_id' => $matchTeamData["team_id"]], true);
-            $leagueS->delMatchTeamMember(['team_id' => $matchTeamData["team_id"]], true);
 
+        if ($resetFlag || $addFlag) {
+            // 删除旧队员
+            if (!$addFlag) {
+                $teamS->delTeamMembers(['team_id' => $matchTeamData["team_id"]], true);
+                $teamS->delTeamMemberRoles(['team_id' => $matchTeamData["team_id"]], true);
+                $leagueS->delMatchTeamMember(['team_id' => $matchTeamData["team_id"]], true);
+            } else {
+                
+                foreach ($team_member_list as $key => $value) {
+                    if (isset($telephoneArray[$value['name']]) && $telephoneArray[$value['name']] == $value['telephone']) {
+
+                        unset($team_member_list[$key]);
+                    }
+                }
+            }
             $teamMemberNameArr = [];
             // 创建队员
             if (count($team_member_list) > 0) {
