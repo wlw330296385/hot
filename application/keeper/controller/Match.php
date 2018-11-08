@@ -1756,28 +1756,46 @@ class Match extends Base {
             $this->error(__lang('MSG_200'));
         }
         $teamS = new TeamService();
+        $leagueS = new LeagueService();
         $teamInfo = $teamS -> getTeamOnly(['id' => $team_id]);
-
-        $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
 
         $teamInfo["teamManagers"] = [];
         $teamInfo["teamMates"] = [];
-        if(!empty($teamMemberList)) {
-            foreach ($teamMemberList as $row) {
-                $teamMemberRole = $teamS->getTeamMemberRole(['name' =>$row['name']]);
-                $temp = [
-                    'name' => $row['name'],
-                    'telephone' => $row['telephone'],
-                    'role' => $teamMemberRole['type']
-                ];
-                if ($teamMemberRole) {
+        // 领队 team_member_role
+        $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
+        if(!empty($teamMemberRoleList)) {
+            foreach ($teamMemberRoleList as $row) {
+                $teamMember = $teamS->getTeamMember(['name' => $row['name'], 'telephone' => ['neq','']]);
+                if ($teamMember) {
+                    $temp = [
+                        'team_member_id' => $teamMember['id'],
+                        'name' => $teamMember['name'],
+                        'telephone' => $teamMember['telephone'],
+                        'role' => $row['type']
+                    ];
                     array_push($teamInfo["teamManagers"], $temp);
-                } else {
-                    array_push($teamInfo["teamMates"], $temp);
                 }
+                $teamMember = null;
             }
         }
-
+        // 参赛队员 match_team_member
+        $matchTeamMemberList = $leagueS->getMatchTeamMembers(['team_id' => $team_id]);
+        if(!empty($matchTeamMemberList)) {
+            foreach ($matchTeamMemberList as $item) {
+                $teamMember = $teamS->getTeamMember(['name' =>$item['name']]);
+                if ($teamMember) {
+                    $temp = [
+                        'team_member_id' => $teamMember['id'],
+                        'name' => $teamMember['name'],
+                        'telephone' => $teamMember['telephone'],
+                        'role' => 0
+                    ];
+                    array_push($teamInfo["teamMates"], $temp);
+                }
+                $teamMember = null;
+            }
+        }
+        
         $this->assign('teamInfo', $teamInfo);
         $this->assign('league_id', $league_id);
         return view('Match/team/updateTeamOfLeague');

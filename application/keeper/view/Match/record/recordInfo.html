@@ -182,7 +182,7 @@
             font-size: 14px
         }
 
-        .refereeContent .pjBtn {
+        .refereeContent .pjBtn,.checkStatus {
             padding: 4px 8px;
         }
 
@@ -316,15 +316,21 @@
                     <!-- 裁判信息 -->
                     <div class="page-header bggray2">
                         <span class="course wd45">
-                            裁判评价
+                            裁判评价 
                         </span>
                     </div>
                     <!-- {:dump($refereeComment1)} -->
                     <ul class="mui-table-view mb refereeContent">
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee1_id =='' || $allow_referee_comment == 0 }
-                            <label><span class="icon iconfont icon-activity-Referee colororange"></span>主裁判</label>
-                            <span>{:empty($matchRecordInfo.referee1) ? "暂无" : $matchRecordInfo.referee1 }</span>
+                            <div class="mui-row" style="line-height: 29px;">
+                                <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee" data-referee="{$matchRecordInfo.referee1_id}">{:empty($matchRecordInfo.referee1) ? "--" : $matchRecordInfo.referee1 }</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore refereeScore1">--</text>&nbsp;分</div>
+                                <div class="mui-col-xs-3 mui-text-right">
+                                    <button class="btn checkStatus">去评价</button>
+                                </div>
+                            </div>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;主裁判</div>
@@ -341,8 +347,14 @@
                         </li>
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee2_id =='' || $allow_referee_comment == 0}
-                            <label><span class="icon iconfont icon-activity-Referee1 colororange"></span>副裁判</label>
-                            <span>{:empty($matchRecordInfo.referee2) ? "暂无" : $matchRecordInfo.referee2 }</span>
+                            <div class="mui-row" style="line-height: 29px;">
+                                <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee1 colororange"></i>&nbsp;副裁判</div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee" data-referee="{$matchRecordInfo.referee2_id}">{:empty($matchRecordInfo.referee2) ? "--" : $matchRecordInfo.referee2}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore refereeScore2">--</text>&nbsp;分</div>
+                                <div class="mui-col-xs-3 mui-text-right">
+                                    <button class="btn checkStatus">去评价</button>
+                                </div>
+                            </div>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;副裁判</div>
@@ -359,8 +371,14 @@
                         </li>
                         <li class="mui-table-view-cell listli">
                             {if $matchRecordInfo.referee3_id =='' || $allow_referee_comment == 0}
-                            <label><span class="icon iconfont icon-activity-Referee2 colororange"></span>副裁判</label>
-                            <span>{:empty($matchRecordInfo.referee3) ? "暂无" : $matchRecordInfo.referee3 }</span>
+                            <div class="mui-row" style="line-height: 29px;">
+                                <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee2 colororange"></i>&nbsp;副裁判</div>
+                                <div class="mui-col-xs-3 mui-text-center thisReferee" data-referee="{$matchRecordInfo.referee3_id}">{:empty($matchRecordInfo.referee3) ? "--" : $matchRecordInfo.referee3}</div>
+                                <div class="mui-col-xs-3 mui-text-center"><text class="colororange refereeScore refereeScore3">--</text>&nbsp;分</div>
+                                <div class="mui-col-xs-3 mui-text-right">
+                                    <button class="btn checkStatus">去评价</button>
+                                </div>
+                            </div>
                             {else/}
                             <div class="mui-row" style="line-height: 29px;">
                                 <div class="mui-col-xs-3"><i class="icon iconfont icon-activity-Referee colororange"></i>&nbsp;副裁判</div>
@@ -459,7 +477,7 @@
                     <div class="page-header bggray2">
                         <span class="course">球员数据</span>
                     </div>
-                    <ul class="mui-table-view list border-b dataList homeMembersList mui-input-group"></ul>
+                    <ul class="mui-table-view list border-b dataList homeMembersList mui-input-group mb44"></ul>
                 </div>
             </div>
 
@@ -492,7 +510,7 @@
                     <div class="page-header bggray2">
                         <span class="course">球员数据</span>
                     </div>
-                    <ul class="mui-table-view list border-b dataList awayMembersList  mui-input-group"></ul>
+                    <ul class="mui-table-view list border-b dataList awayMembersList  mui-input-group mb44"></ul>
                 </div>
             </div>
 
@@ -699,6 +717,18 @@
                 }else {
                     //如果有选中
                     alert("确认删除选中？") //给个提示
+                }
+            })
+
+            var allow_referee_comment = "{$allow_referee_comment}";
+            $(".checkStatus").on("tap",function(){
+                var refereeId  = $(this).parents(".mui-row").find(".thisReferee").attr("data-referee");
+                if(allow_referee_comment ==0 && refereeId !=0){
+                    mui.alert("只有参赛队员才可评价。如非平台会员请先注册！");
+                    return false;
+                }else{
+                    mui.toast("暂无裁判");
+                    return false;
                 }
             })
             

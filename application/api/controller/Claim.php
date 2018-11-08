@@ -329,7 +329,7 @@ class Claim extends Base
         // 消息内容组合
         $message = [
             'title' => '申请认领比赛数据回复结果',
-            'content' => '',
+            'content' => $teamMember['team'] . " 的领队已" . $statusStr . "您的认领申请",
             'url' => url('keeper/team/matchMemberClaimApplyinfo', ['id' => $apply['id']], '', true),
             'keyword1' => '您申请认领 ' .  $teamMember['name'] . ' 在 ' . $teamMember['team'] . ' 的比赛数据',
             'keyword2' => $statusStr,

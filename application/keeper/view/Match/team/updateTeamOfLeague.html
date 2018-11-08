@@ -60,24 +60,22 @@
                     <input type="hidden" name="logo" value="{$teamInfo.logo}" class="data">
                 </a>
             </div>
-
+            
             <!-- 队长信息 -->
             <div class="page-header bggray2">
                 <span class="f14">必填（领队信息，认领球队时做验证使用）<i class="tip">*</i></span>
             </div>
             <div class="operation-box captainCont" style="padding:15px;">
                 {volist name="$teamInfo.teamManagers" id="vo"}
-                <div class="mui-input-row mui-checkbox checkboxCont">
+                <div class="mui-input-row mui-checkbox checkboxCont" data-team_member_id="{$vo.team_member_id}">
                     <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                         <div class="mui-col-xs-1 order">1</div>
                         <div class="mui-col-xs-3">
                             <input type="text" name="name" value="{$vo.name}" placeholder="姓名" class="mui-text-center captainName">
                         </div>
                         <div class="mui-col-xs-2">
-                            <select name="role" class="captainRole role">
-                                <option value="">选择职务</option>
-                                <option value="3" {if condition="$vo.role == '3'" } selected="true" {/if}>队长 </option>
-                                    <option value="6" {if condition="$vo.role == '6'" } selected="true" {/if}>领队 </option>
+                            <select name="role" class="captainRole role" disabled>
+                                    <option value="6">领队 </option>
                                     </select> </div> <div class="mui-col-xs-5">
                                     <input type="text" name="telephone" value="{$vo.telephone}" class="mui-text-left captainTelephone"
                                         placeholder="手机号码" class="mui-text-left">
@@ -91,10 +89,10 @@
             <div class="page-header bggray2">
                 <span class="f14">选填（<text class="colororange">参赛队员</text>信息，如领队也参赛，也需要填写在下表中，手机号码供认领数据时做验证使用）</span>
             </div>
-            <div class="operation-box" style="padding:15px;">
+            <div class="operation-box teamMemberCont" style="padding:15px;">
                 <div class="box">
                     {volist name="$teamInfo.teamMates" id="vo"}
-                    <div class="mui-input-row mui-checkbox checkboxCont">
+                    <div class="mui-input-row mui-checkbox checkboxCont" data-team_member_id="{$vo.team_member_id}">
                         <div class="mui-row mui-text-center f14" style="line-height: 41px;">
                             <div class="mui-col-xs-1 order">{$key+1}</div>
                             <div class="mui-col-xs-3">
@@ -175,7 +173,6 @@
         });
         var flagPhone = false;
         $(function () {
-
             // 添加队员
             $(".addMember").on("tap", "", function () {
                 var listLength = $(this).parents(".operation-btn").siblings(".box").find(
@@ -274,6 +271,7 @@
             }
 
             var team_member_list = [];
+            var team_member_role_list = [];
             var isOk = true //用变量记住状态
             // 队员信息判断
             $(".box .checkboxCont").each(function () {
@@ -294,14 +292,31 @@
                 }
             });
             // 提交数据
-            $(".checkboxCont").each(function () {
+            $(".captainCont .checkboxCont").each(function () {
                 var name = $(this).find("input[name=name]").val();
                 var role = $(this).find(".role option:selected").val();
                 var telephone = $(this).find("input[name=telephone]").val();
-                team_member_list.push({
+                var team_member_id = $(this).attr("data-team_member_id");
+                team_member_role_list.push({
                     name,
                     role,
-                    telephone
+                    telephone,
+                    team_member_id
+                })
+            });
+            if (!isOk) {
+                return isOk
+            }
+            console.log(team_member_role_list)
+            // 提交数据
+            $(".teamMemberCont .checkboxCont").each(function () {
+                var name = $(this).find("input[name=name]").val();
+                var telephone = $(this).find("input[name=telephone]").val();
+                var team_member_id = $(this).attr("data-team_member_id");
+                team_member_list.push({
+                    name,
+                    telephone,
+                    team_member_id
                 })
             });
             if (!isOk) {
@@ -315,6 +330,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.team_member_list = JSON.stringify(team_member_list);
+            objData.team_member_role_list = JSON.stringify(team_member_role_list);
             var url = "{:url('api/team/saveVirtualTeam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
