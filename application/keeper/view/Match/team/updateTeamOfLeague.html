@@ -60,7 +60,8 @@
                     <input type="hidden" name="logo" value="{$teamInfo.logo}" class="data">
                 </a>
             </div>
-
+            <div class="hide"> {:dump($teamInfo.teamManagers)}</div>
+           
             <!-- 队长信息 -->
             <div class="page-header bggray2">
                 <span class="f14">必填（领队信息，认领球队时做验证使用）<i class="tip">*</i></span>
@@ -74,10 +75,8 @@
                             <input type="text" name="name" value="{$vo.name}" placeholder="姓名" class="mui-text-center captainName">
                         </div>
                         <div class="mui-col-xs-2">
-                            <select name="role" class="captainRole role">
-                                <option value="">选择职务</option>
-                                <option value="3" {if condition="$vo.role == '3'" } selected="true" {/if}>队长 </option>
-                                    <option value="6" {if condition="$vo.role == '6'" } selected="true" {/if}>领队 </option>
+                            <select name="role" class="captainRole role" disabled>
+                                    <option value="6">领队 </option>
                                     </select> </div> <div class="mui-col-xs-5">
                                     <input type="text" name="telephone" value="{$vo.telephone}" class="mui-text-left captainTelephone"
                                         placeholder="手机号码" class="mui-text-left">
@@ -175,7 +174,6 @@
         });
         var flagPhone = false;
         $(function () {
-
             // 添加队员
             $(".addMember").on("tap", "", function () {
                 var listLength = $(this).parents(".operation-btn").siblings(".box").find(
