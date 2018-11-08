@@ -3145,6 +3145,275 @@ class Team extends Base
     }
 
     // 更新虚拟球队
+    // public function saveVirtualTeam()
+    // {
+    //     if (empty(input('post.name')) || empty(input('post.match_id'))) {
+    //         return json(['code' => 100, 'msg' => __lang('MSG_402')]);
+    //     }
+
+    //     if (empty($this->memberInfo['id'])) {
+    //         return json(['code' => 100, 'msg' => __lang('MSG_001')]);
+    //     }
+    //     // 处理请求参数
+    //     $data = input('post.');
+
+    //     $match_id = $data['match_id'];
+    //     unset($data['match_id']);
+
+    //     if (!empty( $data['team_id'])) {
+    //         $team_id = $data['team_id'];
+    //         unset($data['team_id']);
+    //     }
+
+    //     // 检查match_org_member的权限，保证是组织的管理员或负责人 (match_org_member.type > 9)
+    //     $matchS = new MatchService();
+    //     $leagueS = new LeagueService();
+    //     $teamS = new TeamService();
+
+    //     $matchInfo = $matchS->getMatchOnly(['id' => $match_id]);
+    //     if (empty($matchInfo)){
+    //         return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+    //     }
+
+    //     $power = $leagueS->getMatchMemberType([
+    //         'member_id' => $this->memberInfo['id'],
+    //         'match_id' => $match_id,
+    //         'status' => 1
+    //     ]);
+    //     if ($power < 8) {
+    //         return json(['code' => 100, 'msg' => __lang('MSG_403')]);
+    //     }
+
+    //     // 如果有传 Team_id 获取队伍信息 查询是否匹配
+    //     // 已在联赛内的球队 更新 和 不在联赛内的球队 创建
+    //     if (!empty($team_id)) {
+    //         $matchTeamInfo = $leagueS->getMatchTeamInfoSimple(['match_id' => $match_id, 'team_id' => $team_id]);
+    //         if (empty($matchTeamInfo)) {
+    //             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+    //         }
+
+    //         $teamInfo = $teamS->getTeamOnly(['id' => $team_id]);
+    //         if (empty($teamInfo)) {
+    //             return json(['code' => 100, 'msg' => __lang('MSG_404')]);
+    //         } else if ($teamInfo['member_id'] != -1) {
+    //             return json(['code' => 100, 'msg' => '该球队非联赛创建的临时球队，无法修改']);
+    //         }
+    //     } else {
+    //         $teams_count = $leagueS->getMatchTeamCount(['match_id' => $match_id, 'status' => 1]);
+    //         if ($matchInfo["teams_max"] <= $teams_count) {
+    //             return json(['code' => 100, 'msg' => "联赛的参赛球队已满额，无法继续创建球队"]);
+    //         }
+    //     }
+
+    //     // 有无修改参赛人，有则检测match_record_member表
+    //     $resetFlag = 0;
+    //     $addFlag = 0;
+    //     if ( !empty($data['team_member_list']) ) {
+    //         $team_member_list = json_decode($data['team_member_list'], true);
+
+    //         // if (empty($team_member_list)) {
+    //         //     return json(['code' => 100, 'msg' => __lang('MSG_402')."team_member_list"]);
+    //         // }
+    //         $team_member_count = count($team_member_list);
+    //         if ($team_member_count == 0) {
+    //             $resetFlag = 1;
+    //         } else if (empty($team_id) && $team_member_count > 0) {
+    //             $resetFlag = 1;
+    //         } else {
+
+    //             $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
+    //             $matchTeamMemberList = $leagueS->getMatchTeamMembers(['team_id' => $team_id]);
+
+    //             $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
+
+    //             // 1.如果球员数不同，重置
+    //             // 2.如果球员数相同，但有个手机号不在里面,重置
+    //             // 3.如果球员数相同，但有个名字不在里面，重置
+    //             // 4.如果球员数相同，但有个权限不在里面，重置
+    //             if (count($team_member_list) < (count($teamMemberRoleList) + count($matchTeamMemberList))) {
+    //                 $resetFlag = 1;
+    //             } else {
+    //                 if (!empty($teamMemberList)) {
+
+    //                     $telephoneArray = [];
+    //                     foreach ($teamMemberList as $item) {
+    //                         $telephoneArray[$item['name']] = $item['telephone'];
+    //                     }
+
+    //                     $roleArray = [];
+    //                     if (!empty($teamMemberRoleList)) {
+    //                         foreach ($teamMemberRoleList as $col) {
+    //                             $roleArray[$col['type']][] = $col['name'];
+    //                         }
+    //                     }
+
+    //                     foreach ($team_member_list as $row) {
+    //                         if (!empty($telephoneArray)) {
+    //                             if (!empty($telephoneArray[$row['name']]) && $telephoneArray[$row['name']] != $row['telephone']) {
+    //                                 $resetFlag = 1;
+    //                             } 
+    //                         }
+    //                         if (!empty($roleArray)) {
+    //                             if (!empty($row['role']) && !empty($roleArray[$row['role']]) && !in_array($row['name'], $roleArray[$row['role']])) {
+    //                                 $resetFlag = 1;
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+
+    //             if (!$resetFlag && count($team_member_list) > (count($teamMemberRoleList) + count($matchTeamMemberList))) {
+    //                 $addFlag = 1;
+    //             }
+
+    //             // 1.如果 match_record_member 有一个条记录就不允许重置队员
+    //             if ($resetFlag) {
+    //                 $recordMemberCount = $matchS->getMatchRecordMemberCount([
+    //                     'match_id' => $match_id,
+    //                     'team_id' => $team_id
+    //                 ]);
+    //                 if ($recordMemberCount > 0) {
+    //                     return json(['code' => 100, 'msg' => "修改队员失败，部分队员已有该联赛的比赛记录"]);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     $teamData["__token__"] = $data["__token__"]; 
+    //     $teamData["name"] = $data["name"];
+    //     $teamData['logo'] = !empty($data['logo']) ? $data['logo'] : config('default_image.team_logo');
+    //     $teamData['cover'] = !empty($data['cover']) ? $data['cover'] : config('default_image.upload_default');
+    //     $teamData['type'] = !empty($data['type']) ? $data['type'] : 3; // 默认业余组织类型
+    //     $teamData['member_id'] = -1;
+    //     $teamData['member'] = "";
+    //     $teamData['leader_id'] = -1;
+    //     $teamData['leader'] = "";
+    //     $teamData['captain_id'] = -1;
+    //     $teamData['captain'] = "";
+    //     $teamData['member_num'] = !empty($team_member_count) ? $team_member_count : 0;
+    //     if (!empty($matchTeamInfo)) {
+    //         $teamData['id'] = $matchTeamInfo['team_id'];
+    //     }
+
+    //     $res = $teamS->saveVirtualTeam($teamData);
+    //     if ($res['code'] != 200) {
+    //         return json(['code' => 100, 'msg' => "创建球队失败"]);
+    //     }
+
+    //     $matchTeamData["match_id"] = $matchInfo["id"];
+    //     $matchTeamData["match"] = $matchInfo["name"];
+    //     $matchTeamData["team_id"] = empty($team_id) ? $res["insid"] : $team_id;
+    //     $matchTeamData["team"] = $data["name"];
+    //     $matchTeamData["team_logo"] = $teamData['logo'];
+    //     $matchTeamData["members_num"] = !empty($team_member_count) ? $team_member_count : 0;
+    //     $matchTeamData["status"] = 1;
+    //     if (!empty($matchTeamInfo)) {
+    //         $matchTeamData["id"] = $matchTeamInfo["id"];
+    //     }
+    //     $result = $leagueS->saveMatchTeam($matchTeamData);
+    //     if ($result['code'] != 200) {
+    //         return json(['code' => 100, 'msg' => "创建联赛内球队失败"]);
+    //     }
+
+    //     if (!empty($teamInfo)) {
+    //         if ( $teamInfo['name'] != $data['name'] || $teamInfo['logo'] != $data['logo'] ) {
+    //             Db::startTrans();
+    //             try {
+    //                 $res1 = Db::table('match_group_team')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name'], 'team_logo' => $teamData['logo']]);
+    //                 $res2 = Db::table('match_record')->where('home_team_id', $matchTeamData["team_id"])->update(['home_team' => $data['name'], 'home_team_logo' => $teamData['logo']]);
+    //                 $res3 = Db::table('match_record')->where('away_team_id', $matchTeamData["team_id"])->update(['away_team' => $data['name'], 'away_team_logo' => $teamData['logo']]);
+    //                 $res4 = Db::table('match_record_member')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name']]);
+    //                 $res5 = Db::table('match_schedule')->where('home_team_id', $matchTeamData["team_id"])->update(['home_team' => $data['name'], 'home_team_logo' => $teamData['logo']]);
+    //                 $res6 = Db::table('match_schedule')->where('away_team_id', $matchTeamData["team_id"])->update(['away_team' => $data['name'], 'away_team_logo' => $teamData['logo']]);
+    //                 $res6 = Db::table('match_stage_advteam')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name']]);
+    //                 $res6 = Db::table('match_rank')->where('team_id', $matchTeamData["team_id"])->update(['team' => $data['name'], 'team_logo' => $teamData['logo']]);
+    //                 Db::commit();
+    //             } catch (\Exception $e) {
+    //                 Db::rollback();
+    //                 trace('error:' . $e->getMessage(), 'error');
+    //                 return json(['code' => 100, 'msg' => __lang('MSG_400')]);
+    //             }
+    //         }
+    //     }
+
+    //     if ($resetFlag || $addFlag) {
+    //         // 删除旧队员
+    //         if (!$addFlag) {
+    //             $teamS->delTeamMembers(['team_id' => $matchTeamData["team_id"]], true);
+    //             $teamS->delTeamMemberRoles(['team_id' => $matchTeamData["team_id"]], true);
+    //             $leagueS->delMatchTeamMember(['team_id' => $matchTeamData["team_id"]], true);
+    //         } else {
+                
+    //             foreach ($team_member_list as $key => $value) {
+    //                 if (isset($telephoneArray[$value['name']]) && $telephoneArray[$value['name']] == $value['telephone']) {
+
+    //                     unset($team_member_list[$key]);
+    //                 }
+    //             }
+    //         }
+    //         $teamMemberNameArr = [];
+    //         // 创建队员
+    //         if (count($team_member_list) > 0) {
+    //             foreach ($team_member_list as $row) {
+    //                 if (!in_array($row['name'],$teamMemberNameArr)) {
+    //                     // 前端传入的数组 如果即是领队又是队员就要求领队的index在前
+    //                     $teamMemberData = [
+    //                         "team_id" => $matchTeamData["team_id"],
+    //                         "team" => $data["name"],
+    //                         "name" => $row['name'],
+    //                         "member_id" => -1,
+    //                         "telephone" => $row['telephone'],
+    //                         "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
+    //                         "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+    //                         "status" => 1
+    //                     ];
+    //                     $resTeamMember = $teamS->getTeamMember([
+    //                          "team_id" => $matchTeamData["team_id"],
+    //                          "member_id" => -1,
+    //                          "name" => $row['name'],
+    //                          "telephone" => $row['telephone']
+    //                     ]);
+    //                     if ($resTeamMember) {
+    //                         $teamMemberData['id'] = $resTeamMember['id'];
+    //                     }
+    //                     $res1 = $teamS->saveTeamMember($teamMemberData);
+
+    //                     array_push($teamMemberNameArr, $row['name']);
+    //                 }
+    //                 // 有权限的人仅写入team_member_role，其他人写在team_member 和 match_team_member
+    //                 if (!empty($row['role'])) {
+    //                     $teamMemberRoleData = [
+    //                         "team_id" => $matchTeamData["team_id"],
+    //                         "member_id" => -1,
+    //                         "name" => $row['name'],
+    //                         "type" => $row['role'],
+    //                         "status" => 1
+    //                     ];
+    //                     $res2 = $teamS->addTeamMemberRole($teamMemberRoleData);
+    //                 } else {
+    //                     $matchTeamMemberData = [
+    //                         "match_team_id" => $result['data'],
+    //                         "match_id" => $matchInfo['id'],
+    //                         "match" => $matchInfo['name'],
+    //                         "team_id" => $matchTeamData["team_id"],
+    //                         "team" => $data['name'],
+    //                         "team_logo" => $teamData['logo'],
+    //                         "team_member_id" => $res1['insid'],
+    //                         "name" => $row['name'],
+    //                         "member_id" => -1,
+    //                         "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+    //                         "status" => 1
+    //                     ];
+    //                     $res3 = $leagueS->saveMatchTeamMember($matchTeamMemberData);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return json(['code' => 200, 'msg' => __lang('MSG_200')]);
+    // }
+
+    // 更新虚拟球队
     public function saveVirtualTeam()
     {
         if (empty(input('post.name')) || empty(input('post.match_id'))) {
@@ -3205,77 +3474,121 @@ class Team extends Base
             }
         }
 
-        // 有无修改参赛人，有则检测match_record_member表
-        $resetFlag = 0;
-        $addFlag = 0;
-        if ( !empty($data['team_member_list']) ) {
-            $team_member_list = json_decode($data['team_member_list'], true);
+        $name_array = [];
+        // 处理 team_member_list 队员
+        if (!empty($data['team_member_list'])) {
+            
+            $team_member_data = [];
+            // 原有数据，默认删除操作
+            if (!empty($team_id) ) {
 
-            // if (empty($team_member_list)) {
-            //     return json(['code' => 100, 'msg' => __lang('MSG_402')."team_member_list"]);
-            // }
-            $team_member_count = count($team_member_list);
-            if ($team_member_count == 0) {
-                $resetFlag = 1;
-            } else if (empty($team_id) && $team_member_count > 0) {
-                $resetFlag = 1;
-            } else {
+                // 获取参赛队员名单
+                $origin_match_team_member = $leagueS->getMatchTeamMembers(["team_id" => $team_id]);
+                $team_member_id_array = [];
+                foreach ($origin_match_team_member as $row) {
+                    $team_member_id_array[] = $row['team_member_id'];
+                }
+                $oringin_team_member_list = $teamS->getTeamMemberListOnly(["team_id" => $team_id, "id" => ['in', $team_member_id_array]]);
+                foreach ($oringin_team_member_list as $row) {
+                    $team_member_data[$row['id']] = [
+                        "id"        => $row['id'],
+                        "name"      => $row['name'],
+                        "origin_name" => $row['name'],
+                        "telephone" => $row['telephone'],
+                        "action"    => "delete"
+                    ];
+                }
+            }
 
-                $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
-                $matchTeamMemberList = $leagueS->getMatchTeamMembers(['team_id' => $team_id]);
+            // 传入数据，将有的数据的action 由 delete 改为 edit, add(无id), 队员不允许重名
+            $new_team_member_list = json_decode($data['team_member_list'], true);
 
-                $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
-
-                // 1.如果球员数不同，重置
-                // 2.如果球员数相同，但有个手机号不在里面,重置
-                // 3.如果球员数相同，但有个名字不在里面，重置
-                // 4.如果球员数相同，但有个权限不在里面，重置
-                if (count($team_member_list) < (count($teamMemberRoleList) + count($matchTeamMemberList))) {
-                    $resetFlag = 1;
+            $team_member_add_data = [];
+            foreach ($new_team_member_list as $row) {
+                if (!empty($row['team_member_id']) && !empty($team_member_data[$row['team_member_id']])) {
+                    $team_member_data[$row['team_member_id']]['action'] = "edit";
+                    $team_member_data[$row['team_member_id']]['name'] = $row['name'];
+                    $team_member_data[$row['team_member_id']]['telephone'] = $row['telephone'];
                 } else {
-                    if (!empty($teamMemberList)) {
-
-                        $telephoneArray = [];
-                        foreach ($teamMemberList as $item) {
-                            $telephoneArray[$item['name']] = $item['telephone'];
-                        }
-
-                        $roleArray = [];
-                        if (!empty($teamMemberRoleList)) {
-                            foreach ($teamMemberRoleList as $col) {
-                                $roleArray[$col['type']][] = $col['name'];
-                            }
-                        }
-
-                        foreach ($team_member_list as $row) {
-                            if (!empty($telephoneArray)) {
-                                if (!empty($telephoneArray[$row['name']]) && $telephoneArray[$row['name']] != $row['telephone']) {
-                                    $resetFlag = 1;
-                                } 
-                            }
-                            if (!empty($roleArray)) {
-                                if (!empty($row['role']) && !empty($roleArray[$row['role']]) && !in_array($row['name'], $roleArray[$row['role']])) {
-                                    $resetFlag = 1;
-                                }
-                            }
-                        }
-                    }
+                    $team_member_add_data[] = [
+                        "name"      => $row['name'],
+                        "telephone" => $row['telephone'],
+                        "action"    => "add"
+                    ];
                 }
+            }
+            $team_member_data = array_merge($team_member_data,$team_member_add_data);
 
-                if (!$resetFlag && count($team_member_list) > (count($teamMemberRoleList) + count($matchTeamMemberList))) {
-                    $addFlag = 1;
-                }
+            // 判断
+            foreach ($team_member_data as $row) {
 
-                // 1.如果 match_record_member 有一个条记录就不允许重置队员
-                if ($resetFlag) {
+                // 有记录不能删除和改名
+                // if ($row['action'] == 'delete' || ($row['action'] == 'edit' && $row['name'] != $row['origin_name'])) 
+
+                // 有记录不能删除
+                if ($row['action'] == 'delete') {
                     $recordMemberCount = $matchS->getMatchRecordMemberCount([
                         'match_id' => $match_id,
-                        'team_id' => $team_id
+                        'team_id' => $team_id,
+                        'team_member_id' => $row['id']
                     ]);
                     if ($recordMemberCount > 0) {
                         return json(['code' => 100, 'msg' => "修改队员失败，部分队员已有该联赛的比赛记录"]);
                     }
+                } 
+
+                if ($row['action'] != 'delete') {
+                    $name_array[] = $row['name'];
                 }
+            }
+            $attend_name_array = $name_array;
+        }
+
+        $role_name_array = [];
+        // 处理 team_member_role_list 领队和队长
+        if (!empty($data['team_member_role_list'])) {
+
+            $new_team_member_role_list = json_decode($data['team_member_role_list'], true);
+            
+            $team_member_role_data = [];
+            if (!empty($team_id) ) {
+                $oringin_team_member_role_list = $teamS->getTeamMemberRoleList(["team_id" => $team_id]);
+                foreach ($oringin_team_member_role_list as $row) {
+                    $team_member = $teamS->getTeamMember(["team_id" => $team_id, "name" => $row['name']]);
+                    $team_member_role_data[$team_member['id']] = [
+                        "id"        => $team_member['id'],
+                        "name"      => $team_member['name'],
+                        "origin_name" => $team_member['name'],
+                        "telephone" => $team_member['telephone'],
+                        "role"      => $row['type'],
+                        "action"    => "delete"
+                    ];
+                }
+            }
+
+            // 传入数据，将有的数据的action 由 delete 改为 edit, add(无id), 队员不允许重名
+            $team_member_role_add_data = [];
+            foreach ($new_team_member_role_list as $row) {
+                if (!empty($row['team_member_id']) && !empty($team_member_role_data[$row['team_member_id']])) {
+                    $team_member_role_data[$row['team_member_id']]['action'] = "edit";
+                    $team_member_role_data[$row['team_member_id']]['name'] = $row['name'];
+                    $team_member_role_data[$row['team_member_id']]['telephone'] = $row['telephone'];
+                } else {
+                    $team_member_role_data[] = [
+                        "name"      => $row['name'],
+                        "telephone" => $row['telephone'],
+                        "role"      => $row['role'],
+                        "action"    => "add"
+                    ];
+                }
+            }
+            $team_member_role_data = array_merge($team_member_role_data, $team_member_role_add_data);
+            
+            foreach ($team_member_role_data as $row) {
+                if (!in_array($row['name'], $name_array) ) {
+                    $name_array[] = $row['name'];
+                }
+                $role_name_array[] = $row['name'];
             }
         }
 
@@ -3290,11 +3603,11 @@ class Team extends Base
         $teamData['leader'] = "";
         $teamData['captain_id'] = -1;
         $teamData['captain'] = "";
-        $teamData['member_num'] = !empty($team_member_count) ? $team_member_count : 0;
+        $teamData['member_num'] = !empty($name_array) ? count($name_array) : 0;
         if (!empty($matchTeamInfo)) {
             $teamData['id'] = $matchTeamInfo['team_id'];
         }
-
+// dump($teamData);exit;
         $res = $teamS->saveVirtualTeam($teamData);
         if ($res['code'] != 200) {
             return json(['code' => 100, 'msg' => "创建球队失败"]);
@@ -3305,7 +3618,7 @@ class Team extends Base
         $matchTeamData["team_id"] = empty($team_id) ? $res["insid"] : $team_id;
         $matchTeamData["team"] = $data["name"];
         $matchTeamData["team_logo"] = $teamData['logo'];
-        $matchTeamData["members_num"] = !empty($team_member_count) ? $team_member_count : 0;
+        $matchTeamData["members_num"] = !empty($attend_name_array) ? count($attend_name_array) : 0;
         $matchTeamData["status"] = 1;
         if (!empty($matchTeamInfo)) {
             $matchTeamData["id"] = $matchTeamInfo["id"];
@@ -3336,79 +3649,119 @@ class Team extends Base
             }
         }
 
-        if ($resetFlag || $addFlag) {
-            // 删除旧队员
-            if (!$addFlag) {
-                $teamS->delTeamMembers(['team_id' => $matchTeamData["team_id"]], true);
-                $teamS->delTeamMemberRoles(['team_id' => $matchTeamData["team_id"]], true);
-                $leagueS->delMatchTeamMember(['team_id' => $matchTeamData["team_id"]], true);
-            } else {
-                
-                foreach ($team_member_list as $key => $value) {
-                    if (isset($telephoneArray[$value['name']]) && $telephoneArray[$value['name']] == $value['telephone']) {
+// dump($team_member_role_data);exit;
+        if (!empty($team_member_data)) {
 
-                        unset($team_member_list[$key]);
+            foreach ($team_member_data as $row) {
+                if ($row['action'] == 'delete') {
+                    if (!in_array( $row['name'], $role_name_array)){
+                        $resDel1 = $teamS->delTeamMembers(['id' => $row['id']], true);
                     }
-                }
-            }
-            $teamMemberNameArr = [];
-            // 创建队员
-            if (count($team_member_list) > 0) {
-                foreach ($team_member_list as $row) {
-                    if (!in_array($row['name'],$teamMemberNameArr)) {
-                        // 前端传入的数组 如果即是领队又是队员就要求领队的index在前
-                        $teamMemberData = [
-                            "team_id" => $matchTeamData["team_id"],
-                            "team" => $data["name"],
-                            "name" => $row['name'],
-                            "member_id" => -1,
-                            "telephone" => $row['telephone'],
-                            "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
-                            "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
-                            "status" => 1
-                        ];
-                        $resTeamMember = $teamS->getTeamMember([
-                             "team_id" => $matchTeamData["team_id"],
-                             "member_id" => -1,
-                             "name" => $row['name'],
-                             "telephone" => $row['telephone']
-                        ]);
-                        if ($resTeamMember) {
-                            $teamMemberData['id'] = $resTeamMember['id'];
+                    $resDel2 = $leagueS->delMatchTeamMember(['team_member_id' => $row['id']], true);
+                } else {
+                    $teamMemberData = [
+                        "team_id" => $matchTeamData["team_id"],
+                        "team" => $data["name"],
+                        "name" => $row['name'],
+                        "member_id" => -1,
+                        "telephone" => $row['telephone'],
+                        "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
+                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                        "status" => 1
+                    ];
+
+                    if ($row['action'] == 'edit') {
+                        $teamMemberData['id'] = $row['id'];
+                    }
+
+                    // 新增加的人是不是领队，是则仅更新
+                    if ($row['action'] == 'add' && in_array( $row['name'], $role_name_array) ) {
+                        $resultRow = $teamS->getTeamMember(['team_id' => $team_id, 'name' => $row['name']]);
+                        if ($resultRow) {
+                            $teamMemberData['id'] = $resultRow['id'];
                         }
-                        $res1 = $teamS->saveTeamMember($teamMemberData);
-
-                        array_push($teamMemberNameArr, $row['name']);
                     }
-                    // 有权限的人仅写入team_member_role，其他人写在team_member 和 match_team_member
-                    if (!empty($row['role'])) {
-                        $teamMemberRoleData = [
-                            "team_id" => $matchTeamData["team_id"],
-                            "member_id" => -1,
-                            "name" => $row['name'],
-                            "type" => $row['role'],
-                            "status" => 1
-                        ];
-                        $res2 = $teamS->addTeamMemberRole($teamMemberRoleData);
+                    $res1 = $teamS->saveTeamMember($teamMemberData);
+
+                    $matchTeamMemberData = [
+                        "match_team_id" => $result['data'],
+                        "match_id" => $matchInfo['id'],
+                        "match" => $matchInfo['name'],
+                        "team_id" => $matchTeamData["team_id"],
+                        "team" => $data['name'],
+                        "team_logo" => $teamData['logo'],
+                        "team_member_id" => $res1['insid'],
+                        "name" => $row['name'],
+                        "member_id" => -1,
+                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                        "status" => 1
+                    ];
+                    if ($row['action'] == 'edit') {
+                        $res3 = $leagueS->saveMatchTeamMember($matchTeamMemberData, ["team_member_id" => $res1['insid']] );
                     } else {
-                        $matchTeamMemberData = [
-                            "match_team_id" => $result['data'],
-                            "match_id" => $matchInfo['id'],
-                            "match" => $matchInfo['name'],
-                            "team_id" => $matchTeamData["team_id"],
-                            "team" => $data['name'],
-                            "team_logo" => $teamData['logo'],
-                            "team_member_id" => $res1['insid'],
-                            "name" => $row['name'],
-                            "member_id" => -1,
-                            "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
-                            "status" => 1
-                        ];
+                        // dump($matchTeamMemberData);exit;
                         $res3 = $leagueS->saveMatchTeamMember($matchTeamMemberData);
+                    }
+                    
+
+                    if ($row['action'] == 'edit') {
+                        $matchRecordMemberData = [
+                            "team" => $data['name'],
+                            "name" => $row['name']
+                        ];
+                        $res4 = $leagueS->saveMatchRecordMember($matchRecordMemberData, ["team_member_id" => $row['id']]);
+
+                        $matchStatisticsData = [
+                            "team" => $data['name'],
+                            "name" => $row['name']
+                        ];
+                        $res5 = $leagueS->saveMatchStatistics($matchStatisticsData, ["team_member_id" => $row['id']]);
                     }
                 }
             }
         }
+        // dump($team_member_role_data);exit;
+        if (!empty($team_member_role_data)) {
+            foreach ($team_member_role_data as $row) {
+                // 有权限的人仅写入team_member_role，其他人写在team_member 和 match_team_member
+                if ($row['action'] == 'delete') {
+                    $resDel3 = $teamS->delTeamMembers(['id' => $row['id']], true);
+                    $resDel4 = $teamS->delTeamMemberRoles(['id' => $row['id']], true);
+                } else {
+                    $teamMemberData = [
+                        "team_id" => $matchTeamData["team_id"],
+                        "team" => $data["name"],
+                        "name" => $row['name'],
+                        "member_id" => -1,
+                        "telephone" => $row['telephone'],
+                        "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
+                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                        "status" => 1
+                    ];
+
+                    if ($row['action'] == 'edit') {
+                        $teamMemberData['id'] = $row['id'];
+                    }
+
+                    $res6 = $teamS->saveTeamMember($teamMemberData);
+
+                    $teamMemberRoleData = [
+                        "team_id" => $matchTeamData["team_id"],
+                        "member_id" => -1,
+                        "name" => $row['name'],
+                        "type" => $row['role'],
+                        "status" => 1
+                    ];
+                    if ($row['action'] == 'edit') {
+                        $res7 = $teamS->saveTeamMemberRole($teamMemberRoleData, ["team_id" => $matchTeamData["team_id"], "name" => $row['origin_name']]);
+                    }
+                    if ($row['action'] == 'add') {
+                        $res7 = $teamS->addTeamMemberRole($teamMemberRoleData);
+                    }
+                }
+            }
+        }
+        
 
         return json(['code' => 200, 'msg' => __lang('MSG_200')]);
     }

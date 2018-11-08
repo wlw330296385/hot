@@ -1765,7 +1765,7 @@ class Match extends Base {
         $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
         if(!empty($teamMemberRoleList)) {
             foreach ($teamMemberRoleList as $row) {
-                $teamMember = $teamS->getTeamMember(['name' => $row['name'], 'telephone' => ['neq','']]);
+                $teamMember = $teamS->getTeamMember(['team_id' => $team_id, 'name' => $row['name'], 'telephone' => ['neq','']]);
                 if ($teamMember) {
                     $temp = [
                         'team_member_id' => $teamMember['id'],
@@ -1782,7 +1782,7 @@ class Match extends Base {
         $matchTeamMemberList = $leagueS->getMatchTeamMembers(['team_id' => $team_id]);
         if(!empty($matchTeamMemberList)) {
             foreach ($matchTeamMemberList as $item) {
-                $teamMember = $teamS->getTeamMember(['name' =>$item['name']]);
+                $teamMember = $teamS->getTeamMember(['team_id' => $team_id, 'name' =>$item['name']]);
                 if ($teamMember) {
                     $temp = [
                         'team_member_id' => $teamMember['id'],

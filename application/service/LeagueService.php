@@ -22,6 +22,8 @@ use app\model\MatchTeamMember;
 use app\model\MatchHonor;
 use app\model\MatchHonorMember;
 use app\model\MatchReferee;
+use app\model\MatchStatistics;
+use app\model\MatchRecordMember;
 use think\Db;
 
 class LeagueService
@@ -1560,5 +1562,61 @@ class LeagueService
         } else {
             return ['code' => 100, 'msg' => __lang('MSG_400')];
         }
+    }
+
+    // 保存联赛参赛球队球员数据
+    public function saveMatchRecordMember($data, $condi = [])
+    {
+        $model = new MatchRecordMember();
+        if (!empty($condi) && is_array($condi)) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+        }
+        return $model->id;
+    }
+
+    // 保存联赛参赛球队球员数据
+    public function saveMatchStatistics($data, $condi = [])
+    {
+        $model = new MatchStatistics();
+        if (!empty($condi) && is_array($condi)) {
+            // 带更新条件更新数据
+            $res = $model->allowField(true)->isUpdate(true)->save($data, $condi);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 更新数据
+        if (array_key_exists('id', $data)) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res === false) {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            }
+            return $res;
+        }
+        // 插入数据
+        $res = $model->allowField(true)->isUpdate(false)->save($data);
+        if ($res === false) {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+        }
+        return $model->id;
     }
 }

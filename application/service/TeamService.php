@@ -269,6 +269,43 @@ class TeamService
         }
     }
 
+    // 保存team_member_role
+    public function saveTeamMemberRole($data=[], $condition=[])
+    {
+        $model = new TeamMemberRole();
+        // 带更新条件更新数据
+        if (!empty($condition)) {
+            $res = $model->allowField(true)->save($data, $condition);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200')];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 有传入team_member表id 更新数据
+        if (isset($data['id'])) {
+            $res = $model->allowField(true)->isUpdate(true)->save($data);
+            if ($res || ($res === 0)) {
+                return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+            } else {
+                trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+                return ['code' => 100, 'msg' => __lang('MSG_400')];
+            }
+        }
+        // 新增数据
+        $res = $model->allowField(true)->save($data);
+        if ($res) {
+            // 球队成员数+1
+            //db('team')->where('id', $data['team_id'])->setInc('member_num', 1);
+
+            return ['code' => 200, 'msg' => __lang('MSG_200'), 'insid' => $model->id];
+        } else {
+            trace('error:' . $model->getError() . ', \n sql:' . $model->getLastSql(), 'error');
+            return ['code' => 100, 'msg' => __lang('MSG_400')];
+        }
+    }
+
     // 批量保存team_member 数据
     public function saveAllTeamMember($data)
     {
