@@ -15,7 +15,7 @@
 
 <body>
 
-    <header id="header" class="mui-bar mui-bar-nav for-tab">
+    <header class="mui-bar mui-bar-nav for-tab">
         <div class="camp-lesson-list">
             <div class="mui-segmented-control mb">
                 <a class="mui-control-item mui-icon mui-icon-left-nav" href="{:url('team/teamManage',['team_id' => $team_id])}"></a>
@@ -31,17 +31,17 @@
         <div class="tab-pullRefresh">
             <div id="notfinishedlineMatchList" class="mui-scroll-wrapper mui-control-content  mui-active">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b finished-1 OA_task_match"></ul>
+                    <ul class="mui-table-view list border-b finished-1 OA_task_match"></ul>
                 </div>
             </div>
             <div id="finishedlineMatchList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b finished1 OA_task_match"></ul>
+                    <ul class="mui-table-view list border-b finished1 OA_task_match"></ul>
                 </div>
             </div>
             <div id="claimMatchList" class="mui-scroll-wrapper mui-control-content">
                 <div class="mui-scroll">
-                    <ul class="mui-table-view detalis-list list border-b claim"></ul>
+                    <ul class="mui-table-view list border-b claim"></ul>
                 </div>
             </div>
         </div>
@@ -226,36 +226,41 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('team/matchinfoofteam')}" + '/id/' + data.data.data[i].id +
-                            '/team_id/' + "{$team_id}";
+                        var dataArr = data.data.data[i];
+                        var urls = "{:url('team/matchinfoofteam')}" + '/id/' + dataArr.id + '/team_id/' +
+                            "{$team_id}";
                         newli += '<li class="mui-table-view-cell listli">';
-                        if (data.data.data[i].is_finished == "未完成") {
-                            newli += '<div class="mui-slider-right mui-disabled" data-match_id="' + data.data
-                                .data[i].match_id + '"><span class="mui-btn bgblue setFinished" data-match_id="' +
-                                data.data.data[i].match_id +
-                                '">设为完成</span><span class="mui-btn mui-btn-grey operationBtn" data-action="">通知队员</span><span class="mui-btn mui-btn-red operationBtn" data-action="del">删除</span></div>';
+                        if (dataArr.is_finished == "未完成") {
+                            newli +=
+                                `<div class="mui-slider-right mui-disabled" data-match_id="${dataArr.match_id}">
+                                    <span class="mui-btn bgblue setFinished">设为完成</span>
+                                   
+                                    <span class="mui-btn mui-btn-red operationBtn" data-action="del">删除</span>
+                                </div>`;
+                                // <span class="mui-btn mui-btn-grey operationBtn" data-action="">通知队员</span>  因暂无api  所以先注释
                         } else {
-                            newli += '<div class="mui-slider-right mui-disabled" data-id="' + data.data
-                                .data[i].id +
-                                '"><span class="mui-btn mui-btn-grey" data-action="">通知队员</span><span class="mui-btn mui-btn-red" data-action="del">删除</span></div>';
+                            newli +=
+                                `<div class="mui-slider-right mui-disabled" data-match_id="${dataArr.match_id}">
+                                </div>`;
+                                // <span class="mui-btn mui-btn-grey operationBtn" data-action="">通知队员</span>  因暂无api  所以先注释
                         }
-                        newli += '<div class="mui-slider-handle"><a href="' + urls + '">'
-                        if (data.data.data[i].match_org_id != 0) {
-                            newli += '<div class="mui-media-body wd83">' + data.data.data[i].home_team + ' vs ' + data.data.data[i].away_team + '';
+                        newli += `<div class="mui-slider-handle"><a href="${urls}">`
+                        if (dataArr.match_org_id != 0) {
+                            newli +=
+                                `<div class="mui-media-body wd83">${dataArr.home_team} vs ${dataArr.away_team}`;
                         } else {
-                            newli += '<div class="mui-media-body wd83">' + data.data.data[i].name + '';
+                            newli += `<div class="mui-media-body wd83">${dataArr.name}`;
                         }
-                        if (data.data.data[i].status == "公开") {
-                                newli += '<font class="tipCorner bgorange">公开</font>';
-                            }
-                        if (data.data.data[i].match_time == 0) {
+                        if (dataArr.status == "公开") {
+                            newli += '<font class="tipCorner bgorange">公开</font>';
+                        }
+                        if (dataArr.match_time == 0) {
                             newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                         } else {
-                            newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
+                            newli += `<p class="mui-ellipsis">${dataArr.match_time}</p>`
                         }
                         newli +=
-                            '</div><div class="price-frame rightLocation" style="padding-right:0">' +
-                            data.data.data[i].type + '</a></div>'
+                            `</div><div class="price-frame rightLocation" style="padding-right:0">${dataArr.type}</a></div>`
                         newli += '</li>';
                     }
                 }
@@ -290,7 +295,6 @@
 
     //认领
     var toClaimList = function (wList, page, gType) {
-        //搜索关键字不能完全为空，否则查询为空
         var url = "{:url('api/match/teamclaimfinishmatchpage')}?page=" + page;
         var team_id = "{$team_id}"
         mui.ajax({
@@ -309,26 +313,26 @@
                 var newli = '';
                 if (data.code == 200) {
                     for (var i = 0; i <= data.data.data.length - 1; i++) {
-                        var urls = "{:url('team/claimFinishedMatch')}" + '/match_id/' + data.data.data[
-                            i].match_id + '/team_id/' + "{$team_id}";
-                        newli += '<li class="mui-table-view-cell mui-media listli coach">'
-                        newli += '<div class="mui-slider-handle"><a href="' + urls +
-                            '"><div class="mui-media-body wd83">' + data.data.data[i].match + '';
-                        if (data.data.data[i].match_time == 0) {
+                        var dataArr = data.data.data[i];
+                        var urls = "{:url('team/claimFinishedMatch')}" + '/match_id/' + dataArr.match_id +
+                            '/team_id/' + "{$team_id}";
+                        newli += '<li class="mui-table-view-cell listli">'
+                        newli +=
+                            `<div class="mui-slider-handle"><a href="${urls}"><div class="mui-media-body wd83">${dataArr.match}`;
+                        if (dataArr.match_time == 0) {
                             newli += '<p class="mui-ellipsis">比赛时间待定</p>'
                         } else {
-                            newli += '<p class="mui-ellipsis">' + data.data.data[i].match_time + '</p>'
+                            newli += `<p class="mui-ellipsis">${dataArr.match_time}</p>`
                         }
                         newli += '</div><div class="price-frame">';
-                        if (data.data.data[i].claim_status == 0) {
+                        if (dataArr.claim_status == 0) {
                             newli += '<div class="mui-inline"><b class="colororange f16">未认领</b></div>'
-                        } else if (data.data.data[i].claim_status == 1) {
+                        } else if (dataArr.claim_status == 1) {
                             newli += '<div class="mui-inline"><b class="colororange f16">已认领</b></div>'
-                        } else if (data.data.data[i].claim_status == 2) {
+                        } else if (dataArr.claim_status == 2) {
                             newli += '<div class="mui-inline"><b class="colorgray f16">失效</b></div>'
                         }
-
-                        newli += '<p class="address">' + data.data.data[i].type + '</p></a></div></li>'
+                        newli += `<p class="address">${dataArr.type}</p></a></div></li>`
                     }
                 }
 
@@ -403,7 +407,7 @@
 
     // 将比赛设置为完成
     $(document).on('tap', '.setFinished', function () {
-        var match_id = $(this).attr("data-match_id");
+        var match_id = $(this).parent().attr("data-match_id");
         var elem = this;
         var li = elem.parentNode.parentNode;
         var btnArray = ['确认', '取消'];
