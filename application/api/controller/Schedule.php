@@ -836,6 +836,21 @@ class Schedule extends Base
                         'system_remarks'=>'赠课操作'
                     ]);
                 }
+                db('schedule_giftbuy')->insert(
+                    [
+                        'camp'=>$campInfo['camp'],
+                        'camp_id'=>$campInfo['id'],
+                        'lesson_id'=>$lesson_id,
+                        'lesson'=>$lessonInfo['lesson'],
+                        'member_id'=>$this->memberInfo['id'],
+                        'member'=>$this->memberInfo['member'],
+                        'quantity'=>-$rest_schedule_gift,
+                        'cost'=>$lessonInfo['cost'],
+                        'status'=>1,
+                        'create_time'=>time(),
+                        'update_time'=>time()
+                    ]
+                );
                 return json(['code' => 200, 'msg' => "操作成功,您已退掉{$rest_schedule_gift}节赠课"]);
             }else{
                 return json(['code' => 100, 'msg' => '操作失败']);

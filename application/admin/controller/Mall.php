@@ -41,11 +41,13 @@ class Mall extends Backend {
 
     public function createGoods(){
         $goods_type = input('param.goods_type',1);
-        $skuTypeList = db('sku')->where(['goods_type'=>$goods_type])->select();
+
+        $skuTypeList = db('sku')->where(['goods_type'=>$goods_type,'status'=>1])->select();
         $goodsCategoryList = db('goods_category')->select();
         $goodsCategoryListTree = getTree($goodsCategoryList);
         if(request()->isPost()){
             $data = input('post.');
+            dump($data);die;
             $Goods = new \app\model\Goods;
             $result = $Goods->save($data);
             if($result){
@@ -53,9 +55,19 @@ class Mall extends Backend {
             }else{
                 $this->error("操作失败");
             }
+        } 
+
+        $skuList = [];
+        foreach ($skuTypeList as $key => $value) {
+            $skuList[$value['sku_type']][] = $value;
+        }
+        $typeList = [];
+        foreach ($skuList as $key => $value) {
+            $typeList[] = $key;
         }
 
-        $this->assign('skuTypeList',$skuTypeList);
+        $this->assign('skuList',$skuList);
+        $this->assign('typeList',json_encode($typeList));
         $this->assign('goodsCategoryListTree',$goodsCategoryListTree);
         return view('Mall/createGoods');
     }

@@ -18,11 +18,11 @@ class Index extends Controller
 
     // 用户提现补录
     public function sw(){
-        $list = db('schedule_giftbuy')->field('schedule_giftbuy.id,lesson.cost')->join('lesson','lesson.id=schedule_giftbuy.lesson_id')->select();
-        foreach ($list as $key => $value) {
-            db('schedule_giftbuy')->where(['id'=>$value['id']])->update(['cost'=>$value['cost']]);
-        }
-       
+        $list = [
+            "颜色"=>['红'=>1,'黑'=>2],
+            "尺码"=>['M'=>4,'XXL'=>3]
+        ];
+       dump(json_encode($list));
     }
 
     function exportExcel($expTitle,$expCellName,$expTableData){

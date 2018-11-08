@@ -118,9 +118,65 @@
 
                         </div>
 
-                    <div class="box-footer">
-                        <button type="submit" class="btn btn-success">提  交</button>
-                    </div>
+
+
+                        <!-- 编辑商品属性开始 -->
+                        <div class="form-group">
+                            <!-- Main content -->
+                            <section class="content">
+                                <div class="row">
+                                    <div class="col-md-12">
+
+                                        <div class="box box-danger">
+                                            <div class="box-header">
+                                                <h3 class="box-title">商品属性
+                                                    <small>选择商品属性之后必须填写库存</small>
+                                                </h3>
+                                            </div>
+
+                                            {foreach $skuList as $key => $vol}
+                                            <br>
+                                            <label for="{$key}">{$key}</label>
+                                            <input type="hidden" class="form-control" placeholder="" name="sku_type[]" value="{$key}">
+                                            <br>
+                                            {foreach $vol as $k=>$v}
+                                            <label for="{$k}">{$v.sku}</label>
+                                            <input type="checkbox" name="{$v.sku}" data_name="{$v.sku}" value="{$v.id}" class="sku sku{$key}">
+                                            {/foreach}
+                                            <br>
+                                            {/foreach}
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="form-group">
+                            <!-- Main content -->
+                            <section class="content">
+                                <div class="row">
+                                    <div class="col-md-12" id="">
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <header>
+                                                <tr id="skuType">
+                                                    
+                                                    <th>库存</th>
+                                                    <th>价格浮动</th>
+                                                </tr>
+                                            </header>
+                                            <tbody id="skuEdit">
+                                                
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <!-- 编辑商品属性结束 -->
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-success">提  交</button>
+                        </div>
                     </form>
                 </div>
         </div>
@@ -137,9 +193,54 @@
 <!-- CK Editor -->
 <script src="/static/plugins/ckeditor/ckeditor.js"></script>
 <script>
-  $(function () {
+    var typeList = JSON.parse('{$typeList}');
 
-  })
+    var keyArr = Object.keys(typeList);
+    console.log(typeList);
+    $(function () {
+
+        $('.sku').on('click',function(){
+            var list_1 = [];
+            var list_2 = [];
+            $('.sku'+typeList[keyArr[0]]+":checked").each(function(i){
+                var v = {
+                    name:$(this).attr('data_name'),
+                    v:$(this).val()
+                }
+                list_1.push(v);
+            })
+            $('.sku'+typeList[keyArr[1]]+":checked").each(function(i){
+                var v = {
+                    name:$(this).attr('data_name'),
+                    v:$(this).val()
+                }
+                list_2.push(v);
+            })
+            console.log(list_1);
+            // 这里组合输入框
+            var skuEdit_html = '';
+            for (var i = 0; i < list_1.length; i++) {
+                for (var j = 0; j < list_2.length; j++) {
+                    skuEdit_html+=`<tr>
+                                    <td>${list_1[i].name}</td> 
+                                    <td>${list_2[j].name}</td>
+                                    <td><input type="number" name="stock[]" required="required" class="form-control"  min="1" step="1"></td>
+                                    <td><input type="number" name="price[]" required="required" class="form-control"></td>
+                                </tr>`;
+                }
+            }
+            $('#skuEdit').html(skuEdit_html);
+        })
+
+        //输入框的标题
+        var skuType_html = '';
+        for (var i = 0; i < typeList.length; i++) {
+            skuType_html += `<th>${typeList[i]}</th>
+                        `;
+        }                
+        $('#skuType').prepend(skuType_html);                
+
+    })
 
 </script>
 {/block}

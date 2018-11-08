@@ -48,11 +48,8 @@ class GradeMember extends Base{
                 unset($map['keyword']);
             }
             $res = db('grade_member')->where($map)->select();
-            if($res){
-                return json(['code'=>200,'msg'=>'ok','data'=>$res]);
-            }else{
-                return json(['code'=>100,'msg'=>'检查你的参数']);
-            }
+            return json(['code'=>200,'msg'=>'ok','data'=>$res]);
+            
         }catch (Exception $e){
             return json(['code'=>100,'msg'=>$e->getMessage()]);
         }
