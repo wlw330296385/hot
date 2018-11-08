@@ -1768,6 +1768,7 @@ class Match extends Base {
                 $teamMember = $teamS->getTeamMember(['name' => $row['name'], 'telephone' => ['neq','']]);
                 if ($teamMember) {
                     $temp = [
+                        'team_member_id' => $teamMember['id'],
                         'name' => $teamMember['name'],
                         'telephone' => $teamMember['telephone'],
                         'role' => $row['type']
@@ -1784,6 +1785,7 @@ class Match extends Base {
                 $teamMember = $teamS->getTeamMember(['name' =>$item['name']]);
                 if ($teamMember) {
                     $temp = [
+                        'team_member_id' => $teamMember['id'],
                         'name' => $teamMember['name'],
                         'telephone' => $teamMember['telephone'],
                         'role' => 0
