@@ -668,7 +668,7 @@ class LeagueService
     }
 
     // 获取联赛球队球员列表（无分页）
-    public function getMatchTeamMembers($map, $order = 'id desc')
+    public function getMatchTeamMembers($map, $order = 'id asc')
     {
         $model = new MatchTeamMember();
         $res = $model->where($map)->order($order)->select();

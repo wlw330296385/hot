@@ -3219,13 +3219,17 @@ class Team extends Base
             } else if (empty($team_id) && $team_member_count > 0) {
                 $resetFlag = 1;
             } else {
+
+                $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
+                $matchTeamMemberList = $leagueS->getMatchTeamMembers(['team_id' => $team_id]);
+
                 $teamMemberList = $teamS->getTeamMemberListOnly(['team_id' => $team_id]);
 
                 // 1.如果球员数不同，重置
                 // 2.如果球员数相同，但有个手机号不在里面,重置
                 // 3.如果球员数相同，但有个名字不在里面，重置
                 // 4.如果球员数相同，但有个权限不在里面，重置
-                if (count($team_member_list) != count($teamMemberList)) {
+                if (count($team_member_list) != (count($teamMemberRoleList) + count($matchTeamMemberList))) {
                     $resetFlag = 1;
                 } else {
                     if (!empty($teamMemberList)) {
@@ -3235,7 +3239,6 @@ class Team extends Base
                             $telephoneArray[$item['name']] = $item['telephone'];
                         }
 
-                        $teamMemberRoleList = $teamS->getTeamMemberRoleList(['team_id' => $team_id]);
                         $roleArray = [];
                         if (!empty($teamMemberRoleList)) {
                             foreach ($teamMemberRoleList as $col) {
@@ -3338,31 +3341,35 @@ class Team extends Base
             $teamS->delTeamMemberRoles(['team_id' => $matchTeamData["team_id"]], true);
             $leagueS->delMatchTeamMember(['team_id' => $matchTeamData["team_id"]], true);
 
+            $teamMemberNameArr = [];
             // 创建队员
             if (count($team_member_list) > 0) {
                 foreach ($team_member_list as $row) {
+                    if (!in_array($row['name'],$teamMemberNameArr)) {
+                        // 前端传入的数组 如果即是领队又是队员就要求领队的index在前
+                        $teamMemberData = [
+                            "team_id" => $matchTeamData["team_id"],
+                            "team" => $data["name"],
+                            "name" => $row['name'],
+                            "member_id" => -1,
+                            "telephone" => $row['telephone'],
+                            "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
+                            "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
+                            "status" => 1
+                        ];
+                        $resTeamMember = $teamS->getTeamMember([
+                             "team_id" => $matchTeamData["team_id"],
+                             "member_id" => -1,
+                             "name" => $row['name'],
+                             "telephone" => $row['telephone']
+                        ]);
+                        if ($resTeamMember) {
+                            $teamMemberData['id'] = $resTeamMember['id'];
+                        }
+                        $res1 = $teamS->saveTeamMember($teamMemberData);
 
-                    $teamMemberData = [
-                        "team_id" => $matchTeamData["team_id"],
-                        "team" => $data["name"],
-                        "name" => $row['name'],
-                        "member_id" => -1,
-                        "telephone" => $row['telephone'],
-                        "sex" => !empty($row["sex"]) ? $row["sex"] : 1,
-                        "avatar" => !empty($row['avatar']) ? $row['avatar'] : config('default_image.member_avatar'),
-                        "status" => 1
-                    ];
-                    $resTeamMember = $teamS->getTeamMember([
-                         "team_id" => $matchTeamData["team_id"],
-                         "member_id" => -1,
-                         "name" => $row['name'],
-                         "telephone" => $row['telephone']
-                    ]);
-                    if ($resTeamMember) {
-                        $teamMemberData['id'] = $resTeamMember['id'];
+                        array_push($teamMemberNameArr, $row['name']);
                     }
-                    $res1 = $teamS->saveTeamMember($teamMemberData);
-
                     // 有权限的人仅写入team_member_role，其他人写在team_member 和 match_team_member
                     if (!empty($row['role'])) {
                         $teamMemberRoleData = [
