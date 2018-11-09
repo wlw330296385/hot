@@ -88,7 +88,7 @@
             <div class="page-header bggray2">
                 <span class="f14">选填（<text class="colororange">参赛队员</text>信息，如领队也参赛，也需要填写在下表中，手机号码供认领数据时做验证使用）</span>
             </div>
-            <div class="operation-box" style="padding:15px;">
+            <div class="operation-box teamMemberCont" style="padding:15px;">
                 <div class="box">
                     <div class="mui-input-row mui-checkbox checkboxCont">
                         <div class="mui-row mui-text-center f14" style="line-height: 41px;">
@@ -269,6 +269,7 @@
             }
 
             var team_member_list = [];
+            var team_member_role_list = [];
             var isOk = true //用变量记住状态
             // 队员信息判断
             $(".box .checkboxCont").each(function () {
@@ -288,14 +289,28 @@
                     return isOk = false;
                 }
             });
-            // 提交数据
-            $(".checkboxCont").each(function () {
+             // 提交数据
+             $(".captainCont .checkboxCont").each(function () {
                 var name = $(this).find("input[name=name]").val();
                 var role = $(this).find(".role option:selected").val();
                 var telephone = $(this).find("input[name=telephone]").val();
-                team_member_list.push({
+                team_member_role_list.push({
                     name,
                     role,
+                    telephone
+                })
+            });
+            if (!isOk) {
+                return isOk
+            }
+            console.log(team_member_role_list)
+            // 提交数据
+            $(".teamMemberCont .checkboxCont").each(function () {
+                var name = $(this).find("input[name=name]").val();
+                var telephone = $(this).find("input[name=telephone]").val();
+                var team_member_id = $(this).attr("data-team_member_id");
+                team_member_list.push({
+                    name,
                     telephone
                 })
             });
@@ -310,6 +325,7 @@
             arrData = wooApi.getDomData('domData', datas);
             var objData = wooApi.arrTOobj(arrData);
             objData.team_member_list = JSON.stringify(team_member_list);
+            objData.team_member_role_list = JSON.stringify(team_member_role_list);
             var url = "{:url('api/team/saveVirtualTeam')}";
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {

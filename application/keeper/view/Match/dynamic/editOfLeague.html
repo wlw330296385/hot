@@ -142,6 +142,27 @@
         // 获取数据并进行提交
         function submitAction() {
 
+            var title = $("input[name=title]").val();
+            var author = $("input[name=author]").val();
+            var abstract = $("input[name=abstract]").val();
+            var covers = $("input[name=covers]").val();
+            if (title == '') {
+                mui.toast("请填写动态标题");
+                return false;
+            }
+            if (author == '') {
+                mui.toast("请填写作者");
+                return false;
+            }
+            if (abstract == '') {
+                mui.toast("请填写摘要");
+                return false;
+            }
+            if (covers == '') {
+                mui.toast("请上传动态封面");
+                return false;
+            }
+
             //去除提示文字的标签 
             $("#articleEditor").children(".Eleditor-placeholder").remove();
             //获取最终含简单html标签的图文内容
@@ -159,7 +180,8 @@
             var ajaxResult = wooApi.asyncF(url, objData);
             if (ajaxResult.code == 200) {
                 mui.alert(ajaxResult.msg, '动态发布成功', '确定', function () {
-                    var goUrl = "{:url('match/dynamicListOfLeague')}" + '/article_id/' + "{$articleInfo.id}" + '/league_id/' + "{$articleInfo.organization_id}";
+                    var goUrl = "{:url('match/dynamicListOfLeague')}" + '/article_id/' + "{$articleInfo.id}" +
+                        '/league_id/' + "{$articleInfo.organization_id}";
                     window.top.location.href = goUrl;
                 })
             } else {
@@ -173,7 +195,6 @@
                 }, 'json');
             }
         };
-
     </script>
     <script>
         var pc = new PhotoClip('.clipArea', {

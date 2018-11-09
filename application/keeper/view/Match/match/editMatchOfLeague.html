@@ -204,7 +204,8 @@
             </div>
 
             <!-- 主队信息 -->
-            <div id="onHomeTeam" class="mui-scroll-wrapper mui-control-content teamTap" data-team="{$matchRecordInfo.home_team_id}" data-team_id="{$matchRecordInfo.home_team_id}">
+            <div id="onHomeTeam" class="mui-scroll-wrapper mui-control-content teamTap" data-team="{$matchRecordInfo.home_team_id}"
+                data-team_id="{$matchRecordInfo.home_team_id}">
                 <div class="mui-scroll">
                     <form action="" class="mui-input-group mb44">
                         <div class="page-header bggray2">
@@ -721,7 +722,7 @@
                                             <span class="tapBtn tapConfirm tapGreen">确认</span>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="homeScoreCont" value="">
+                                    <input type="hidden" name="awayScoreCont" value="">
                                 </div>
                             </li>`
                         }
@@ -755,7 +756,12 @@
             var ft = $(this).find("input[name=ft]").val(); //罚球命中数
             var personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
             $(this).find("input[name=homeScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
+            // 遍历求和球员总得分
+            $(this).find("input[name=homeScoreCont]").each(function () {
+                homeScoreAll += parseInt($(this).val());
+            })
         });
+        console.log(homeScoreAll)
 
         // 客队分数
         $(".awayList").find(".dataCollapse").each(function () {
@@ -764,19 +770,16 @@
             var ft = $(this).find("input[name=ft]").val(); //罚球命中数
             var personalScore = fg * 2 + threepfg * 3 + ft * 1; //单个球员得分
             $(this).find("input[name=awayScoreCont]").val(personalScore); //单个球员得分赋值在personalScoreCont变量中
+            console.log($(this).find("input[name=awayScoreCont]").val())
+            // 遍历求和球员总得分
+            $(this).find("input[name=awayScoreCont]").each(function () {
+                awayScoreAll += parseInt($(this).val());
+            })
         });
-
-        // 遍历求和球员总得分
-        $(this).parents(".teamTap").find("input[name=homeScoreCont]").each(function () {
-            homeScoreAll += parseInt($(this).val());
-        })
-        $(this).parents(".teamTap").find("input[name=awayScoreCont]").each(function () {
-            awayScoreAll += parseInt($(this).val());
-        })
-        console.log(homeScoreAll)
         console.log(awayScoreAll)
-        var hoemTeamScore = $(this).parents().siblings(".mui-scroll").find(".hoemTeamScore").text();
-        var awayTeamScore = $(this).parents().siblings(".mui-scroll").find(".awayTeamScore").text();
+
+        var hoemTeamScore = $(".hoemTeamScore").text(); //主队总得分
+        var awayTeamScore = $(".awayTeamScore").text(); //客队总得分
         if (homeScoreAll > hoemTeamScore) {
             mui.alert("主队球员总得分不能大于主队总得分");
             return false;
