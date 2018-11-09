@@ -1,7 +1,7 @@
 <?php 
 namespace app\mall\controller;
 use app\mall\controller\Base;
-class Index extends Base
+class Goods extends Base
 {
     
     public function _initialize(){
@@ -14,5 +14,21 @@ class Index extends Base
     }
 
 
+    
 
+
+    //商品详情
+    public function goodsInfo(){
+    	echo "商品详情";
+    }
+
+
+
+    //购物车列表
+    public function cartlist(){
+    	echo "购物车列表";
+    }
+
+
+    
 }

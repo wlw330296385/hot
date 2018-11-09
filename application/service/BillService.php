@@ -133,19 +133,20 @@ class BillService {
     **/
     private function finishBill($data){
         $MessageService = new \app\service\MessageService;
-        // 训练营的余额和历史会员增加
-        $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
-        $schedule_rebate = $campInfo['schedule_rebate'];
-        $campBlance = $data['balance_pay'];
-        if($campInfo['rebate_type'] == 2){
-            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
-        }else{
-            $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('total_member',1)->update();
-        }
+        
         
         
         //开始课程操作,包括(模板消息发送,camp\camp_mamber和lesson的数据更新)
         if($data['goods_type'] == '课程'){
+            // 训练营的余额和历史会员增加
+            $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
+            $schedule_rebate = $campInfo['schedule_rebate'];
+            $campBlance = $data['balance_pay'];
+            if($campInfo['rebate_type'] == 2){
+                $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->inc('total_member',1)->update();
+            }else{
+                $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('total_member',1)->update();
+            }
             db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>1]);
             //购买人数+1;
             db('lesson')->where(['id'=>$data['goods_id']])->setInc('students');
@@ -222,7 +223,6 @@ class BillService {
                     }
                 }
             }else{
-                //$re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id'],'status'=>1])->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update();
                 $re = db('lesson_member')->where(['camp_id'=>$data['camp_id'],'lesson_id'=>$data['goods_id'],'student_id'=>$data['student_id']])->whereNull('delete_time')->inc('rest_schedule',$data['total'])->inc('total_schedule',$data['total'])->update(['status' => 1,'type' => 1,'update_time'=>time(),'system_remarks'=>date('Ymd',time()).'续费']);
                 $ress = db('student')->where(['id'=>$data['student_id']])->inc('total_lesson',1)->update();
                 if(!$re){
@@ -258,6 +258,13 @@ class BillService {
             }
             
         }elseif ($data['goods_type'] == '活动') {
+            // 训练营的余额和历史会员增加
+            $campInfo = db('camp')->where(['id'=>$data['camp_id']])->find();
+            $schedule_rebate = $campInfo['schedule_rebate'];
+            $campBlance = $data['balance_pay'];
+            if($campInfo['rebate_type'] == 2){
+                $ress = db('camp')->where(['id'=>$data['camp_id']])->inc('balance',$campBlance)->update();
+            }
             db('income')->insert(['lesson_id'=>$data['goods_id'],'lesson'=>$data['goods'],'goods_id'=>$data['goods_id'],'goods'=>$data['goods'],'camp_id'=>$data['camp_id'],'camp'=>$data['camp_id'],'income'=>$data['balance_pay'],'balance_pay'=>$data['balance_pay'],'schedule_rebate'=>$schedule_rebate,'member_id'=>$data['member_id'],'member'=>$data['member'],'create_time'=>time(),'total'=>$data['total'],'price'=>$data['price'],'f_id'=>$data['id'],'rebate_type'=>$campInfo['rebate_type'],'date_str' =>date('Ymd',time()),'type'=>2]);
             // camp_member操作
             $CampMember = new CampMember;
@@ -283,8 +290,6 @@ class BillService {
                 ];
                 CampFinance::create($dataCampFinance);
             }
-            
-            
         }  
                 
         return 1;
