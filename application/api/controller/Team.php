@@ -3538,6 +3538,9 @@ class Team extends Base
                 } 
 
                 if ($row['action'] != 'delete') {
+                    if ( in_array($row['name'], $name_array) ) {
+                        return json(['code' => 100, 'msg' => "同一球队暂不允许队员同名"]);
+                    }
                     $name_array[] = $row['name'];
                 }
             }
