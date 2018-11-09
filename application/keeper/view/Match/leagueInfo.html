@@ -548,8 +548,7 @@
         }
         var count = 1;
 
-        //点击查看更多别人的打卡记录
-
+        //点击查看更多评论
         $(".moreOthers").on("tap", function () {
             pullupRefresh();
         })
@@ -595,8 +594,10 @@
 
                         $(".comment_count").text(data.data.total); // 评论总数
                         // 当评论总数小于10，不显示查看更多评论文字
-                        if (data.data.current_page == 1 && (data.data.length < 10 || data.data.data == '')) {
+                        if (data.data.current_page == 1 && (data.data.total <= 10 || data.data.data == '')) {
                             $(".moreOthers").hide();
+                        }else{
+                            $(".moreOthers").show();
                         }
 
                         for (var i = 0; i <= data.data.data.length - 1; i++) {

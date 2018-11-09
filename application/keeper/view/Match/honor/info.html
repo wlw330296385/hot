@@ -84,7 +84,10 @@
                     <span class="thumbup_count">0</span>
                 </span>
             </div>
-            <ul class="mui-table-view comment-list"></ul>
+            <ul class="mui-table-view comment-list coach"></ul>
+            <p class="moreOthers mui-text-center bggray2 f12" style="padding:10px;">
+                查看更多评论...
+            </p>
 
             <!--底部操作-->
             <ul class="mui-table-view operation">
@@ -158,7 +161,6 @@
 
         var match_id = "{$league_id}"
         var honor_id = "{$honorInfo.id}"
-        var count = 1;
 
         $(function () {
 
@@ -276,9 +278,9 @@
                 });
             });
 
-            pulldownRefresh(); //页面打开时获取一次最新评论信息
             isthumbsup(); //点赞状态
             followStatus(); //判断当前的关注状态
+            toCommentList(); //联赛荣誉
         });
 
         // 点赞状态
@@ -347,6 +349,13 @@
             });
         }
 
+        var count = 1;
+
+        //点击查看更多评论
+        $(".moreOthers").on("tap", function () {
+            pullupRefresh();
+        })
+
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
@@ -367,7 +376,8 @@
         }
         //获取评论列表
         function toCommentList(page, gType) {
-            var url = "{:url('api/league/leaguecommentlist','','',true)}/?page=" + page;
+            var url = "{:url('api/league/leaguecommentlistpage','','',true)}" + "?page=" + page;
+            var match_id = "{$league_id}";
             var commented_id = honor_id;
             mui.ajax({
                 url: url,
@@ -386,27 +396,35 @@
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        $(".comment_count").text(data.data.length);
-                        for (var i = 0; i <= data.data.length - 1; i++) {
-                            newli = newli +
-                                '<li class="mui-table-view-cell listli border-b"><div class="mui-pull-right">' +
-                                data.data[i].create_time +
-                                '</div><img class="mui-pull-left img32" src="' + data.data[i].member_avatar +
-                                '">' + data.data[i].member + '<p>' + data.data[i].comment + '</p></li>'
+
+                        $(".comment_count").text(data.data.total); // 评论总数
+                        // 当评论总数小于10，不显示查看更多评论文字
+                        if (data.data.current_page == 1 && (data.data.total <= 10 || data.data.data == '')) {
+                            $(".moreOthers").hide();
+                        } else {
+                            $(".moreOthers").show();
                         }
-                    }
-                    if (gType == 1) {
-                        //上拉刷新
-                        $("ul.comment-list").empty().append(newli);
-                        if (newli == '') {
+
+                        for (var i = 0; i <= data.data.data.length - 1; i++) {
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' +
+                                data.data.data[i].create_time +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].member_avatar +
+                                '">' + data.data.data[i].member + '<p>' + data.data.data[i].comment +
+                                '</p></li>'
+                        }
+
+                        if (data.data.current_page == 1 && data.data.data == '') {
                             $("ul.comment-list").html(
                                 '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
                             );
                         }
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.comment-list").append(newli);
+                        // 最后一页数据小于10条，提示没更多评论
+                        if (data.data.current_page > 1 && data.data.data == '') {
+                            $(".moreOthers").text("没有更多评论了！");
+                        }
                     }
+                    $("ul.comment-list").append(newli);
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');

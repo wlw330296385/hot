@@ -103,8 +103,10 @@
                         {/if}
                         <span id="dianzan">
                             {if $isLikes} {eq name="isLikes.status" value='1' }
-                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color" style="color:red"></i>&nbsp; {else /}
-                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/eq} {else /}
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color" style="color:red"></i>&nbsp;
+                            {else /}
+                            <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/eq}
+                            {else /}
                             <i class="mui-icon-extra mui-icon-extra-like f16 thumbsup" id="color"></i>&nbsp; {/if}
                             <font class="thumbup_count">{$articleInfo.likes}</font>
                         </span>
@@ -138,6 +140,9 @@
                 </span>
             </div>
             <ul class="mui-table-view comment-list coach"></ul>
+            <p class="moreOthers mui-text-center bggray2 f12" style="padding:10px;">
+                查看更多评论...
+            </p>
 
         </div>
 
@@ -189,15 +194,13 @@
     <script src="/static/frontend/js/jquery-3.2.1.min.js"></script>
     <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
     <script>
-
+        var article = "{$articleInfo.title}";
+        var article_id = "{$articleInfo.id}";
         $(function () {
-
             toCommentList(); //获取评论列表
 
             //评论功能
             $(".commentBtn").on('tap', function () {
-                var article = "{$articleInfo.title}";
-                var article_id = "{$articleInfo.id}";
                 var comment = $(".comment").val();
                 var avatar = "{$memberInfo.avatar}";
                 if (comment == '') {
@@ -211,10 +214,12 @@
                         comment: comment,
                         avatar: avatar,
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -236,25 +241,25 @@
 
             //收藏功能
             $(".collect").on('tap', function () {
-                var article = "{$articleInfo.title}";
-                var article_id = "{$articleInfo.id}";
                 mui.ajax("{:url('api/article/collectApi')}", {
                     data: {
                         article: article,
                         article_id: article_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
                             if ($(".collect").text() == '已收藏') {
-                                $(".collect").text('收藏')
+                                $(".collect").text('收藏').addClass("mui-btn-danger")
                                 mui.toast('取消收藏');
                             } else {
-                                $(".collect").text('已收藏')
+                                $(".collect").text('已收藏').removeClass("mui-btn-danger")
                                 mui.toast('收藏成功');
                             }
                         } else {
@@ -270,17 +275,17 @@
 
             //点赞功能
             $(".thumbsup").on('tap', function () {
-                var article = "{$articleInfo.title}";
-                var article_id = "{$articleInfo.id}";
                 mui.ajax("{:url('api/article/likesApi')}", {
                     data: {
                         article: article,
                         article_id: article_id
                     },
-                    dataType: 'json',//服务器返回json格式数据
-                    type: 'post',//HTTP请求类型
-                    timeout: 10000,//超时时间设置为10秒；
-                    headers: { 'Content-Type': 'application/json' },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (data) {
                         console.log(data);
                         if (data.code == 200) {
@@ -306,59 +311,81 @@
                 });
 
             });
+
+            //点击查看更多评论
+            $(".moreOthers").on("tap", function () {
+                pullupRefresh();
+            })
+
         })
 
         var count = 1;
         //下拉刷新具体业务实现
         function pulldownRefresh() {
             setTimeout(function () {
-                count = 1;//刷新并显示第一页
+                count = 1; //刷新并显示第一页
                 var page = count;
-                var gType = 1;//代表下拉刷新
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 1; //代表下拉刷新
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //上拉加载具体业务实现
         function pullupRefresh() {
             setTimeout(function () {
-                count++;//翻下一页
+                count++; //翻下一页
                 var page = count;
-                var gType = 2;//代表上拉加载
-                toCommentList(page, gType);//具体取数据的方法
+                var gType = 2; //代表上拉加载
+                toCommentList(page, gType); //具体取数据的方法
             }, 100);
         }
         //获取评论列表
         function toCommentList(page, gType) {
             var url = "{:url('api/article/getCommentListByPageApi','','',true)}/?page=" + page;
-            var article_id = "{$articleInfo.id}";
             mui.ajax({
                 url: url,
                 data: {
                     article_id: article_id,
                 },
-                dataType: 'json',//服务器返回json格式数据
-                type: 'post',//HTTP请求类型
-                timeout: 10000,//超时时间设置为10秒；
-                headers: { 'Content-Type': 'application/json' },
+                dataType: 'json', //服务器返回json格式数据
+                type: 'post', //HTTP请求类型
+                timeout: 10000, //超时时间设置为10秒；
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 success: function (data) {
                     console.log(data)
                     var newli = '';
                     if (data.code == 200) {
-                        $(".comment_count").text(data.data.data.length);
+
+                        $(".comment_count").text(data.data.total); // 评论总数
+                        // 当评论总数小于10，不显示查看更多评论文字
+                        if (data.data.current_page == 1 && (data.data.total <= 10 || data.data.data == '')) {
+                            $(".moreOthers").hide();
+                        } else {
+                            $(".moreOthers").show();
+                        }
+
                         for (var i = 0; i <= data.data.data.length - 1; i++) {
-                            newli = newli + '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' + data.data.data[i].create_time + '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar + '">' + data.data.data[i].member + '<p>' + data.data.data[i].comment + '</p></li>'
+                            newli = newli +
+                                '<li class="mui-table-view-cell listli"><div class="mui-pull-right">' +
+                                data.data.data[i].create_time +
+                                '</div><img class="mui-pull-left coachicon" src="' + data.data.data[i].avatar +
+                                '">' + data.data.data[i].member + '<p>' + data.data.data[i].comment +
+                                '</p></li>'
                         }
-                        if (newli == '') {
-                            $("ul.comment-list").html('<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>');
+
+                        if (data.data.current_page == 1 && data.data.data == '') {
+                            $("ul.comment-list").html(
+                                '<li class="nodata"><i class="icon iconfont icon-logo-Big"></i><p>还没有评论哦，你来说几句吧！</p></li>'
+                            );
                         }
+                        // 最后一页数据小于10条，提示没更多评论
+                        if (data.data.current_page > 1 && data.data.data == '') {
+                            $(".moreOthers").text("没有更多评论了！");
+                        }
+
                     }
-                    if (gType == 1) {
-                        //上拉刷新
-                        $("ul.comment-list").empty().append(newli);
-                    } else {
-                        //下拉加载 gType==2
-                        $("ul.comment-list").append(newli);
-                    }
+                    $("ul.comment-list").append(newli);
                 },
                 error: function (xhr, type, errerThrown) {
                     mui.toast('网络异常,请稍候再试');

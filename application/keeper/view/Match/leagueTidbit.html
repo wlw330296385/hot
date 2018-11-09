@@ -19,10 +19,6 @@
             height: 260px;
         }
 
-        .page-header .more {
-            padding-right: 0px;
-        }
-
         .nav-list .nav-list-frame .navli {
             width: 25%;
         }
@@ -46,7 +42,7 @@
 
     <div class="mui-content">
 
-        <div class="list mt55 ">
+        <div class="list mt55">
 
             <ul class="mui-table-view mb">
                 <li class="mui-table-view-cell listli">
@@ -174,48 +170,48 @@
         mui(".mui-content").on("tap", "a", function () {
             window.top.location.href = this.href;
         });
+        var league_id = "{$league_id}";
+        $(function () {
+            if ($(".leagueName").height() > 18) {
+                $(".leagueName").css("line-height", "24px")
+            }
 
-        if ($(".leagueName").height() > 18) {
-            $(".leagueName").css("line-height", "24px")
-        }
+            followStatus(); //判断当前的关注状态
+            dynamicList(); //动态列表
 
-        followStatus(); //判断当前的关注状态
-        getbattle(); //分组列表
-
-        // 关注联赛
-        $(".follow").on("tap", '', function () {
-            var league_id = "{$league_id}";
-            mui.ajax("{:url('api/follow/focus')}", {
-                data: {
-                    type: 5,
-                    league_id: league_id
-                },
-                dataType: 'json', //服务器返回json格式数据
-                type: 'post', //HTTP请求类型
-                timeout: 10000, //超时时间设置为10秒；
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                success: function (data) {
-                    //服务器返回响应，根据响应结果，分析是否登录成功；
-                    console.log(data);
-                    if (data.code == 200) {
-                        mui.toast(data.msg);
-                        followStatus();
-                    } else {
-                        mui.toast(data.msg);
+            // 关注联赛
+            $(".follow").on("tap", '', function () {
+                mui.ajax("{:url('api/follow/focus')}", {
+                    data: {
+                        type: 5,
+                        league_id: league_id
+                    },
+                    dataType: 'json', //服务器返回json格式数据
+                    type: 'post', //HTTP请求类型
+                    timeout: 10000, //超时时间设置为10秒；
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    success: function (data) {
+                        //服务器返回响应，根据响应结果，分析是否登录成功；
+                        console.log(data);
+                        if (data.code == 200) {
+                            mui.toast(data.msg);
+                            followStatus();
+                        } else {
+                            mui.toast(data.msg);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        //异常处理；
+                        console.log(type);
                     }
-                },
-                error: function (xhr, type, errorThrown) {
-                    //异常处理；
-                    console.log(type);
-                }
+                });
             });
-        });
+        })
 
         // 判断当前的关注状态
         function followStatus() {
-            var league_id = "{$league_id}";
             mui.ajax("{:url('api/follow/getfollow')}", {
                 data: {
                     type: 5,
@@ -246,17 +242,16 @@
             });
         }
 
-        // 小组列表
-        function getbattle() {
-            //搜索关键字不能完全为空，否则查询为空
+        // 动态列表
+        function dynamicList() {
             var url = "{:url('api/league/getleaguearticlelist','','',true)}";
-            var league_id = "{$league_id}";
             mui.ajax({
                 url: url,
                 data: {
-                    league_id: league_id,
+                    organization_id: league_id,
                     organization_type: 4,
                     category: 3,
+                    status: 1
                 },
                 dataType: 'json', //服务器返回json格式数据
                 type: 'post', //HTTP请求类型
@@ -271,16 +266,24 @@
                         for (var i = 0; i <= data.data.length - 1; i++) {
                             var urls = "{:url('match/dynamicInfo')}" + '/article_id/' + data.data[i].id +
                                 '/league_id/' + data.data[i].organization_id;
-                            newli += '<li class="mui-table-view-cell listli border-b"><a href="' + urls +
-                                '"><img class="mui-pull-left proportion4x3" src="' + data.data[i].covers +
-                                '"><div class="mui-media-body wd73"><strong class="newline">' + data.data[i]
-                                .title + '</strong>';
-                            newli += '<p class="mui-ellipsis f12">' + data.data[i].create_time +
-                                '<span class="wd45"><font style="margin-right: 8px !important;"><i class="mui-icon-extra mui-icon-extra-comment f14"></i>&nbsp;' +
-                                data.data[i].comments +
-                                '</font><font><i class="mui-icon-extra mui-icon-extra-like f14"></i>&nbsp;' +
-                                data.data[i].likes + '</span></span></p></div>';
-                            newli += '</a></li>';
+                            newli +=
+                                `<li class="mui-table-view-cell listli border-b">
+                                    <a href="${urls}"><img class="mui-pull-left proportion4x3" src="${data.data[i].covers}">
+                                        <div class="mui-media-body wd73">
+                                            <strong class="newline">${data.data[i].title}</strong>
+                                            <p class="mui-ellipsis f12">${data.data[i].create_time}
+                                                <span class="wd45">
+                                                    <font style="margin-right: 8px !important;">
+                                                        <i class="mui-icon-extra mui-icon-extra-comment f14"></i>&nbsp; ${data.data[i].comments}
+                                                    </font>
+                                                    <font>
+                                                    <i class="mui-icon-extra mui-icon-extra-like f14"></i>&nbsp;${data.data[i].likes}
+                                                    </font>
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </li>`;
                         }
                     }
                     $("ul.dunamicList").empty().append(newli);
